@@ -3,7 +3,7 @@ import { useState } from "react";
 const W = 390;
 const H = 844;
 
-// ─── Palette — PhewPhew CI ─────────────────────────────────
+// ─── Palette: PhewPhew CI ─────────────────────────────────
 const C = {
   bg: "#EEF8FD",           // very light sky, derived from #E2F4FC
   surface: "#FFFFFF",      // white
