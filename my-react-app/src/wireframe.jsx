@@ -1458,7 +1458,7 @@ function ScanScreen({ onNav }) {
           </div>
 
           {/* Ingredients / description */}
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 20 }}>
             <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.05em", marginBottom: 5 }}>INGREDIENTS OR DESCRIPTION <span style={{ fontWeight: 400, textTransform: "none", fontSize: 10 }}>(optional)</span></Text>
             <div style={{ background: C.surface, border: `1.5px solid ${productDesc ? C.accent : C.border}`, borderRadius: 12, padding: "12px 14px" }}>
               <textarea
@@ -1470,14 +1470,6 @@ function ScanScreen({ onNav }) {
               />
             </div>
             <Text size={9} color={C.muted} style={{ marginTop: 5, fontFamily: "'DM Sans', sans-serif" }}>Tip: Copy directly from the product label or brand website for best results</Text>
-          </div>
-
-          {/* Quick suggestions */}
-          <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.05em", marginBottom: 8 }}>COMMON PRODUCTS</Text>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 20 }}>
-            {["The Ordinary Retinol", "Cetaphil Moisturiser", "La Roche-Posay SPF", "Laneige Water Bank"].map(s => (
-              <div key={s} onClick={() => setProductName(s)} style={{ padding: "5px 12px", borderRadius: 99, background: C.card, border: `1px solid ${C.border}`, fontSize: 11, fontWeight: 500, color: C.sub, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{s}</div>
-            ))}
           </div>
 
           <div onClick={triggerManualScan} style={{ width: "100%", padding: "15px", borderRadius: 16, background: productName ? `linear-gradient(120deg, ${C.accentMid}, ${C.accent})` : C.card, textAlign: "center", fontSize: 14, fontWeight: 800, cursor: productName ? "pointer" : "default", fontFamily: "'DM Sans', sans-serif", color: productName ? "#0D2A3A" : C.muted, boxShadow: productName ? `0 6px 20px ${C.accentMid}55` : "none", transition: "all 0.2s" }}>
@@ -1504,59 +1496,153 @@ function ScanScreen({ onNav }) {
 
       {/* ── RESULT ── */}
       {phase === "result" && (
-        <div style={{ flex: 1, background: C.bg, borderRadius: "20px 20px 0 0", overflowY: "auto", padding: "16px 20px 0" }}>
-          <div style={{ width: 36, height: 4, borderRadius: 99, background: C.border, margin: "0 auto 16px" }} />
+        <div style={{ flex: 1, background: C.bg, overflowY: "auto" }}>
 
-          {/* Status banner */}
-          <div style={{ background: "#E8FFFB", border: `1.5px solid #7ADFC8`, borderRadius: 16, padding: "14px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#7ADFC8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ fontSize: 18, color: "#fff" }}>✓</span>
+          {/* ── Hero verdict — full bleed colour block ── */}
+          <div style={{
+            background: "linear-gradient(145deg, #0A2E20, #0D4A30)",
+            padding: "20px 20px 28px",
+            position: "relative", overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "#b5ffef", opacity: 0.08 }} />
+            <div style={{ position: "absolute", bottom: -20, left: -20, width: 90, height: 90, borderRadius: "50%", background: C.mint, opacity: 0.1 }} />
+
+            {/* Product identity row */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18, position: "relative", zIndex: 1 }}>
+              <div style={{ width: 46, height: 46, borderRadius: 13, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>🧴</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", fontFamily: "Syne, sans-serif", lineHeight: 1.3 }}>
+                  {productName || "COSRX Niacinamide Serum"}
+                </div>
+                <div style={{ fontSize: 10, color: "rgba(181,255,239,0.7)", fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>
+                  {inputMode === "text" ? "✏️ Entered manually" : "📷 Camera scan · COSRX"}
+                </div>
+              </div>
             </div>
-            <div>
-              <Text size={14} weight={800} color={C.mintDark}>Compatible with your skin</Text>
-              <Text size={11} color="#3A8A70">No conflicts with your current routine.</Text>
+
+            {/* Score + verdict side by side */}
+            <div style={{ display: "flex", alignItems: "center", gap: 18, position: "relative", zIndex: 1 }}>
+              {/* Compatibility score ring */}
+              <div style={{ position: "relative", width: 72, height: 72, flexShrink: 0 }}>
+                <svg width="72" height="72" viewBox="0 0 72 72">
+                  <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="6"/>
+                  <circle cx="36" cy="36" r="30" fill="none" stroke="#4ade80" strokeWidth="6"
+                    strokeDasharray={`${0.88 * 188.5} ${188.5}`}
+                    strokeLinecap="round" strokeDashoffset="47"
+                    transform="rotate(-90 36 36)"/>
+                </svg>
+                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "Syne, sans-serif", lineHeight: 1 }}>88</span>
+                  <span style={{ fontSize: 8, color: "rgba(255,255,255,0.5)", fontFamily: "'DM Sans', sans-serif" }}>/100</span>
+                </div>
+              </div>
+
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "#4ade80", fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 5 }}>
+                  Great match for<br />your skin
+                </div>
+                <div style={{ fontSize: 10, color: "rgba(181,255,239,0.75)", fontFamily: "'DM Sans', sans-serif", lineHeight: 1.55 }}>
+                  3 actives work well together · 1 minor flag (fragrance) — safe to use with caution
+                </div>
+              </div>
+            </div>
+
+            {/* 3 quick stat pills */}
+            <div style={{ display: "flex", gap: 7, marginTop: 16, position: "relative", zIndex: 1 }}>
+              {[
+                { label: "4 ingredients", sub: "detected", color: "rgba(155,233,250,0.15)", border: "rgba(155,233,250,0.25)", text: C.accentMid },
+                { label: "3 compatible", sub: "with your skin", color: "rgba(74,222,128,0.12)", border: "rgba(74,222,128,0.3)", text: "#4ade80" },
+                { label: "1 flag", sub: "fragrance", color: "rgba(255,180,60,0.12)", border: "rgba(255,180,60,0.3)", text: "#FFB43A" },
+              ].map(p => (
+                <div key={p.label} style={{ flex: 1, padding: "8px 8px 6px", borderRadius: 10, background: p.color, border: `1px solid ${p.border}`, textAlign: "center" }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: p.text, fontFamily: "Syne, sans-serif" }}>{p.label}</div>
+                  <div style={{ fontSize: 8, color: "rgba(255,255,255,0.45)", fontFamily: "'DM Sans', sans-serif", marginTop: 1 }}>{p.sub}</div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Detected product */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "13px 16px", marginBottom: 14 }}>
-            <Text size={10} weight={700} color={C.sub} style={{ letterSpacing: "0.07em", marginBottom: 8 }}>DETECTED PRODUCT</Text>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: C.card, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>🧴</div>
+          {/* ── Body — light scrollable content ── */}
+          <div style={{ padding: "16px 20px 0" }}>
+
+            {/* Ingredient breakdown */}
+            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, marginBottom: 14, overflow: "hidden" }}>
+              <div style={{ padding: "13px 16px 10px", borderBottom: `1px solid ${C.border}` }}>
+                <Text size={12} weight={800}>Ingredient Breakdown</Text>
+              </div>
+              {[
+                { name: "Niacinamide 10%",  tag: "BRIGHTENING",  safe: true,  note: "Reduces pores + pigmentation. Works well with your Zinc toner." },
+                { name: "Zinc PCA 1%",       tag: "OIL CONTROL",  safe: true,  note: "Balances sebum — ideal for your combination skin type." },
+                { name: "Hyaluronic Acid",   tag: "HYDRATION",    safe: true,  note: "Draws moisture into skin. Layer before moisturiser for best effect." },
+                { name: "Fragrance",         tag: "⚠ IRRITANT",   safe: false, note: "Your profile flags fragrance sensitivity. Watch for redness or itching." },
+              ].map((ing, i, arr) => (
+                <div key={ing.name} style={{ padding: "11px 16px", borderBottom: i < arr.length - 1 ? `1px solid ${C.border}` : "none", background: ing.safe ? "transparent" : "#FFFAF5" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: ing.note ? 5 : 0 }}>
+                    <div style={{ width: 9, height: 9, borderRadius: "50%", background: ing.safe ? "#4ade80" : C.danger, flexShrink: 0 }} />
+                    <Text size={12} weight={700}>{ing.name}</Text>
+                    <div style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 99, background: ing.safe ? C.accentLight : "#FDE8E8", fontSize: 8, fontWeight: 700, color: ing.safe ? "#1A6A88" : C.danger, fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>{ing.tag}</div>
+                  </div>
+                  {ing.note && <Text size={10} color={ing.safe ? C.sub : "#B05000"} style={{ paddingLeft: 19, lineHeight: 1.55 }}>{ing.note}</Text>}
+                </div>
+              ))}
+            </div>
+
+            {/* Routine conflict check */}
+            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, marginBottom: 14, overflow: "hidden" }}>
+              <div style={{ padding: "13px 16px 10px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <Text size={12} weight={800}>Routine Compatibility</Text>
+                <span style={{ padding: "2px 8px", borderRadius: 99, background: "#E8FFFB", fontSize: 9, fontWeight: 700, color: C.mintDark, fontFamily: "'DM Sans', sans-serif", border: `1px solid #7ADFC8` }}>✓ No conflicts</span>
+              </div>
+              {[
+                { step: "Vitamin C Serum", icon: "🍊", ok: true,  note: "Use Niacinamide at a different time — alternating AM/PM is ideal." },
+                { step: "BHA Toner",       icon: "⚗️", ok: true,  note: "No conflict. BHA + Niacinamide complement each other." },
+                { step: "SPF 50",          icon: "☀️", ok: true,  note: "Apply this before SPF for best absorption." },
+              ].map((r, i, arr) => (
+                <div key={r.step} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 16px", borderBottom: i < arr.length - 1 ? `1px solid ${C.border}` : "none" }}>
+                  <span style={{ fontSize: 16, flexShrink: 0 }}>{r.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <Text size={11} weight={700}>{r.step}</Text>
+                    <Text size={10} color={C.sub} style={{ marginTop: 2, lineHeight: 1.5 }}>{r.note}</Text>
+                  </div>
+                  <span style={{ fontSize: 13, color: "#4ade80", flexShrink: 0 }}>✓</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Where to use pill */}
+            <div style={{ background: C.accentLight, border: `1px solid ${C.border}`, borderRadius: 14, padding: "12px 16px", marginBottom: 16, display: "flex", gap: 12, alignItems: "center" }}>
+              <span style={{ fontSize: 20 }}>💡</span>
               <div>
-                <Text size={13} weight={700}>{productName || "COSRX Niacinamide Serum"}</Text>
-                <Text size={10} color={C.sub}>{productName ? "Entered manually" : "COSRX · Scanned"}</Text>
+                <Text size={11} weight={700} color={C.accent}>Best used in your AM routine</Text>
+                <Text size={10} color={C.sub} style={{ marginTop: 2, lineHeight: 1.5 }}>After toner, before moisturiser. Pat gently — do not rub.</Text>
               </div>
             </div>
-          </div>
 
-          {/* Ingredients */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
-            <Text size={10} weight={700} color={C.sub} style={{ letterSpacing: "0.07em", marginBottom: 10 }}>KEY INGREDIENTS</Text>
-            {[
-              { name: "Niacinamide 10%", tag: "BRIGHTENING", safe: true },
-              { name: "Zinc PCA 1%", tag: "OIL CONTROL", safe: true },
-              { name: "Hyaluronic Acid", tag: "HYDRATION", safe: true },
-              { name: "Fragrance", tag: "⚠ IRRITANT", safe: false },
-            ].map(ing => (
-              <div key={ing.name} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: ing.safe ? C.accentMid : C.danger, flexShrink: 0 }} />
-                <Text size={12}>{ing.name}</Text>
-                <div style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 99, background: ing.safe ? C.accentLight : "#FDE8E8", fontSize: 9, fontWeight: 700, color: ing.safe ? "#1A6A88" : C.danger, fontFamily: "'DM Sans', sans-serif" }}>{ing.tag}</div>
+            {/* CTAs */}
+            <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
+              <div
+                onClick={() => { setPhase("camera"); setInputMode("camera"); setProductName(""); setProductDesc(""); setScanProgress(0); }}
+                style={{ flex: 1, padding: "13px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: C.text }}
+              >
+                ← Scan Again
               </div>
-            ))}
-          </div>
+              <div style={{ flex: 2, padding: "13px", borderRadius: 14, background: `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`, textAlign: "center", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: "#0D2A3A", boxShadow: `0 4px 16px ${C.accentMid}55` }}>
+                + Add to AM Routine
+              </div>
+            </div>
 
-          {/* Actions */}
-          <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
-            <div onClick={() => { setPhase("camera"); setInputMode("camera"); setProductName(""); setProductDesc(""); }} style={{ flex: 1, padding: "13px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-              ← Scan Again
+            {/* Secondary action: share / derm */}
+            <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+              <div style={{ flex: 1, padding: "11px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: C.sub }}>
+                🔗 Share Result
+              </div>
+              <div onClick={() => onNav("derm")} style={{ flex: 1, padding: "11px", borderRadius: 14, background: "#FFFDE8", border: `1px solid #E0D840`, textAlign: "center", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: "#5A5000" }}>
+                ✚ Ask Derm
+              </div>
             </div>
-            <div style={{ flex: 1, padding: "13px", borderRadius: 14, background: `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`, color: "#0D2A3A", textAlign: "center", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-              + Add to Routine
-            </div>
+
+            <div style={{ height: 90 }} />
           </div>
-          <div style={{ height: 80 }} />
         </div>
       )}
 
@@ -1566,70 +1652,422 @@ function ScanScreen({ onNav }) {
 }
 
 function AnalysisScreen({ onNav }) {
+  const [phase, setPhase] = useState("capture"); // capture | analysing | result
+  const [progress, setProgress] = useState(0);
+  const [captureMode, setCaptureMode] = useState("camera"); // camera | upload
+  const [frame, setFrame] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setFrame(f => (f + 1) % 80), 120);
+    return () => clearInterval(t);
+  }, []);
+
+  const triggerAnalysis = () => {
+    setPhase("analysing");
+    setProgress(0);
+    let p = 0;
+    const t = setInterval(() => {
+      p += 2;
+      setProgress(p);
+      if (p >= 100) { clearInterval(t); setTimeout(() => setPhase("result"), 400); }
+    }, 55);
+  };
+
+  // Simulated face blob for live viewfinder
+  const faceBlobs = Array.from({ length: 5 }, (_, i) => ({
+    cx: 50 + Math.sin((frame + i * 16) * 0.05) * 1.5,
+    cy: 50 + Math.cos((frame + i * 12) * 0.04) * 1,
+    r: 22 + i * 1.5 + Math.sin((frame + i * 8) * 0.08) * 0.8,
+    op: 0.03 + i * 0.006,
+  }));
+
+  const analysisStages = ["Mapping facial zones", "Detecting skin texture", "Measuring pore density", "Analysing pigmentation", "Cross-referencing profile"];
+
+  const currentStage = Math.floor((progress / 100) * analysisStages.length);
+
   return (
-    <Box style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
-      <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div onClick={() => onNav("home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
-        <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>AI Skin Analysis</Text>
-        <div style={{ marginLeft: "auto" }}><Badge premium /></div>
-      </Box>
+    <Box style={{ height: "100%", background: "#0D1F2A", display: "flex", flexDirection: "column" }}>
+      <div style={{ background: "#0D1F2A" }}><StatusBar /></div>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
-
-        {/* Sensor + Camera combo */}
-        <Box style={{ background: "#0D2A3A", borderRadius: 20, padding: "20px", marginBottom: 16, position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 70% 30%, #9BE9FA22, transparent 60%)" }} />
-          <Text size={10} color={C.accentMid} weight={700} style={{ letterSpacing: "0.12em", marginBottom: 12 }}>SENSOR + AI ACTIVE</Text>
-          <Box style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-            <div style={{ flex: 1, height: 120, borderRadius: 12, background: "#0f3347", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 4 }}>
-              <Text size={28} color={C.accentMid}>◎</Text>
-              <Text size={10} color="#6b7280">Camera Feed</Text>
-            </div>
-            <div style={{ flex: 1, height: 120, borderRadius: 12, background: "#0f3347", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 4, border: `1px solid ${C.accentMid}` }}>
-              <Text size={28} color={C.premiumMid}>◈</Text>
-              <Text size={10} color="#6b7280">Sensor Data</Text>
-              <Text size={9} color={C.accentMid}>Hydration: 62%</Text>
-            </div>
-          </Box>
-          <div style={{ padding: "12px 16px", borderRadius: 12, background: "#ffffff11", border: "1px solid #ffffff22" }}>
-            <Text size={12} color="#e2e8f0">Place sensor gently against cheek for 3 seconds while camera captures facial map.</Text>
+      {/* Header */}
+      <div style={{ padding: "2px 20px 12px", display: "flex", alignItems: "center", gap: 12 }}>
+        <div onClick={() => onNav("home")} style={{ cursor: "pointer", color: "#9BE9FA", fontSize: 20, lineHeight: 1 }}>‹</div>
+        <Text size={17} weight={800} color="#fff" style={{ fontFamily: "Syne, sans-serif" }}>AI Skin Analysis</Text>
+        {/* capture mode toggle — only visible in capture phase */}
+        {phase === "capture" && (
+          <div style={{ marginLeft: "auto", display: "flex", background: "rgba(255,255,255,0.08)", borderRadius: 10, padding: 2 }}>
+            {[["camera","📷"],["upload","📁"]].map(([m, ico]) => (
+              <div key={m} onClick={() => setCaptureMode(m)} style={{
+                padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: "pointer",
+                background: captureMode === m ? "rgba(155,233,250,0.2)" : "transparent",
+                color: captureMode === m ? C.accentMid : "rgba(255,255,255,0.4)",
+                fontFamily: "'DM Sans', sans-serif", transition: "all 0.15s",
+                display: "flex", alignItems: "center", gap: 4,
+              }}><span>{ico}</span><span style={{ textTransform: "capitalize" }}>{m}</span></div>
+            ))}
           </div>
-        </Box>
+        )}
+      </div>
 
-        {/* Results section */}
-        <Box style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 16 }}>
-          <Text size={13} weight={700} style={{ marginBottom: 14 }}>Analysis Results — Explainable AI</Text>
-          {[
-            { label: "Skin Hydration", val: 62, explain: "Slightly below optimal. Sensor confirms surface dryness." },
-            { label: "Sebum Level", val: 48, explain: "Moderate oil production in T-zone detected." },
-            { label: "Pore Visibility", val: 35, explain: "Low — skin texture is smooth." },
-          ].map(r => (
-            <Box key={r.label} style={{ marginBottom: 14 }}>
-              <Box style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                <Text size={12} weight={600}>{r.label}</Text>
-                <Text size={12} color={C.accent} weight={700}>{r.val}%</Text>
-              </Box>
-              <div style={{ height: 8, borderRadius: 99, background: C.card }}>
-                <div style={{ height: "100%", width: `${r.val}%`, borderRadius: 99, background: C.accent }} />
+      {/* ── CAPTURE PHASE ── */}
+      {phase === "capture" && (
+        <>
+          {/* Live camera viewfinder */}
+          <div style={{ position: "relative", height: 300, overflow: "hidden", flexShrink: 0 }}>
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, #0D2A3A, #0A1820, #0D2840)" }} />
+
+            {/* Animated face zone blobs */}
+            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} viewBox="0 0 100 100" preserveAspectRatio="none">
+              {faceBlobs.map((b, i) => (
+                <ellipse key={i} cx={b.cx} cy={b.cy} rx={b.r * 0.7} ry={b.r} fill={C.accentMid} opacity={b.op} />
+              ))}
+            </svg>
+
+            {/* Face oval guide */}
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "relative" }}>
+                <svg width="140" height="185" viewBox="0 0 140 185" fill="none">
+                  <ellipse cx="70" cy="92" rx="62" ry="85"
+                    stroke={C.accentMid} strokeWidth="1.5" strokeDasharray="6 3" opacity="0.7"/>
+                  {/* Zone scan lines */}
+                  {[30, 70, 110, 150].map(y => (
+                    <line key={y} x1="16" y1={y} x2="124" y2={y}
+                      stroke={C.accentMid} strokeWidth="0.4" opacity="0.15"/>
+                  ))}
+                  {/* Corner ticks */}
+                  {[[8, 7],[132, 7],[8, 178],[132, 178]].map(([x, y], i) => (
+                    <g key={i} transform={`rotate(${[0,90,270,180][i]}, ${x}, ${y})`}>
+                      <line x1={x} y1={y} x2={x+10} y2={y} stroke={C.accentMid} strokeWidth="2" strokeLinecap="round"/>
+                      <line x1={x} y1={y} x2={x} y2={y+10} stroke={C.accentMid} strokeWidth="2" strokeLinecap="round"/>
+                    </g>
+                  ))}
+                </svg>
+                <div style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: 9, color: "rgba(155,233,250,0.6)", fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>Align face within oval</span>
+                </div>
               </div>
-              <Text size={11} color={C.sub} style={{ marginTop: 4 }}>💡 {r.explain}</Text>
-            </Box>
-          ))}
-        </Box>
-
-        {/* Derm CTA */}
-        <Box onClick={() => onNav("derm")} style={{ background: "#E8FFFB", border: `1px solid #7ADFC8`, borderRadius: 16, padding: "16px", marginBottom: 16, cursor: "pointer" }}>
-          <Box style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <Text size={28}>✚</Text>
-            <div>
-              <Text size={13} weight={700} color={C.mintDark}>Consult a Dermatologist</Text>
-              <Text size={11} color="#3A8A70">Discuss your results with a pro · ฿300/session</Text>
             </div>
-            <Text size={18} color={C.muted} style={{ marginLeft: "auto" }}>›</Text>
-          </Box>
-        </Box>
-      </Box>
+
+            {/* Live dot */}
+            <div style={{ position: "absolute", top: 12, left: 16, display: "flex", alignItems: "center", gap: 5 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80" }} />
+              <span style={{ fontSize: 9, color: "rgba(155,233,250,0.8)", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, letterSpacing: "0.08em" }}>LIVE</span>
+            </div>
+            {/* Torch */}
+            <div style={{ position: "absolute", top: 10, right: 16, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <span style={{ fontSize: 15 }}>🔦</span>
+            </div>
+
+            {/* Upload overlay (when upload mode selected) */}
+            {captureMode === "upload" && (
+              <div style={{ position: "absolute", inset: 0, background: "rgba(13,26,32,0.88)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                <div style={{ width: 64, height: 64, borderRadius: 18, background: "rgba(155,233,250,0.12)", border: `1.5px dashed ${C.accentMid}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 28 }}>📁</span>
+                </div>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", fontFamily: "'DM Sans', sans-serif" }}>Upload a clear selfie</span>
+                <span style={{ fontSize: 10, color: "rgba(155,233,250,0.6)", fontFamily: "'DM Sans', sans-serif", textAlign: "center", maxWidth: 200, lineHeight: 1.5 }}>Use natural lighting, no filters. Face front-on for best accuracy.</span>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom sheet */}
+          <div style={{ flex: 1, background: C.bg, borderRadius: "20px 20px 0 0", padding: "14px 20px 0", overflowY: "auto" }}>
+            <div style={{ width: 36, height: 4, borderRadius: 99, background: C.border, margin: "0 auto 14px" }} />
+
+            {/* Tips row */}
+            <div style={{ display: "flex", gap: 7, marginBottom: 16 }}>
+              {[
+                { icon: "💡", text: "Good lighting" },
+                { icon: "😐", text: "Neutral expression" },
+                { icon: "🧼", text: "Clean, bare skin" },
+              ].map(t => (
+                <div key={t.text} style={{ flex: 1, padding: "8px 6px", borderRadius: 11, background: C.card, border: `1px solid ${C.border}`, textAlign: "center" }}>
+                  <div style={{ fontSize: 16, marginBottom: 3 }}>{t.icon}</div>
+                  <Text size={9} color={C.sub}>{t.text}</Text>
+                </div>
+              ))}
+            </div>
+
+            {/* Primary CTA */}
+            <div onClick={triggerAnalysis} style={{ width: "100%", padding: "15px", borderRadius: 16, background: `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`, textAlign: "center", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: "#0D2A3A", boxShadow: `0 6px 20px ${C.accentMid}55`, marginBottom: 14 }}>
+              {captureMode === "camera" ? "◈  Analyse My Skin" : "📁  Upload & Analyse"}
+            </div>
+
+            {/* Physical indicator — Coming Soon banner */}
+            <div style={{ background: "linear-gradient(120deg, #1A1A2E, #16213E)", border: "1px solid rgba(155,233,250,0.2)", borderRadius: 16, padding: "14px 16px", marginBottom: 8, position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: -15, right: -15, width: 70, height: 70, borderRadius: "50%", background: C.accentMid, opacity: 0.06 }} />
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(155,233,250,0.1)", border: "1px solid rgba(155,233,250,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 20 }}>🔬</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                    <Text size={12} weight={700} color="#9BE9FA">Physical Skin Indicator</Text>
+                    <div style={{ padding: "2px 7px", borderRadius: 99, background: "rgba(255,249,175,0.15)", border: "1px solid rgba(255,249,175,0.3)", fontSize: 8, fontWeight: 700, color: "#fff9af", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.06em" }}>COMING SOON</div>
+                  </div>
+                  <Text size={10} color="rgba(155,233,250,0.55)" style={{ lineHeight: 1.5 }}>Pair a skin sensor for real-time hydration, sebum & pH readings — 3× more accurate than photo alone</Text>
+                </div>
+              </div>
+              <div onClick={() => {}} style={{ marginTop: 10, padding: "8px 14px", borderRadius: 10, background: "rgba(155,233,250,0.08)", border: "1px solid rgba(155,233,250,0.15)", textAlign: "center", cursor: "pointer" }}>
+                <Text size={11} weight={600} color={C.accentMid}>🔔 Notify me when available</Text>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── ANALYSING PHASE ── */}
+      {phase === "analysing" && (
+        <>
+          <div style={{ height: 300, position: "relative", overflow: "hidden", flexShrink: 0 }}>
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, #0D2A3A, #0A1820)" }} />
+            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} viewBox="0 0 100 100" preserveAspectRatio="none">
+              {faceBlobs.map((b, i) => (
+                <ellipse key={i} cx={b.cx} cy={b.cy} rx={b.r * 0.7} ry={b.r} fill={C.accentMid} opacity={b.op * 1.5} />
+              ))}
+            </svg>
+            {/* Scanning sweep */}
+            <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
+              <svg width="140" height="185" viewBox="0 0 140 185" fill="none">
+                <ellipse cx="70" cy="92" rx="62" ry="85" stroke={C.accentMid} strokeWidth="1.5" opacity="0.5"/>
+              </svg>
+            </div>
+            {/* Moving scan line over face */}
+            <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", width: 124, top: `${20 + (progress / 100) * 55}%`, height: 2, background: `linear-gradient(90deg, transparent, ${C.accentMid}, transparent)`, transition: "top 0.06s linear", borderRadius: 99 }} />
+            {/* Zone highlight dots */}
+            {[["40%","35%"],["60%","35%"],["50%","55%"],["38%","65%"],["62%","65%"]].map(([l, t], i) => (
+              progress > i * 20 && (
+                <div key={i} style={{ position: "absolute", left: l, top: t, width: 8, height: 8, borderRadius: "50%", background: C.accentMid, opacity: 0.7, boxShadow: `0 0 6px ${C.accentMid}` }} />
+              )
+            ))}
+            {/* Bottom progress bar */}
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 3, background: "rgba(255,255,255,0.08)" }}>
+              <div style={{ height: "100%", width: `${progress}%`, background: C.accentMid, transition: "width 0.06s" }} />
+            </div>
+          </div>
+
+          <div style={{ flex: 1, background: C.bg, borderRadius: "20px 20px 0 0", padding: "20px 20px 0" }}>
+            <div style={{ width: 36, height: 4, borderRadius: 99, background: C.border, margin: "0 auto 18px" }} />
+            <Text size={16} weight={800} style={{ fontFamily: "Syne, sans-serif", marginBottom: 6 }}>Analysing your skin…</Text>
+            <Text size={11} color={C.sub} style={{ marginBottom: 20 }}>{progress < 100 ? analysisStages[Math.min(currentStage, analysisStages.length - 1)] : "Finalising results…"}</Text>
+
+            {/* Stage checklist */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {analysisStages.map((s, i) => {
+                const done = progress > (i + 1) * (100 / analysisStages.length);
+                const active = !done && progress > i * (100 / analysisStages.length);
+                return (
+                  <div key={s} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ width: 22, height: 22, borderRadius: "50%", flexShrink: 0, background: done ? C.accentMid : active ? "rgba(155,233,250,0.15)" : C.card, border: `1.5px solid ${done ? C.accentMid : active ? C.accentMid : C.border}`, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s" }}>
+                      {done && <span style={{ fontSize: 10, color: "#0D2A3A", fontWeight: 800 }}>✓</span>}
+                      {active && <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.accentMid }} />}
+                    </div>
+                    <Text size={12} weight={active || done ? 600 : 400} color={done ? C.accent : active ? C.text : C.muted}>{s}</Text>
+                    {done && <Text size={10} color={C.accentMid} style={{ marginLeft: "auto" }}>✓</Text>}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Progress percentage */}
+            <div style={{ marginTop: 20 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                <Text size={10} color={C.sub}>Processing…</Text>
+                <Text size={10} color={C.accent} weight={700}>{progress}%</Text>
+              </div>
+              <div style={{ height: 5, borderRadius: 99, background: C.card }}>
+                <div style={{ height: "100%", width: `${progress}%`, borderRadius: 99, background: `linear-gradient(90deg, ${C.accentMid}, ${C.accent})`, transition: "width 0.06s" }} />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── RESULT PHASE ── */}
+      {phase === "result" && (
+        <div style={{ flex: 1, background: C.bg, overflowY: "auto" }}>
+
+          {/* Hero score banner */}
+          <div style={{ background: "linear-gradient(145deg, #0A2840, #0D3A5A, #0A3040)", padding: "20px 20px 26px", position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: C.accentMid, opacity: 0.1 }} />
+            <div style={{ position: "absolute", bottom: -20, left: -20, width: 90, height: 90, borderRadius: "50%", background: C.mint, opacity: 0.08 }} />
+
+            <div style={{ display: "flex", alignItems: "center", gap: 18, position: "relative", zIndex: 1, marginBottom: 18 }}>
+              {/* Overall score ring */}
+              <div style={{ position: "relative", width: 80, height: 80, flexShrink: 0 }}>
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="6"/>
+                  <circle cx="40" cy="40" r="34" fill="none" stroke={C.accentMid} strokeWidth="6"
+                    strokeDasharray={`${0.74 * 213.6} ${213.6}`} strokeLinecap="round"
+                    strokeDashoffset="53" transform="rotate(-90 40 40)"/>
+                </svg>
+                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 20, fontWeight: 800, color: "#fff", fontFamily: "Syne, sans-serif", lineHeight: 1 }}>74</span>
+                  <span style={{ fontSize: 7, color: "rgba(255,255,255,0.45)", fontFamily: "'DM Sans', sans-serif" }}>/ 100</span>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: C.accentMid, fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.08em", marginBottom: 4 }}>OVERALL SKIN SCORE</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 4 }}>Good — <span style={{ color: C.accentMid }}>Keep it up</span></div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)", fontFamily: "'DM Sans', sans-serif" }}>📷 Photo analysis · March 13</div>
+              </div>
+            </div>
+
+            {/* 4 quick metric pills */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7, position: "relative", zIndex: 1 }}>
+              {[
+                { label: "Hydration", val: "62%", status: "Low", color: "#FFB43A", bg: "rgba(255,180,58,0.12)", border: "rgba(255,180,58,0.3)" },
+                { label: "Clarity",   val: "78%", status: "Good", color: "#4ade80", bg: "rgba(74,222,128,0.1)", border: "rgba(74,222,128,0.3)" },
+                { label: "Oiliness",  val: "55%", status: "Moderate", color: C.accentMid, bg: "rgba(155,233,250,0.1)", border: "rgba(155,233,250,0.25)" },
+                { label: "Texture",   val: "81%", status: "Smooth", color: "#4ade80", bg: "rgba(74,222,128,0.1)", border: "rgba(74,222,128,0.3)" },
+              ].map(m => (
+                <div key={m.label} style={{ padding: "9px 12px", borderRadius: 12, background: m.bg, border: `1px solid ${m.border}` }}>
+                  <div style={{ fontSize: 8, color: "rgba(255,255,255,0.45)", fontFamily: "'DM Sans', sans-serif", marginBottom: 3 }}>{m.label}</div>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                    <span style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontFamily: "Syne, sans-serif", lineHeight: 1 }}>{m.val}</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: m.color, fontFamily: "'DM Sans', sans-serif" }}>{m.status}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Body content */}
+          <div style={{ padding: "16px 20px 0" }}>
+
+            {/* Detailed metric breakdown */}
+            <Text size={13} weight={800} style={{ marginBottom: 12 }}>Detailed Analysis</Text>
+            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, marginBottom: 14, overflow: "hidden" }}>
+              {[
+                {
+                  label: "Hydration", val: 62, icon: "💧", status: "Below Optimal",
+                  statusColor: "#C07000", statusBg: "#FFF3DC",
+                  explain: "Your skin's surface moisture is 14% below the healthy threshold (75%). Likely cause: insufficient water intake and PM2.5 exposure today.",
+                  action: "Try Round Lab Birch Toner + heavier night cream tonight",
+                  barColor: "#FFB43A",
+                },
+                {
+                  label: "Sebum / Oiliness", val: 55, icon: "✨", status: "Moderate",
+                  statusColor: "#1A6A88", statusBg: C.accentLight,
+                  explain: "T-zone shows moderate oil activity. Combination skin pattern — slightly oilier on forehead and nose.",
+                  action: "Use BHA toner 2x/week to manage pore congestion",
+                  barColor: C.accentMid,
+                },
+                {
+                  label: "Clarity & Tone", val: 78, icon: "🌟", status: "Good",
+                  statusColor: "#1A7A40", statusBg: "#E8FFFB",
+                  explain: "Skin tone is relatively even. Minor pigmentation visible on left cheek — likely UV exposure or post-acne marks.",
+                  action: "Vitamin C serum is working — keep daily AM application",
+                  barColor: "#4ade80",
+                },
+                {
+                  label: "Texture & Pores", val: 81, icon: "🎯", status: "Smooth",
+                  statusColor: "#1A7A40", statusBg: "#E8FFFB",
+                  explain: "Surface texture is smooth with minimal visible pores. No active congestion detected. Niacinamide is showing visible effect.",
+                  action: "Current routine is working well — maintain consistency",
+                  barColor: "#4ade80",
+                },
+                {
+                  label: "UV / Oxidative Stress", val: 42, icon: "☀️", status: "Elevated",
+                  statusColor: "#C05000", statusBg: "#FFF3E8",
+                  explain: "Oxidative markers elevated — consistent with today's high UV (index 9) and AQI 142. Your antioxidant barrier needs a boost.",
+                  action: "Apply extra SPF layer this afternoon + take Vitamin C supplement",
+                  barColor: "#FF8A3A",
+                },
+              ].map((r, i, arr) => (
+                <div key={r.label} style={{ padding: "14px 16px", borderBottom: i < arr.length - 1 ? `1px solid ${C.border}` : "none" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                    <span style={{ fontSize: 17, flexShrink: 0 }}>{r.icon}</span>
+                    <Text size={12} weight={700}>{r.label}</Text>
+                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ padding: "2px 8px", borderRadius: 99, background: r.statusBg, fontSize: 9, fontWeight: 700, color: r.statusColor, fontFamily: "'DM Sans', sans-serif" }}>{r.status}</span>
+                      <Text size={12} weight={800} color={r.barColor}>{r.val}%</Text>
+                    </div>
+                  </div>
+                  {/* Bar */}
+                  <div style={{ height: 6, borderRadius: 99, background: C.card, marginBottom: 8 }}>
+                    <div style={{ height: "100%", width: `${r.val}%`, borderRadius: 99, background: r.barColor }} />
+                  </div>
+                  {/* Explain */}
+                  <Text size={10} color={C.sub} style={{ lineHeight: 1.6, marginBottom: 5 }}>{r.explain}</Text>
+                  {/* Actionable */}
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 6, padding: "7px 10px", borderRadius: 9, background: C.card }}>
+                    <span style={{ fontSize: 11, flexShrink: 0 }}>→</span>
+                    <Text size={10} color={C.accent} weight={600} style={{ lineHeight: 1.5 }}>{r.action}</Text>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Skin type summary */}
+            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: C.accentLight, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 18 }}>🧬</span>
+                </div>
+                <div>
+                  <Text size={12} weight={800}>Detected: Combination Skin</Text>
+                  <Text size={10} color={C.sub}>Oily T-zone · Normal to dry cheeks</Text>
+                </div>
+              </div>
+              <Text size={10} color={C.sub} style={{ lineHeight: 1.6 }}>
+                Confirmed by hydration variance (±18%) between T-zone and cheek zones. Your current routine is well-matched — avoid heavy occlusives on forehead.
+              </Text>
+            </div>
+
+            {/* AI Routine recommendation */}
+            <div style={{ background: `linear-gradient(120deg, #E2F4FC, #E8FFFB)`, border: `1px solid ${C.accentMid}`, borderRadius: 14, padding: "14px 16px", marginBottom: 16 }}>
+              <Text size={11} weight={800} color={C.accent} style={{ marginBottom: 8 }}>✦ AI Routine Recommendation</Text>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {[
+                  "🌅 AM: Add a lightweight hydrating toner before Vitamin C — your hydration is low",
+                  "🌙 PM: Use a ceramide-rich moisturiser tonight to address barrier weakness",
+                  "⚡ This week: Reduce BHA frequency from daily to 2x — slight over-exfoliation detected",
+                ].map(tip => (
+                  <div key={tip} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                    <Text size={10} color={C.text} style={{ lineHeight: 1.6 }}>{tip}</Text>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTAs */}
+            <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+              <div onClick={() => setPhase("capture")} style={{ flex: 1, padding: "13px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+                ← Retake
+              </div>
+              <div onClick={() => onNav("tracker")} style={{ flex: 2, padding: "13px", borderRadius: 14, background: `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`, textAlign: "center", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: "#0D2A3A", boxShadow: `0 4px 16px ${C.accentMid}44` }}>
+                📊 Save to Progress
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+              <div style={{ flex: 1, padding: "11px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: C.sub }}>
+                🔗 Share Report
+              </div>
+              <div onClick={() => onNav("derm")} style={{ flex: 1, padding: "11px", borderRadius: 14, background: "#FFFDE8", border: `1px solid #E0D840`, textAlign: "center", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: "#5A5000" }}>
+                ✚ Ask a Derm
+              </div>
+            </div>
+
+            {/* Physical indicator teaser at bottom of results too */}
+            <div style={{ background: "linear-gradient(120deg, #1A1A2E, #16213E)", border: "1px solid rgba(155,233,250,0.15)", borderRadius: 14, padding: "12px 14px", marginBottom: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 18 }}>🔬</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Text size={11} weight={700} color="#9BE9FA">More accurate with Physical Indicator</Text>
+                    <div style={{ padding: "1px 6px", borderRadius: 99, background: "rgba(255,249,175,0.15)", border: "1px solid rgba(255,249,175,0.25)", fontSize: 7, fontWeight: 700, color: "#fff9af", fontFamily: "'DM Sans', sans-serif" }}>SOON</div>
+                  </div>
+                  <Text size={9} color="rgba(155,233,250,0.5)" style={{ marginTop: 2 }}>Real-time hydration + sebum sensor — 3× precision</Text>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ height: 80 }} />
+          </div>
+        </div>
+      )}
+
       <NavBar active="analysis" onNav={onNav} />
     </Box>
   );
