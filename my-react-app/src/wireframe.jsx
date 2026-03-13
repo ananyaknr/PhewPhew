@@ -402,6 +402,317 @@ function ChipSelector({ options, selected, onToggle, single }) {
   );
 }
 
+// function OnboardingScreen({ onNav }) {
+
+
+//   const [step, setStep] = useState(0);
+//   const [skinType, setSkinType] = useState(null);
+//   const [gender, setGender] = useState(null);
+//   const [workEnv, setWorkEnv] = useState(null);
+//   const [surrounding, setSurrounding] = useState(null);
+//   const [goals, setGoals] = useState([]);
+//   const [allergies, setAllergies] = useState([]);
+//   const [pastAllergy, setPastAllergy] = useState("");
+
+//   const TOTAL_STEPS = 7;
+
+//   const toggleGoal = (g) => setGoals(gs => gs.includes(g) ? gs.filter(x => x !== g) : [...gs, g]);
+//   const toggleAllergy = (a) => setAllergies(as => as.includes(a) ? as.filter(x => x !== a) : [...as, a]);
+
+//   const illustrations = [
+//     <IllustrationWelcome />,
+//     <IllustrationGender />,
+//     <IllustrationSkinType />,
+//     <IllustrationGoals />,
+//     <IllustrationLifestyle />,
+//     <IllustrationLifestyle />,
+//     <IllustrationAllergy />,
+//   ];
+
+//   const canProceed = () => {
+//     if (step === 1) return gender !== null;
+//     if (step === 2) return skinType !== null;
+//     if (step === 3) return goals.length > 0;
+//     if (step === 4) return workEnv !== null;
+//     if (step === 5) return surrounding !== null;
+//     return true;
+//   };
+
+//   return (
+//     <Box style={{ height: "100vh", background: "linear-gradient(160deg, #D4F0FB 0%, #EEF8FD 60%, #E2F4FC 100%)", display: "flex", flexDirection: "column" }}>
+//       <StatusBar />
+
+//       {/* Progress bar */}
+//       <div style={{ padding: "0 24px", marginTop: 4, marginBottom: 16 }}>
+//         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+//           <Text size={10} color={C.sub} weight={600} style={{ letterSpacing: "0.08em" }}>STEP {step + 1} OF {TOTAL_STEPS}</Text>
+//           <Text size={10} color={C.muted}>{Math.round(((step + 1) / TOTAL_STEPS) * 100)}%</Text>
+//         </div>
+//         <div style={{ height: 4, borderRadius: 99, background: C.border }}>
+//           <div style={{ height: "100%", width: `${((step + 1) / TOTAL_STEPS) * 100}%`, borderRadius: 99, background: C.accentMid, transition: "width 0.4s ease" }} />
+//         </div>
+//       </div>
+
+//       {/* Illustration */}
+//       <div style={{ width: "100%", height: 160, padding: "0 20px", marginBottom: 12, flexShrink: 0 }}>
+//         <div style={{ width: "100%", height: "100%", borderRadius: 20, overflow: "hidden", background: "linear-gradient(135deg, #D4F0FB, #E8FFFB)" }}>
+//           {illustrations[step]}
+//         </div>
+//       </div>
+
+//       {/* Content */}
+//       <Box style={{ flex: 1, overflowY: "auto", padding: "0 24px 16px" }}>
+
+//         {/* ── Step 0: Welcome ── */}
+//         {step === 0 && (
+//           <>
+//             <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 12px", borderRadius: 99, background: C.accentMid, marginBottom: 14 }}>
+//               <Text size={10} weight={700} color="#0D2A3A" style={{ letterSpacing: "0.08em" }}>✦ POWERED BY AI + SENSOR</Text>
+//             </div>
+//             <Text size={30} weight={800} style={{ lineHeight: 1.15, fontFamily: "Syne, sans-serif", marginBottom: 10 }}>
+//               Meet <span style={{ color: C.accent }}>PhewPhew</span> —<br />your skin's<br />best friend.
+//             </Text>
+//             <Text size={14} color={C.sub} style={{ lineHeight: 1.7, marginBottom: 20 }}>
+//               Personalised skincare powered by AI + sensor technology. We'll learn your skin, build your routine, and help it glow.
+//             </Text>
+//             <div style={{ display: "flex", gap: 10 }}>
+//               {[["◎", "Scan Ingredients"], ["◈", "AI Analysis"], ["◆", "Earn Rewards"]].map(([icon, label]) => (
+//                 <div key={label} style={{ flex: 1, padding: "10px 8px", borderRadius: 12, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center" }}>
+//                   <Text size={18}>{icon}</Text>
+//                   <Text size={9} color={C.sub} style={{ marginTop: 4, lineHeight: 1.3 }}>{label}</Text>
+//                 </div>
+//               ))}
+//             </div>
+//           </>
+//         )}
+
+//         {/* ── Step 1: Gender ── */}
+//         {step === 1 && (
+//           <>
+//             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What's your<br />biological sex?</Text>
+//             <Text size={13} color={C.sub} style={{ lineHeight: 1.6, marginBottom: 20 }}>
+//               Hormones affect skin behaviour — oil production, sensitivity, and aging patterns differ. This helps us calibrate your analysis accurately.
+//             </Text>
+//             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+//               {[
+//                 { val: "Female", desc: "Higher estrogen — tends toward dryness, hormonal acne", icon: "♀" },
+//                 { val: "Male", desc: "Higher androgens — oilier, thicker skin, larger pores", icon: "♂" },
+//                 { val: "Non-binary / Prefer not to say", desc: "We'll use general skin data for your analysis", icon: "◈" },
+//               ].map(opt => (
+//                 <div
+//                   key={opt.val}
+//                   onClick={() => setGender(opt.val)}
+//                   style={{
+//                     padding: "14px 16px", borderRadius: 14, cursor: "pointer",
+//                     border: `2px solid ${gender === opt.val ? C.accent : C.border}`,
+//                     background: gender === opt.val ? C.accentLight : C.surface,
+//                     display: "flex", alignItems: "center", gap: 14,
+//                     transition: "all 0.15s",
+//                     boxShadow: gender === opt.val ? "0 2px 12px #9BE9FA44" : "none",
+//                   }}
+//                 >
+//                   <Text size={22}>{opt.icon}</Text>
+//                   <div>
+//                     <Text size={13} weight={700} color={gender === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
+//                     <Text size={11} color={C.sub} style={{ marginTop: 2 }}>{opt.desc}</Text>
+//                   </div>
+//                   {gender === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center" }}><Text size={10} color="white">✓</Text></div>}
+//                 </div>
+//               ))}
+//             </div>
+//           </>
+//         )}
+
+//         {/* ── Step 2: Skin type ── */}
+//         {step === 2 && (
+//           <>
+//             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 6 }}>What do you think<br />your skin type is?</Text>
+//             <div style={{ padding: "10px 14px", borderRadius: 12, background: C.accentMid + "44", border: `1px solid ${C.accentMid}`, marginBottom: 16 }}>
+//               <Text size={12} color="#1A5A78" weight={600}>💡 Just your best guess is perfect.</Text>
+//               <Text size={11} color={C.sub} style={{ marginTop: 3 }}>Our AI + sensor will run a real analysis later to confirm and fine-tune — this just gives us a starting point.</Text>
+//             </div>
+//             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+//               {[
+//                 { val: "Oily", desc: "Shiny by midday, enlarged pores, prone to acne", emoji: "💧" },
+//                 { val: "Dry", desc: "Feels tight, flaky patches, dull appearance", emoji: "🌵" },
+//                 { val: "Combination", desc: "Oily T-zone, normal or dry cheeks", emoji: "⚖️" },
+//                 { val: "Sensitive", desc: "Reacts easily, redness, stinging or itching", emoji: "🌸" },
+//                 { val: "Normal", desc: "Balanced, rarely breaks out, minimal issues", emoji: "✨" },
+//               ].map(opt => (
+//                 <div
+//                   key={opt.val}
+//                   onClick={() => setSkinType(opt.val)}
+//                   style={{
+//                     padding: "12px 16px", borderRadius: 14, cursor: "pointer",
+//                     border: `2px solid ${skinType === opt.val ? C.accent : C.border}`,
+//                     background: skinType === opt.val ? C.accentLight : C.surface,
+//                     display: "flex", alignItems: "center", gap: 12,
+//                     transition: "all 0.15s",
+//                   }}
+//                 >
+//                   <Text size={20}>{opt.emoji}</Text>
+//                   <div>
+//                     <Text size={13} weight={700} color={skinType === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
+//                     <Text size={11} color={C.sub}>{opt.desc}</Text>
+//                   </div>
+//                   {skinType === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center" }}><Text size={10} color="white">✓</Text></div>}
+//                 </div>
+//               ))}
+//             </div>
+//           </>
+//         )}
+
+//         {/* ── Step 3: Goals ── */}
+//         {step === 3 && (
+//           <>
+//             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What are your<br />skin goals?</Text>
+//             <Text size={13} color={C.sub} style={{ marginBottom: 18, lineHeight: 1.6 }}>Pick everything that matters to you. We'll build your routine around these.</Text>
+//             <ChipSelector
+//               options={["Reduce acne", "Anti-aging", "Even skin tone", "Deep hydration", "Brightening", "Pore minimising", "Barrier repair", "Reduce redness", "Firming"]}
+//               selected={goals}
+//               onToggle={toggleGoal}
+//             />
+//           </>
+//         )}
+
+//         {/* ── Step 4: Work environment ── */}
+//         {step === 4 && (
+//           <>
+//             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>Where do you<br />spend your days?</Text>
+//             <Text size={13} color={C.sub} style={{ marginBottom: 18, lineHeight: 1.6 }}>Your work environment affects sweat, oil, UV exposure, and air quality — all of which impact your skin daily.</Text>
+//             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+//               {[
+//                 { val: "Office / Indoors", desc: "AC environments cause dehydration + blue light exposure", icon: "🏢" },
+//                 { val: "Mixed (Office + Field)", desc: "Variable conditions — skin needs adaptability", icon: "🔄" },
+//                 { val: "Outdoor / Field Work", desc: "High UV, heat, sweat, and environmental exposure", icon: "🌤" },
+//                 { val: "Work from Home", desc: "Controlled climate but sedentary — hydration often neglected", icon: "🏠" },
+//               ].map(opt => (
+//                 <div
+//                   key={opt.val}
+//                   onClick={() => setWorkEnv(opt.val)}
+//                   style={{
+//                     padding: "12px 16px", borderRadius: 14, cursor: "pointer",
+//                     border: `2px solid ${workEnv === opt.val ? C.accent : C.border}`,
+//                     background: workEnv === opt.val ? C.accentLight : C.surface,
+//                     display: "flex", alignItems: "center", gap: 12,
+//                     transition: "all 0.15s",
+//                   }}
+//                 >
+//                   <Text size={20}>{opt.icon}</Text>
+//                   <div>
+//                     <Text size={13} weight={700} color={workEnv === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
+//                     <Text size={11} color={C.sub}>{opt.desc}</Text>
+//                   </div>
+//                   {workEnv === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center" }}><Text size={10} color="white">✓</Text></div>}
+//                 </div>
+//               ))}
+//             </div>
+//           </>
+//         )}
+
+//         {/* ── Step 5: Surrounding / environment ── */}
+//         {step === 5 && (
+//           <>
+//             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What's your<br />living environment?</Text>
+//             <Text size={13} color={C.sub} style={{ marginBottom: 18, lineHeight: 1.6 }}>Pollution, humidity, and UV index in your area directly affect which products and ingredients your skin needs.</Text>
+//             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+//               {[
+//                 { val: "City with High Pollution", desc: "PM2.5, smog — needs antioxidants + barrier protection", icon: "🏙", tag: "PM2.5 Risk" },
+//                 { val: "City, Low Pollution", desc: "Urban but cleaner air — focus on hydration + UV", icon: "🌆", tag: null },
+//                 { val: "Suburban", desc: "Moderate exposure — balanced routine works well", icon: "🏘", tag: null },
+//                 { val: "Rural / Nature", desc: "Fresh air, high UV outdoors — SPF is key", icon: "🌿", tag: null },
+//                 { val: "Coastal / Humid", desc: "Salt air + high humidity — oiliness and breakouts common", icon: "🌊", tag: null },
+//               ].map(opt => (
+//                 <div
+//                   key={opt.val}
+//                   onClick={() => setSurrounding(opt.val)}
+//                   style={{
+//                     padding: "12px 16px", borderRadius: 14, cursor: "pointer",
+//                     border: `2px solid ${surrounding === opt.val ? C.accent : C.border}`,
+//                     background: surrounding === opt.val ? C.accentLight : C.surface,
+//                     display: "flex", alignItems: "center", gap: 12,
+//                     transition: "all 0.15s",
+//                   }}
+//                 >
+//                   <Text size={20}>{opt.icon}</Text>
+//                   <div style={{ flex: 1 }}>
+//                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+//                       <Text size={13} weight={700} color={surrounding === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
+//                       {opt.tag && <div style={{ padding: "2px 8px", borderRadius: 99, background: "#FDE8E8", border: "1px solid #F5AAAA", fontSize: 8, fontWeight: 700, color: C.danger, fontFamily: "'DM Sans', sans-serif" }}>{opt.tag}</div>}
+//                     </div>
+//                     <Text size={11} color={C.sub}>{opt.desc}</Text>
+//                   </div>
+//                   {surrounding === opt.val && <div style={{ width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Text size={10} color="white">✓</Text></div>}
+//                 </div>
+//               ))}
+//             </div>
+//           </>
+//         )}
+
+//         {/* ── Step 6: Allergies ── */}
+//         {step === 6 && (
+//           <>
+//             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>Any known allergies<br />or sensitivities?</Text>
+//             <Text size={13} color={C.sub} style={{ lineHeight: 1.6, marginBottom: 18 }}>
+//               This helps us flag dangerous ingredients in products you scan and exclude them from all recommendations.
+//             </Text>
+
+//             {/* Known allergens */}
+//             <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.08em", marginBottom: 10 }}>KNOWN ALLERGENS — tap to select</Text>
+//             <ChipSelector
+//               options={["Fragrance", "Paraben", "Alcohol", "Sulfate (SLS/SLES)", "Retinol", "AHA / BHA", "Essential Oils", "Lanolin", "Latex", "Nickel"]}
+//               selected={allergies}
+//               onToggle={toggleAllergy}
+//             />
+
+//             {/* Past reactions */}
+//             <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.08em", marginTop: 20, marginBottom: 10 }}>PAST REACTIONS — describe if any</Text>
+//             <div style={{ padding: "12px 16px", borderRadius: 12, background: C.surface, border: `1.5px solid ${C.border}`, minHeight: 70 }}>
+//               <Text size={12} color={C.muted} style={{ lineHeight: 1.6 }}>
+//                 e.g. "Broke out from The Ordinary Peeling Solution" or "Redness from fragrance-based toners"
+//               </Text>
+//             </div>
+//             <Text size={10} color={C.muted} style={{ marginTop: 6 }}>You can update this anytime in your profile.</Text>
+
+//             {/* Skip option */}
+//             <Text size={12} color={C.sub} style={{ marginTop: 16, textAlign: "center" }}>No known allergies? That's fine — tap Continue.</Text>
+//           </>
+//         )}
+
+//       </Box>
+
+//       {/* Bottom CTA */}
+//       <div style={{ padding: "12px 24px 28px", flexShrink: 0 }}>
+//         <div
+//           onClick={() => {
+//             if (!canProceed() && step !== 0 && step !== 6) return;
+//             if (step === TOTAL_STEPS - 1) onNav("home");
+//             else setStep(s => s + 1);
+//           }}
+//           style={{
+//             width: "100%", padding: "15px", borderRadius: 14,
+//             background: (canProceed() || step === 0 || step === 6) ? C.accentMid : C.border,
+//             color: (canProceed() || step === 0 || step === 6) ? "#0D2A3A" : C.muted,
+//             textAlign: "center", fontSize: 15, fontWeight: 700, cursor: "pointer",
+//             fontFamily: "'DM Sans', sans-serif",
+//             boxShadow: (canProceed() || step === 0 || step === 6) ? "0 4px 18px #9BE9FA55" : "none",
+//             transition: "all 0.2s",
+//           }}
+//         >
+//           {step === 0 ? "Let's begin →" : step === TOTAL_STEPS - 1 ? "Start My Journey ✦" : "Continue →"}
+//         </div>
+//         {step > 0 && (
+//           <div onClick={() => setStep(s => s - 1)} style={{ textAlign: "center", marginTop: 12, fontSize: 13, color: C.sub, cursor: "pointer" }}>← Back</div>
+//         )}
+//       </div>
+//     </Box>
+//   );
+// }
+
+// ─── Premium Badge (only shown when premium) ─────────────
+
+// Assume Box, Text, StatusBar, ChipSelector, Illustrations, and C (colors) are imported here
+
 function OnboardingScreen({ onNav }) {
   const [step, setStep] = useState(0);
   const [skinType, setSkinType] = useState(null);
@@ -418,13 +729,13 @@ function OnboardingScreen({ onNav }) {
   const toggleAllergy = (a) => setAllergies(as => as.includes(a) ? as.filter(x => x !== a) : [...as, a]);
 
   const illustrations = [
-    <IllustrationWelcome />,
-    <IllustrationGender />,
-    <IllustrationSkinType />,
-    <IllustrationGoals />,
-    <IllustrationLifestyle />,
-    <IllustrationLifestyle />,
-    <IllustrationAllergy />,
+    <IllustrationWelcome key="0" />,
+    <IllustrationGender key="1" />,
+    <IllustrationSkinType key="2" />,
+    <IllustrationGoals key="3" />,
+    <IllustrationLifestyle key="4" />,
+    <IllustrationLifestyle key="5" />,
+    <IllustrationAllergy key="6" />,
   ];
 
   const canProceed = () => {
@@ -437,11 +748,23 @@ function OnboardingScreen({ onNav }) {
   };
 
   return (
-    <Box style={{ height: "100vh", background: "linear-gradient(160deg, #D4F0FB 0%, #EEF8FD 60%, #E2F4FC 100%)", display: "flex", flexDirection: "column" }}>
+    <Box 
+      style={{ 
+        height: "100dvh", // dVH handles mobile browser UI better than vh
+        width: "100%",
+        maxWidth: "600px", // Prevents stretching on desktop
+        margin: "0 auto", // Centers the app on large screens
+        background: "linear-gradient(160deg, #D4F0FB 0%, #EEF8FD 60%, #E2F4FC 100%)", 
+        display: "flex", 
+        flexDirection: "column",
+        position: "relative",
+        boxShadow: "0 0 40px rgba(0,0,0,0.05)" // Subtle shadow for desktop view
+      }}
+    >
       <StatusBar />
 
       {/* Progress bar */}
-      <div style={{ padding: "0 24px", marginTop: 4, marginBottom: 16 }}>
+      <div style={{ padding: "0 5%", marginTop: 4, marginBottom: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
           <Text size={10} color={C.sub} weight={600} style={{ letterSpacing: "0.08em" }}>STEP {step + 1} OF {TOTAL_STEPS}</Text>
           <Text size={10} color={C.muted}>{Math.round(((step + 1) / TOTAL_STEPS) * 100)}%</Text>
@@ -452,14 +775,14 @@ function OnboardingScreen({ onNav }) {
       </div>
 
       {/* Illustration */}
-      <div style={{ width: "100%", height: 160, padding: "0 20px", marginBottom: 12, flexShrink: 0 }}>
-        <div style={{ width: "100%", height: "100%", borderRadius: 20, overflow: "hidden", background: "linear-gradient(135deg, #D4F0FB, #E8FFFB)" }}>
+      <div style={{ width: "100%", minHeight: 140, height: "20vh", maxHeight: 200, padding: "0 5%", marginBottom: 12, flexShrink: 0 }}>
+        <div style={{ width: "100%", height: "100%", borderRadius: 20, overflow: "hidden", background: "linear-gradient(135deg, #D4F0FB, #E8FFFB)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {illustrations[step]}
         </div>
       </div>
 
       {/* Content */}
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 24px 16px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", padding: "0 5% 16px" }}>
 
         {/* ── Step 0: Welcome ── */}
         {step === 0 && (
@@ -473,9 +796,10 @@ function OnboardingScreen({ onNav }) {
             <Text size={14} color={C.sub} style={{ lineHeight: 1.7, marginBottom: 20 }}>
               Personalised skincare powered by AI + sensor technology. We'll learn your skin, build your routine, and help it glow.
             </Text>
-            <div style={{ display: "flex", gap: 10 }}>
+            {/* Switched to responsive grid for feature boxes */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 10 }}>
               {[["◎", "Scan Ingredients"], ["◈", "AI Analysis"], ["◆", "Earn Rewards"]].map(([icon, label]) => (
-                <div key={label} style={{ flex: 1, padding: "10px 8px", borderRadius: 12, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center" }}>
+                <div key={label} style={{ padding: "10px 8px", borderRadius: 12, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center" }}>
                   <Text size={18}>{icon}</Text>
                   <Text size={9} color={C.sub} style={{ marginTop: 4, lineHeight: 1.3 }}>{label}</Text>
                 </div>
@@ -491,7 +815,8 @@ function OnboardingScreen({ onNav }) {
             <Text size={13} color={C.sub} style={{ lineHeight: 1.6, marginBottom: 20 }}>
               Hormones affect skin behaviour — oil production, sensitivity, and aging patterns differ. This helps us calibrate your analysis accurately.
             </Text>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {/* Auto-stacking grid for options */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 12 }}>
               {[
                 { val: "Female", desc: "Higher estrogen — tends toward dryness, hormonal acne", icon: "♀" },
                 { val: "Male", desc: "Higher androgens — oilier, thicker skin, larger pores", icon: "♂" },
@@ -510,11 +835,11 @@ function OnboardingScreen({ onNav }) {
                   }}
                 >
                   <Text size={22}>{opt.icon}</Text>
-                  <div>
+                  <div style={{ flex: 1 }}>
                     <Text size={13} weight={700} color={gender === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
                     <Text size={11} color={C.sub} style={{ marginTop: 2 }}>{opt.desc}</Text>
                   </div>
-                  {gender === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center" }}><Text size={10} color="white">✓</Text></div>}
+                  {gender === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Text size={10} color="white">✓</Text></div>}
                 </div>
               ))}
             </div>
@@ -529,7 +854,8 @@ function OnboardingScreen({ onNav }) {
               <Text size={12} color="#1A5A78" weight={600}>💡 Just your best guess is perfect.</Text>
               <Text size={11} color={C.sub} style={{ marginTop: 3 }}>Our AI + sensor will run a real analysis later to confirm and fine-tune — this just gives us a starting point.</Text>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {/* Auto-stacking grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 12 }}>
               {[
                 { val: "Oily", desc: "Shiny by midday, enlarged pores, prone to acne", emoji: "💧" },
                 { val: "Dry", desc: "Feels tight, flaky patches, dull appearance", emoji: "🌵" },
@@ -549,11 +875,11 @@ function OnboardingScreen({ onNav }) {
                   }}
                 >
                   <Text size={20}>{opt.emoji}</Text>
-                  <div>
+                  <div style={{ flex: 1 }}>
                     <Text size={13} weight={700} color={skinType === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
                     <Text size={11} color={C.sub}>{opt.desc}</Text>
                   </div>
-                  {skinType === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center" }}><Text size={10} color="white">✓</Text></div>}
+                  {skinType === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Text size={10} color="white">✓</Text></div>}
                 </div>
               ))}
             </div>
@@ -578,7 +904,7 @@ function OnboardingScreen({ onNav }) {
           <>
             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>Where do you<br />spend your days?</Text>
             <Text size={13} color={C.sub} style={{ marginBottom: 18, lineHeight: 1.6 }}>Your work environment affects sweat, oil, UV exposure, and air quality — all of which impact your skin daily.</Text>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 12 }}>
               {[
                 { val: "Office / Indoors", desc: "AC environments cause dehydration + blue light exposure", icon: "🏢" },
                 { val: "Mixed (Office + Field)", desc: "Variable conditions — skin needs adaptability", icon: "🔄" },
@@ -597,11 +923,11 @@ function OnboardingScreen({ onNav }) {
                   }}
                 >
                   <Text size={20}>{opt.icon}</Text>
-                  <div>
+                  <div style={{ flex: 1 }}>
                     <Text size={13} weight={700} color={workEnv === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
                     <Text size={11} color={C.sub}>{opt.desc}</Text>
                   </div>
-                  {workEnv === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center" }}><Text size={10} color="white">✓</Text></div>}
+                  {workEnv === opt.val && <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: C.accent, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Text size={10} color="white">✓</Text></div>}
                 </div>
               ))}
             </div>
@@ -613,7 +939,7 @@ function OnboardingScreen({ onNav }) {
           <>
             <Text size={24} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What's your<br />living environment?</Text>
             <Text size={13} color={C.sub} style={{ marginBottom: 18, lineHeight: 1.6 }}>Pollution, humidity, and UV index in your area directly affect which products and ingredients your skin needs.</Text>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 12 }}>
               {[
                 { val: "City with High Pollution", desc: "PM2.5, smog — needs antioxidants + barrier protection", icon: "🏙", tag: "PM2.5 Risk" },
                 { val: "City, Low Pollution", desc: "Urban but cleaner air — focus on hydration + UV", icon: "🌆", tag: null },
@@ -634,7 +960,7 @@ function OnboardingScreen({ onNav }) {
                 >
                   <Text size={20}>{opt.icon}</Text>
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                       <Text size={13} weight={700} color={surrounding === opt.val ? "#0D4A6A" : C.text}>{opt.val}</Text>
                       {opt.tag && <div style={{ padding: "2px 8px", borderRadius: 99, background: "#FDE8E8", border: "1px solid #F5AAAA", fontSize: 8, fontWeight: 700, color: C.danger, fontFamily: "'DM Sans', sans-serif" }}>{opt.tag}</div>}
                     </div>
@@ -673,14 +999,14 @@ function OnboardingScreen({ onNav }) {
             <Text size={10} color={C.muted} style={{ marginTop: 6 }}>You can update this anytime in your profile.</Text>
 
             {/* Skip option */}
-            <Text size={12} color={C.sub} style={{ marginTop: 16, textAlign: "center" }}>No known allergies? That's fine — tap Continue.</Text>
+            <Text size={12} color={C.sub} style={{ marginTop: 16, textAlign: "center", display: "block" }}>No known allergies? That's fine — tap Continue.</Text>
           </>
         )}
 
       </Box>
 
       {/* Bottom CTA */}
-      <div style={{ padding: "12px 24px 28px", flexShrink: 0 }}>
+      <div style={{ padding: "12px 5% 28px", flexShrink: 0 }}>
         <div
           onClick={() => {
             if (!canProceed() && step !== 0 && step !== 6) return;
@@ -707,7 +1033,6 @@ function OnboardingScreen({ onNav }) {
   );
 }
 
-// ─── Premium Badge (only shown when premium) ─────────────
 const PremiumTag = () => (
   <div style={{
     display: "inline-flex", alignItems: "center", gap: 3,
@@ -2243,131 +2568,6 @@ function TrackerScreen({ onNav }) {
   );
 }
 
-// function CommunityScreen({ onNav }) {
-//   const [expandedPost, setExpandedPost] = useState(null);
-//   const posts = [
-//     {
-//       user: "Mint_skincare", score: 82, review: "Cosrx Snail Essence is 🔥 for combination skin — cleared my texture in 2 weeks! My pores literally look smaller in photos now.", upvotes: 142,
-//       beforeScore: 64, afterScore: 82, skinType: "Combination",
-//       product: { name: "COSRX Advanced Snail 96 Mucin Power Essence", price: "฿490", match: true, matchReason: "Suits combination skin — lightweight, non-comedogenic, great for texture" },
-//       week1: { hydration: 60, clarity: 62, texture: 64 }, week4: { hydration: 78, clarity: 80, texture: 82 },
-//     },
-//     {
-//       user: "DermNerd_TH", score: 91, review: "Reminder: never mix retinol + vitamin C in same AM routine. Conflict alert caught this for me! Use Vit C in AM and retinol only PM.", upvotes: 289,
-//       beforeScore: 75, afterScore: 91, skinType: "Normal/Dry",
-//       product: { name: "The Ordinary Retinol 0.5% in Squalane", price: "฿350", match: true, matchReason: "Start slow with 0.5% — ideal for beginners. Use PM only, never with Vit C." },
-//       week1: { hydration: 72, clarity: 74, texture: 70 }, week4: { hydration: 88, clarity: 90, texture: 86 },
-//     },
-//     {
-//       user: "GlassSkinGoal", score: 76, review: "Just got my AI analysis — sensor picked up dehydration I didn't even feel. Switched to barrier-first routine and my skin glowed up fast.", upvotes: 87,
-//       beforeScore: 58, afterScore: 76, skinType: "Oily",
-//       product: { name: "Laneige Water Bank Blue Hyaluronic Cream", price: "฿680", match: false, matchReason: "Oily skin — this might be too heavy. Try the water gel version instead for lighter hydration." },
-//       week1: { hydration: 48, clarity: 56, texture: 62 }, week4: { hydration: 76, clarity: 74, texture: 78 },
-//     },
-//   ];
-
-//   return (
-//     <Box style={{ height: "100vh", background: C.bg, display: "flex", flexDirection: "column" }}>
-//       <StatusBar />
-//       <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-//         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Community</Text>
-//         <Badge style={{ marginLeft: "auto" }} />
-//       </Box>
-
-//       <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
-
-//         {/* Trending tags */}
-//         <Box style={{ display: "flex", gap: 8, marginBottom: 16, overflowX: "auto" }}>
-//           {["#OilyGlassSkin", "#NiacinamideLove", "#SPFDaily", "#FragranceFree", "#Trending"].map(t => (
-//             <div key={t} style={{ padding: "6px 14px", borderRadius: 99, background: C.surface, border: `1px solid ${C.border}`, fontSize: 11, color: C.text, whiteSpace: "nowrap", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t}</div>
-//           ))}
-//         </Box>
-
-//         {/* Feed posts */}
-//         {posts.map((p, i) => (
-//           <Box key={i} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 14 }}>
-//             {/* User row */}
-//             <Box style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-//               <div style={{ width: 36, height: 36, borderRadius: 18, background: `linear-gradient(135deg, ${C.accentMid}, ${C.mint})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
-//                 {["🌿","🧬","✨"][i]}
-//               </div>
-//               <div>
-//                 <Text size={13} weight={700}>{p.user}</Text>
-//                 <Text size={10} color={C.sub}>Skin Score {p.score}/100 · {p.skinType}</Text>
-//               </div>
-//               <div style={{ marginLeft: "auto", padding: "4px 10px", borderRadius: 99, background: C.accentLight, fontSize: 10, fontWeight: 700, color: C.accent, fontFamily: "'DM Sans', sans-serif" }}>✓ Verified</div>
-//             </Box>
-
-//             {/* Before/After skin analysis mini-chart */}
-//             <div style={{ background: C.bg, borderRadius: 12, padding: "10px 12px", marginBottom: 10, border: `1px solid ${C.border}` }}>
-//               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-//                 <Text size={10} weight={700} color={C.sub}>Skin Analysis · Before → After</Text>
-//                 <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-//                   <div style={{ width: 8, height: 8, borderRadius: 99, background: C.border }} /><Text size={8} color={C.muted}>Week 1</Text>
-//                   <div style={{ width: 8, height: 8, borderRadius: 99, background: C.accent }} /><Text size={8} color={C.muted}>Week 4</Text>
-//                 </div>
-//               </div>
-//               {[["Hydration", p.week1.hydration, p.week4.hydration],["Clarity", p.week1.clarity, p.week4.clarity],["Texture", p.week1.texture, p.week4.texture]].map(([label, before, after]) => (
-//                 <div key={label} style={{ marginBottom: 6 }}>
-//                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-//                     <Text size={9} color={C.sub}>{label}</Text>
-//                     <Text size={9} color={C.accent} weight={600}>{before} → {after} (+{after - before})</Text>
-//                   </div>
-//                   <div style={{ position: "relative", height: 4, borderRadius: 99, background: C.card }}>
-//                     <div style={{ position: "absolute", left: 0, height: "100%", width: `${before}%`, borderRadius: 99, background: C.border }} />
-//                     <div style={{ position: "absolute", left: 0, height: "100%", width: `${after}%`, borderRadius: 99, background: C.accent, opacity: 0.7 }} />
-//                   </div>
-//                 </div>
-//               ))}
-//               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-//                 <div style={{ flex: 1, textAlign: "center", padding: "4px 6px", borderRadius: 8, background: C.card }}>
-//                   <Text size={11} weight={800} color={C.sub}>{p.beforeScore}</Text>
-//                   <Text size={8} color={C.muted}>Before</Text>
-//                 </div>
-//                 <div style={{ display: "flex", alignItems: "center", color: C.accent, fontSize: 14 }}>→</div>
-//                 <div style={{ flex: 1, textAlign: "center", padding: "4px 6px", borderRadius: 8, background: C.accentLight }}>
-//                   <Text size={11} weight={800} color={C.accent}>{p.afterScore}</Text>
-//                   <Text size={8} color={C.accent}>After</Text>
-//                 </div>
-//               </div>
-//             </div>
-
-//             <Text size={13} color={C.text} style={{ marginBottom: 10, lineHeight: 1.5 }}>{p.review}</Text>
-
-//             {/* Affiliate product link */}
-//             <div onClick={() => onNav("shop")} style={{ background: p.product.match ? "#E8FFFB" : "#FFF3E8", border: `1px solid ${p.product.match ? "#7ADFC8" : "#F0C080"}`, borderRadius: 12, padding: "10px 12px", marginBottom: 10, cursor: "pointer" }}>
-//               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-//                 <Text size={11} weight={700} color={p.product.match ? C.mintDark : "#C05000"}>
-//                   {p.product.match ? "✓ Suits your skin" : "⚠ May not suit you"}
-//                 </Text>
-//                 <div style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, color: C.text, fontFamily: "'DM Sans', sans-serif" }}>{p.product.price}</div>
-//               </div>
-//               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-//                 <div>
-//                   <Text size={11} weight={600}>{p.product.name}</Text>
-//                   <Text size={9} color={C.sub} style={{ marginTop: 2, lineHeight: 1.4 }}>{p.product.matchReason}</Text>
-//                 </div>
-//                 <div style={{ flexShrink: 0, padding: "5px 10px", borderRadius: 9, background: p.product.match ? C.accentMid : "#F0C080", fontSize: 10, fontWeight: 700, color: "#0D2A3A", fontFamily: "'DM Sans', sans-serif" }}>Shop →</div>
-//               </div>
-//             </div>
-
-//             <Box style={{ display: "flex", alignItems: "center", gap: 16 }}>
-//               <Text size={12} color={C.sub}>▲ {p.upvotes} upvotes</Text>
-//               <Text size={12} color={C.sub}>💬 Reply</Text>
-//               <Text size={12} color={C.sub}>⇧ Share</Text>
-//             </Box>
-//           </Box>
-//         ))}
-//       </Box>
-//       <NavBar active="community" onNav={onNav} />
-//     </Box>
-//   );
-// }
-
-// import React, { useState } from 'react';
-
-// import React, { useState } from 'react';
-
 function CommunityScreen({ onNav }) {
   const [expandedPost, setExpandedPost] = useState(null);
   const posts = [
@@ -2508,9 +2708,6 @@ function CommunityScreen({ onNav }) {
   );
 }
 
-// export default CommunityScreen;
-
-// export default CommunityScreen;
 
 function DermScreen({ onNav }) {
   const [bookingStep, setBookingStep] = useState(null); // null | 'select-time' | 'confirm' | 'booked'
@@ -3477,6 +3674,48 @@ const SCREEN_LABELS = {
 };
 
 // ─── ROOT ────────────────────────────────────────────────
+// export default function Wireframe() {
+//   const [screen, setScreen] = useState("onboarding");
+
+//   const navigate = (id) => {
+//     setScreen(id);
+//   };
+
+//   const Screen = SCREENS[screen] || HomeScreen;
+
+//   return (
+//     <div style={{
+//       width: "100%",
+//       height: "100vh",
+//       background: C.bg, // Uses your palette background
+//       overflow: "hidden", 
+//       fontFamily: "'DM Sans', sans-serif",
+//       position: "relative",
+//       display: "flex",
+//       flexDirection: "column",
+//     }}>
+//       <style>{`
+//         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap');
+//         body { margin: 0; padding: 0; background-color: ${C.bg}; }
+//         * { box-sizing: border-box; }
+//         ::-webkit-scrollbar { display: none; }
+//       `}</style>
+      
+//       {/* Inner container scales to exactly 100% of whatever device or window is viewing it */}
+//       <div style={{
+//         width: "100%",
+//         height: "100%",
+//         position: "relative",
+//         display: "flex",
+//         flexDirection: "column",
+//       }}>
+//         <Screen onNav={navigate} />
+//       </div>
+//     </div>
+//   );
+// }
+
+// ─── ROOT ────────────────────────────────────────────────
 export default function Wireframe() {
   const [screen, setScreen] = useState("onboarding");
 
@@ -3485,23 +3724,126 @@ export default function Wireframe() {
   };
 
   const Screen = SCREENS[screen] || HomeScreen;
+  
+  // Hide NavBar on onboarding
+  const showNav = screen !== "onboarding";
 
   return (
-    <div style={{
-      width: "100%",
-      height: "100vh",
-      background: C.bg,
-      overflow: "hidden",
-      fontFamily: "'DM Sans', sans-serif",
-      position: "relative",
-    }}>
+    <div className="app-container">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 0; }
-        html, body { height: 100%; overflow: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap');
+        
+        body { 
+          margin: 0; 
+          padding: 0; 
+          background-color: ${C.bg}; 
+          font-family: 'DM Sans', sans-serif;
+        }
+        
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+
+        /* ─── MOBILE FIRST (Default) ─── */
+        .app-container {
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          width: 100%;
+          background: ${C.bg};
+        }
+
+        .content-area {
+          flex: 1;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding-bottom: ${showNav ? '80px' : '0'}; /* Space for bottom nav */
+          display: flex;
+          justify-content: center; /* Centers content on desktop */
+        }
+
+        .content-inner {
+          width: 100%;
+          max-width: 600px; /* Prevents text from stretching infinitely */
+          position: relative;
+        }
+
+        .responsive-navbar {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 80px;
+          background: ${C.surface};
+          border-top: 1px solid ${C.border};
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          z-index: 100;
+          box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          cursor: pointer;
+          color: ${C.muted};
+          transition: all 0.2s;
+          padding: 10px;
+        }
+
+        .nav-item.active {
+          color: ${C.accent};
+          transform: translateY(-2px);
+        }
+
+        .nav-icon { font-size: 24px; margin-bottom: 4px; }
+        .nav-label { font-size: 12px; font-weight: 600; }
+
+        /* ─── DESKTOP OVERRIDES ─── */
+        @media (min-width: 768px) {
+          .app-container {
+            flex-direction: row; /* Switch to side-by-side layout */
+          }
+
+          .responsive-navbar {
+            position: relative; /* Remove fixed bottom positioning */
+            width: 250px;
+            height: 100vh;
+            flex-direction: column; /* Stack icons vertically */
+            justify-content: flex-start;
+            padding-top: 40px;
+            border-top: none;
+            border-right: 1px solid ${C.border};
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+          }
+
+          .nav-item {
+            flex-direction: row; /* Icon and text side-by-side */
+            width: 100%;
+            padding: 20px 30px;
+            justify-content: flex-start;
+          }
+
+          .nav-icon { margin-bottom: 0; margin-right: 15px; }
+          .nav-label { font-size: 16px; } /* Larger text for desktop */
+
+          .content-area {
+            padding-bottom: 0; /* Remove mobile nav spacing */
+            padding-top: 40px;
+          }
+        }
       `}</style>
-      <Screen onNav={navigate} />
+      
+      {/* Sidebar Navigation for Desktop / Bottom Navigation for Mobile */}
+      {showNav && <NavBar current={screen} onNav={navigate} />}
+
+      {/* Main Screen Content */}
+      <div className="content-area">
+        <div className="content-inner">
+          <Screen onNav={navigate} />
+        </div>
+      </div>
     </div>
   );
 }
