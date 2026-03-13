@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const W = 390;
 const H = 844;
@@ -58,60 +58,53 @@ const Badge = ({ label, premium }) => {
 };
 
 const NavBar = ({ active, onNav }) => {
+  // IA rationale:
+  // Home    — dashboard, routines, daily life overview
+  // Analyse — AI skin analysis + progress tracker (insight tools)
+  // [FAB]   — Ingredient Scanner (primary daily action, most-used feature)
+  // Derm    — dermatologist consult + community (people / advice)
+  // Me      — loyalty, shop, profile
+
   const items = [
     {
-      id: "home",
-      label: "Home",
+      id: "home", label: "Home",
       icon: (on) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H15v-5h-6v5H4a1 1 0 01-1-1V10.5z"
-            fill={on ? C.accent : "none"} stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinejoin="round"/>
+          <path d="M3 11L12 3l9 8v9a1 1 0 01-1 1h-5v-5H9v5H4a1 1 0 01-1-1v-9z"
+            fill={on ? C.accentLight : "none"}
+            stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinejoin="round"/>
         </svg>
       ),
     },
     {
-      id: "scan",
-      label: "Scan",
+      id: "analysis", label: "Analyse",
       icon: (on) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
-          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
-          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
-          <circle cx="17.5" cy="17.5" r="3" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
-          <line x1="19.6" y1="19.6" x2="22" y2="22" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
+          <circle cx="12" cy="10" r="6" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <path d="M8 10c0-2.2 1.8-4 4-4" stroke={on ? C.accent : C.muted} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M5 19l2.5-2.5M19 19l-2.5-2.5" stroke={on ? C.accent : C.muted} strokeWidth="1.6" strokeLinecap="round"/>
+          <circle cx="12" cy="10" r="2" fill={on ? C.accent : C.muted} opacity={on ? 1 : 0.4}/>
+        </svg>
+      ),
+    },
+    null, // center FAB placeholder
+    {
+      id: "community", label: "Community",
+      icon: (on) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="9" cy="8" r="3" fill={on ? C.accentLight : "none"} stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <path d="M3 19c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
+          <circle cx="18" cy="9" r="2.5" stroke={on ? C.accent : C.muted} strokeWidth="1.6"/>
+          <path d="M16 19c0-2 0.9-3.8 2.5-4.5" stroke={on ? C.accent : C.muted} strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       ),
     },
     {
-      id: "tracker",
-      label: "Track",
+      id: "loyalty", label: "Me",
       icon: (on) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M3 17l5-5 4 4 5-6 4 3" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <rect x="3" y="3" width="18" height="18" rx="3" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
-        </svg>
-      ),
-    },
-    {
-      id: "community",
-      label: "Community",
-      icon: (on) => (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <circle cx="9" cy="8" r="3.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
-          <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
-          <circle cx="17" cy="9" r="2.5" stroke={on ? C.accent : C.muted} strokeWidth="1.6"/>
-          <path d="M15 20c0-2.2 1-4 3-4.5" stroke={on ? C.accent : C.muted} strokeWidth="1.6" strokeLinecap="round"/>
-        </svg>
-      ),
-    },
-    {
-      id: "shop",
-      label: "Shop",
-      icon: (on) => (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinejoin="round"/>
-          <line x1="3" y1="6" x2="21" y2="6" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
-          <path d="M16 10a4 4 0 01-8 0" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
+          <circle cx="12" cy="8" r="4" fill={on ? C.accentLight : "none"} stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
         </svg>
       ),
     },
@@ -119,33 +112,67 @@ const NavBar = ({ active, onNav }) => {
 
   return (
     <div style={{
-      position: "absolute", bottom: 0, left: 0, right: 0, height: 72,
+      position: "absolute", bottom: 0, left: 0, right: 0, height: 70,
       background: C.surface,
       borderTop: `1px solid ${C.border}`,
-      display: "flex", alignItems: "flex-start",
-      paddingTop: 8,
+      display: "flex", alignItems: "center",
+      boxShadow: "0 -2px 16px rgba(13,42,58,0.06)",
     }}>
-      {items.map(it => {
+      {items.map((it, idx) => {
+        // Center FAB
+        if (it === null) {
+          const scanActive = active === "scan";
+          return (
+            <div key="scan-fab" style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <div
+                onClick={() => onNav("scan")}
+                style={{
+                  width: 52, height: 52,
+                  borderRadius: "50%",
+                  background: scanActive
+                    ? `linear-gradient(135deg, ${C.accent}, #1A88B8)`
+                    : `linear-gradient(135deg, ${C.accentMid}, ${C.accent})`,
+                  boxShadow: scanActive
+                    ? `0 4px 18px ${C.accent}66`
+                    : `0 4px 14px ${C.accentMid}88`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer",
+                  transform: "translateY(-10px)",
+                  border: `3px solid ${C.surface}`,
+                  transition: "all 0.2s",
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="3" width="6" height="6" rx="1.5" stroke="#0D2A3A" strokeWidth="1.8"/>
+                  <rect x="15" y="3" width="6" height="6" rx="1.5" stroke="#0D2A3A" strokeWidth="1.8"/>
+                  <rect x="3" y="15" width="6" height="6" rx="1.5" stroke="#0D2A3A" strokeWidth="1.8"/>
+                  <circle cx="17.5" cy="17.5" r="2.5" stroke="#0D2A3A" strokeWidth="1.8"/>
+                  <line x1="19.3" y1="19.3" x2="21.5" y2="21.5" stroke="#0D2A3A" strokeWidth="1.8" strokeLinecap="round"/>
+                </svg>
+              </div>
+            </div>
+          );
+        }
+
         const on = active === it.id;
         return (
           <div key={it.id} onClick={() => onNav(it.id)} style={{
             flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-            cursor: "pointer", position: "relative",
+            cursor: "pointer", paddingBottom: 4,
           }}>
-            {/* Active pill indicator */}
-            {on && (
-              <div style={{
-                position: "absolute", top: -9, left: "50%", transform: "translateX(-50%)",
-                width: 28, height: 3, borderRadius: 99,
-                background: C.accent,
-              }} />
-            )}
-            {it.icon(on)}
             <div style={{
-              fontSize: 8.5, fontWeight: on ? 700 : 400,
+              width: 40, height: 32, borderRadius: 12,
+              background: on ? C.accentLight : "transparent",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "background 0.15s",
+            }}>
+              {it.icon(on)}
+            </div>
+            <div style={{
+              fontSize: 9, fontWeight: on ? 700 : 400,
               color: on ? C.accent : C.muted,
               fontFamily: "'DM Sans', sans-serif",
-              letterSpacing: "0.02em",
+              letterSpacing: "0.01em",
             }}>{it.label}</div>
           </div>
         );
@@ -988,7 +1015,7 @@ function HomeScreen({ onNav }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {[
               { icon: "◎", label: "Ingredient Scanner", sub: "Photo scan · conflict check",   screen: "scan",     bg: "#E8FFFB", border: "#7ADFC8", iconColor: C.mintDark, premium: false },
-              { icon: "◈", label: "AI Skin Analysis",   sub: "AI+indicator · deep insights",   screen: "analysis", bg: C.accentLight, border: C.border, iconColor: C.accent, premium: false },
+              { icon: "◈", label: "AI Skin Analysis",   sub: "Sensor + AI · deep insights",   screen: "analysis", bg: C.accentLight, border: C.border, iconColor: C.accent, premium: false },
               { icon: "◉", label: "Progress Tracker",   sub: "Before/After · score trend",    screen: "tracker",  bg: C.accentLight, border: C.border, iconColor: C.accent, premium: true },
               { icon: "✚", label: "Derm Consult",       sub: "Video call · ฿300–500/session", screen: "derm",     bg: "#FFFDE8",  border: "#E0D840", iconColor: "#5A5000", premium: true },
             ].map(a => (
@@ -1144,94 +1171,395 @@ function HomeScreen({ onNav }) {
 }
 
 function ScanScreen({ onNav }) {
-  const [phase, setPhase] = useState("idle"); // idle | scanning | result
+  // phase: "camera" | "scanning" | "result" | "manual" | "recent-detail"
+  const [phase, setPhase] = useState("camera");
+  const [scanProgress, setScanProgress] = useState(0);
+  const [inputMode, setInputMode] = useState("camera"); // "camera" | "text"
+  const [productName, setProductName] = useState("");
+  const [productDesc, setProductDesc] = useState("");
+  const [selectedRecent, setSelectedRecent] = useState(null);
+  const [frame, setFrame] = useState(0); // simulated live camera frame counter
+
+  // Simulate live camera feed with frame counter
+  useEffect(() => {
+    const interval = setInterval(() => setFrame(f => (f + 1) % 60), 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  const recentScans = [
+    { id: 1, name: "COSRX AHA/BHA Clarifying Toner", brand: "COSRX", date: "Today, 9:14 AM", safe: true, conflict: false, emoji: "🧴",
+      ingredients: [
+        { name: "Glycolic Acid 0.1%", tag: "EXFOLIANT", safe: true },
+        { name: "BHA 0.1%", tag: "PORE CARE", safe: true },
+        { name: "Niacinamide 3%", tag: "BRIGHTENING", safe: true },
+      ],
+      summary: "Safe for your combination skin. Low concentration actives — no conflicts with your current routine.",
+    },
+    { id: 2, name: "The Ordinary Niacinamide 10%", brand: "The Ordinary", date: "Yesterday", safe: true, conflict: false, emoji: "💧",
+      ingredients: [
+        { name: "Niacinamide 10%", tag: "BRIGHTENING", safe: true },
+        { name: "Zinc PCA 1%", tag: "OIL CONTROL", safe: true },
+        { name: "Aqua / Water", tag: "BASE", safe: true },
+      ],
+      summary: "Compatible. Niacinamide at 10% is well-tolerated — avoid combining with Vitamin C serum at the same step.",
+    },
+    { id: 3, name: "Paula's Choice 2% BHA Exfoliant", brand: "Paula's Choice", date: "Mar 10", safe: false, conflict: true, emoji: "⚗️",
+      ingredients: [
+        { name: "Salicylic Acid 2%", tag: "EXFOLIANT", safe: true },
+        { name: "Methylpropanediol", tag: "PENETRATION", safe: true },
+        { name: "Fragrance", tag: "⚠ IRRITANT", safe: false },
+      ],
+      summary: "⚠ Conflict detected: Fragrance listed. Your profile flags fragrance sensitivity. Use with caution.",
+    },
+  ];
+
+  // Trigger scan animation then show result
+  const triggerScan = () => {
+    setPhase("scanning");
+    setScanProgress(0);
+    let p = 0;
+    const t = setInterval(() => {
+      p += 4;
+      setScanProgress(p);
+      if (p >= 100) { clearInterval(t); setTimeout(() => setPhase("result"), 300); }
+    }, 60);
+  };
+
+  const triggerManualScan = () => {
+    if (!productName.trim()) return;
+    setPhase("scanning");
+    setScanProgress(0);
+    let p = 0;
+    const t = setInterval(() => {
+      p += 3;
+      setScanProgress(p);
+      if (p >= 100) { clearInterval(t); setTimeout(() => setPhase("result"), 300); }
+    }, 70);
+  };
+
+  // Simulated live camera noise pattern based on frame
+  const camNoise = Array.from({ length: 6 }, (_, i) => ({
+    x: 10 + ((frame * 7 + i * 43) % 80),
+    y: 10 + ((frame * 11 + i * 29) % 60),
+    op: 0.04 + (Math.sin((frame + i * 10) * 0.3) * 0.02),
+  }));
+
+  if (phase === "recent-detail" && selectedRecent) {
+    const r = selectedRecent;
+    return (
+      <Box style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column" }}>
+        <StatusBar />
+        <Box style={{ padding: "4px 20px 14px", display: "flex", alignItems: "center", gap: 12 }}>
+          <div onClick={() => { setPhase("camera"); setSelectedRecent(null); }} style={{ cursor: "pointer", color: C.sub, fontSize: 20 }}>‹</div>
+          <Text size={17} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Scan Result</Text>
+          <Text size={10} color={C.muted} style={{ marginLeft: "auto" }}>{r.date}</Text>
+        </Box>
+        <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+          {/* Header card */}
+          <div style={{ background: r.safe ? "#E8FFFB" : "#FFF3E8", border: `1.5px solid ${r.safe ? "#7ADFC8" : "#F0A060"}`, borderRadius: 16, padding: "16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: C.card, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>{r.emoji}</div>
+            <div style={{ flex: 1 }}>
+              <Text size={13} weight={800} style={{ lineHeight: 1.3 }}>{r.name}</Text>
+              <Text size={10} color={C.sub} style={{ marginTop: 2 }}>{r.brand}</Text>
+              <div style={{ marginTop: 6 }}>
+                <span style={{ padding: "2px 9px", borderRadius: 99, background: r.safe ? "#E8FFFB" : "#FDEEE8", fontSize: 10, fontWeight: 700, color: r.safe ? C.mintDark : "#C05000", fontFamily: "'DM Sans', sans-serif", border: `1px solid ${r.safe ? "#7ADFC8" : "#F0A060"}` }}>
+                  {r.safe ? "✓ Compatible" : "⚠ Conflict Found"}
+                </span>
+              </div>
+            </div>
+          </div>
+          {/* Summary */}
+          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
+            <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.06em", marginBottom: 6 }}>AI SUMMARY</Text>
+            <Text size={12} color={C.text} style={{ lineHeight: 1.65 }}>{r.summary}</Text>
+          </div>
+          {/* Ingredients */}
+          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 16 }}>
+            <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.06em", marginBottom: 10 }}>KEY INGREDIENTS</Text>
+            {r.ingredients.map(ing => (
+              <div key={ing.name} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: ing.safe ? C.accentMid : C.danger, flexShrink: 0 }} />
+                <Text size={12}>{ing.name}</Text>
+                <div style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 99, background: ing.safe ? C.accentLight : "#FDE8E8", fontSize: 9, fontWeight: 700, color: ing.safe ? "#1A6A88" : C.danger, fontFamily: "'DM Sans', sans-serif" }}>{ing.tag}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: "13px", borderRadius: 14, background: C.accentMid, textAlign: "center", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: "#0D2A3A" }}>
+            + Add to Routine
+          </div>
+        </Box>
+        <NavBar active="scan" onNav={onNav} />
+      </Box>
+    );
+  }
 
   return (
-    <Box style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
-      <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div onClick={() => onNav("home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
-        <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Ingredient Scanner</Text>
-        <Badge style={{ marginLeft: "auto" }} />
-      </Box>
+    <Box style={{ height: "100%", background: "#0D1F2A", display: "flex", flexDirection: "column" }}>
+      <div style={{ background: "#0D1F2A" }}><StatusBar /></div>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      {/* ── Header ── */}
+      <div style={{ padding: "2px 20px 12px", display: "flex", alignItems: "center", gap: 12 }}>
+        <div onClick={() => onNav("home")} style={{ cursor: "pointer", color: "#9BE9FA", fontSize: 20, lineHeight: 1 }}>‹</div>
+        <Text size={17} weight={800} color="#fff" style={{ fontFamily: "Syne, sans-serif" }}>Ingredient Scanner</Text>
+        {/* Mode toggle */}
+        <div style={{ marginLeft: "auto", display: "flex", background: "rgba(255,255,255,0.08)", borderRadius: 10, padding: 2 }}>
+          {[["camera","📷"],["text","✏️"]].map(([m, ico]) => (
+            <div key={m} onClick={() => { setInputMode(m); if (phase !== "result") setPhase(m === "text" ? "manual" : "camera"); }} style={{
+              padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: "pointer",
+              background: inputMode === m ? "rgba(155,233,250,0.2)" : "transparent",
+              color: inputMode === m ? C.accentMid : "rgba(255,255,255,0.45)",
+              fontFamily: "'DM Sans', sans-serif", transition: "all 0.15s",
+              display: "flex", alignItems: "center", gap: 4,
+            }}><span>{ico}</span><span style={{ textTransform: "capitalize" }}>{m}</span></div>
+          ))}
+        </div>
+      </div>
 
-        {phase === "idle" && (
-          <>
-            {/* Camera viewfinder */}
-            <div style={{ width: "100%", height: 260, borderRadius: 20, background: "#0D2A3A", position: "relative", overflow: "hidden", marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg, #0f3347 0px, #0f3347 10px, #0D2A3A 10px, #0D2A3A 20px)", opacity: 0.4 }} />
-              <div style={{ width: 180, height: 120, border: `2px dashed ${C.accentMid}`, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
-                <Text size={11} color={C.accentMid} style={{ textAlign: "center" }}>Point camera at\ningredient label</Text>
+      {/* ── CAMERA PHASE — full-bleed live viewport ── */}
+      {(phase === "camera" || phase === "scanning") && inputMode === "camera" && (
+        <>
+          {/* Live camera fill — takes most of the screen */}
+          <div style={{ position: "relative", flex: "0 0 auto", height: 320, overflow: "hidden" }}>
+            {/* Simulated live feed background */}
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, #0D2A3A, #0A1A24, #0D3240)" }} />
+            {/* Moving noise blobs that simulate live video */}
+            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} viewBox="0 0 100 100" preserveAspectRatio="none">
+              {camNoise.map((n, i) => (
+                <ellipse key={i} cx={n.x} cy={n.y} rx={12 + i * 3} ry={8 + i * 2}
+                  fill={i % 2 === 0 ? "#9BE9FA" : "#b5ffef"} opacity={n.op} />
+              ))}
+              {/* Shelf/label simulation lines */}
+              <rect x="15" y="38" width="70" height="28" rx="2" fill="none" stroke="rgba(155,233,250,0.06)" strokeWidth="0.5"/>
+              <line x1="15" y1="48" x2="85" y2="48" stroke="rgba(155,233,250,0.04)" strokeWidth="0.3"/>
+              <line x1="15" y1="55" x2="72" y2="55" stroke="rgba(155,233,250,0.04)" strokeWidth="0.3"/>
+            </svg>
+
+            {/* Scan frame overlay */}
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "relative", width: 220, height: 130 }}>
+                {/* Corner brackets */}
+                {[["0,0","row"],["100%,0","row-reverse"],["0,100%","row"],["100%,100%","row-reverse"]].map(([pos, dir], ci) => {
+                  const [x, y] = pos.split(",");
+                  return (
+                    <div key={ci} style={{ position: "absolute", left: x, top: y, width: 20, height: 20, transform: `translate(${x === "0" ? "0" : "-100%"}, ${y === "0" ? "0" : "-100%"})` }}>
+                      <div style={{ width: 20, height: 3, background: C.accentMid, borderRadius: 2, transform: `${x !== "0" ? "scaleX(-1)" : ""}` }} />
+                      <div style={{ width: 3, height: 20, background: C.accentMid, borderRadius: 2, marginTop: -3, transform: `${y !== "0" ? "scaleY(-1) translateY(17px)" : ""}` }} />
+                    </div>
+                  );
+                })}
+                {/* Scan line animation */}
+                {phase === "scanning" && (
+                  <div style={{ position: "absolute", left: 0, right: 0, top: `${scanProgress}%`, height: 2, background: `linear-gradient(90deg, transparent, ${C.accentMid}, transparent)`, transition: "top 0.06s linear", borderRadius: 99 }} />
+                )}
+                {/* Instruction / detected text */}
+                <div style={{ position: "absolute", bottom: -28, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: 10, color: phase === "scanning" ? C.accentMid : "rgba(155,233,250,0.6)", fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>
+                    {phase === "scanning" ? `Analysing... ${scanProgress}%` : "Point at ingredient label"}
+                  </span>
+                </div>
               </div>
-              <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", fontSize: 10, color: "#9BE9FA99", fontFamily: "'DM Sans', sans-serif" }}>AUTO-DETECT · LIVE</div>
             </div>
 
-            <Box style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-              <div onClick={() => setPhase("result")} style={{ flex: 1, padding: "14px", borderRadius: 14, background: C.accentMid, color: C.text, textAlign: "center", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", boxShadow: "0 4px 16px #9BE9FA55" }}>
-                ◎ Scan Now
-              </div>
-              <div style={{ flex: 1, padding: "14px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 14, fontWeight: 600, cursor: "pointer", color: C.text, fontFamily: "'DM Sans', sans-serif" }}>
-                Upload Photo
-              </div>
-            </Box>
+            {/* Bottom overlay: live badge + torch */}
+            <div style={{ position: "absolute", top: 12, left: 16, display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80" }} />
+              <span style={{ fontSize: 9, color: "rgba(155,233,250,0.8)", fontFamily: "'DM Sans', sans-serif", fontWeight: 700, letterSpacing: "0.08em" }}>LIVE</span>
+            </div>
+            <div style={{ position: "absolute", top: 10, right: 16, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <span style={{ fontSize: 16 }}>🔦</span>
+            </div>
 
-            <Text size={13} weight={700} style={{ marginBottom: 10 }}>Recent Scans</Text>
-            {[
-              { name: "Cosrx AHA/BHA Toner", status: "✓ Safe", color: C.accent },
-              { name: "The Ordinary Niacinamide", status: "✓ Safe", color: C.accent },
-              { name: "Paula's Choice BHA", status: "⚠ Conflict", color: "#B8860B" },
-            ].map(s => (
-              <Box key={s.name} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 16px", marginBottom: 10, display: "flex", alignItems: "center" }}>
-                <Rect w={36} h={36} r={8} color={C.card} style={{ marginRight: 12 }} />
-                <div>
-                  <Text size={13} weight={600}>{s.name}</Text>
-                  <Text size={11} color={s.color} weight={600}>{s.status}</Text>
+            {/* Progress bar at very bottom of camera */}
+            {phase === "scanning" && (
+              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 3, background: "rgba(255,255,255,0.1)" }}>
+                <div style={{ height: "100%", width: `${scanProgress}%`, background: C.accentMid, transition: "width 0.06s" }} />
+              </div>
+            )}
+          </div>
+
+          {/* ── Bottom sheet (light) ── */}
+          <div style={{ flex: 1, background: C.bg, borderRadius: "20px 20px 0 0", padding: "16px 20px 0", overflowY: "auto" }}>
+            {/* Drag handle */}
+            <div style={{ width: 36, height: 4, borderRadius: 99, background: C.border, margin: "0 auto 14px" }} />
+
+            {/* Primary action */}
+            {phase === "camera" && (
+              <div onClick={triggerScan} style={{ width: "100%", padding: "15px", borderRadius: 16, background: `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`, textAlign: "center", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", color: "#0D2A3A", boxShadow: `0 6px 20px ${C.accentMid}66`, marginBottom: 12 }}>
+                ◎  Scan Ingredients
+              </div>
+            )}
+            {phase === "scanning" && (
+              <div style={{ width: "100%", padding: "15px", borderRadius: 16, background: C.card, textAlign: "center", fontSize: 14, fontWeight: 700, fontFamily: "'DM Sans', sans-serif", color: C.muted, marginBottom: 12, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <span style={{ fontSize: 12 }}>⟳</span> Scanning... {scanProgress}%
+              </div>
+            )}
+
+            {/* Upload alternative */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 18 }}>
+              <div style={{ flex: 1, padding: "10px", borderRadius: 12, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 12, fontWeight: 600, cursor: "pointer", color: C.text, fontFamily: "'DM Sans', sans-serif" }}>
+                📁 Upload Photo
+              </div>
+              <div onClick={() => { setInputMode("text"); setPhase("manual"); }} style={{ flex: 1, padding: "10px", borderRadius: 12, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 12, fontWeight: 600, cursor: "pointer", color: C.text, fontFamily: "'DM Sans', sans-serif" }}>
+                ✏️ Type Manually
+              </div>
+            </div>
+
+            {/* Recent scans */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <Text size={12} weight={800}>Recent Scans</Text>
+              <Text size={10} color={C.accent} weight={600} style={{ cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>See all</Text>
+            </div>
+            {recentScans.map(s => (
+              <div key={s.id} onClick={() => { setSelectedRecent(s); setPhase("recent-detail"); }} style={{ background: C.surface, border: `1px solid ${s.conflict ? "#F0C080" : C.border}`, borderRadius: 12, padding: "11px 14px", marginBottom: 9, display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: s.safe ? "#E8FFFB" : "#FFF3E8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{s.emoji}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Text size={12} weight={700} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</Text>
+                  <Text size={10} color={C.muted}>{s.date}</Text>
                 </div>
-                <Text size={18} color={C.muted} style={{ marginLeft: "auto" }}>›</Text>
-              </Box>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ padding: "2px 8px", borderRadius: 99, background: s.safe ? "#E8FFFB" : "#FFF3E8", fontSize: 9, fontWeight: 700, color: s.safe ? C.mintDark : "#C05000", fontFamily: "'DM Sans', sans-serif", border: `1px solid ${s.safe ? "#7ADFC8" : "#F0A060"}` }}>
+                    {s.safe ? "✓ Safe" : "⚠ Conflict"}
+                  </span>
+                  <span style={{ color: C.muted, fontSize: 14 }}>›</span>
+                </div>
+              </div>
             ))}
-          </>
-        )}
+            <div style={{ height: 80 }} />
+          </div>
+        </>
+      )}
 
-        {phase === "result" && (
-          <>
-            <Box style={{ background: "#E8FFFB", border: `1px solid #7ADFC8`, borderRadius: 16, padding: "16px", marginBottom: 16 }}>
-              <Box style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                <Text size={22}>✓</Text>
-                <Text size={15} weight={700} color={C.mintDark}>Compatible with your skin</Text>
-              </Box>
-              <Text size={13} color={C.sub}>Scanned product matches your skin profile. No conflicts detected.</Text>
-            </Box>
+      {/* ── MANUAL TEXT INPUT ── */}
+      {phase === "manual" && inputMode === "text" && (
+        <div style={{ flex: 1, background: C.bg, borderRadius: "20px 20px 0 0", marginTop: 0, overflowY: "auto", padding: "20px 20px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+            <div style={{ width: 38, height: 38, borderRadius: 11, background: C.accentLight, border: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 18 }}>✏️</span>
+            </div>
+            <div>
+              <Text size={13} weight={800}>Enter Product Details</Text>
+              <Text size={10} color={C.sub}>No photo? Describe it and we'll analyse.</Text>
+            </div>
+          </div>
 
-            <Box style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 16 }}>
-              <Text size={13} weight={700} style={{ marginBottom: 12 }}>Detected Ingredients</Text>
-              {[
-                { name: "Niacinamide 10%", tag: "BRIGHTENING", safe: true },
-                { name: "Zinc PCA 1%", tag: "OIL CONTROL", safe: true },
-                { name: "Hyaluronic Acid", tag: "HYDRATION", safe: true },
-                { name: "Fragrance", tag: "IRRITANT RISK", safe: false },
-              ].map(ing => (
-                <Box key={ing.name} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: ing.safe ? C.accentMid : C.danger, flexShrink: 0 }} />
-                  <Text size={13}>{ing.name}</Text>
-                  <div style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 99, background: ing.safe ? C.accentLight : "#FDE8E8", fontSize: 9, fontWeight: 700, color: ing.safe ? "#1A6A88" : C.danger, fontFamily: "'DM Sans', sans-serif" }}>{ing.tag}</div>
-                </Box>
-              ))}
-            </Box>
+          {/* Product name input */}
+          <div style={{ marginBottom: 14 }}>
+            <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.05em", marginBottom: 5 }}>PRODUCT NAME</Text>
+            <div style={{ background: C.surface, border: `1.5px solid ${productName ? C.accent : C.border}`, borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 16 }}>🧴</span>
+              <input
+                value={productName}
+                onChange={e => setProductName(e.target.value)}
+                placeholder="e.g. COSRX Advanced Snail Mucin"
+                style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontSize: 13, fontFamily: "'DM Sans', sans-serif", color: C.text }}
+              />
+              {productName && <span onClick={() => setProductName("")} style={{ fontSize: 14, color: C.muted, cursor: "pointer" }}>×</span>}
+            </div>
+          </div>
 
-            <Box style={{ display: "flex", gap: 10 }}>
-              <div onClick={() => setPhase("idle")} style={{ flex: 1, padding: "14px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                ← Scan Again
+          {/* Ingredients / description */}
+          <div style={{ marginBottom: 16 }}>
+            <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.05em", marginBottom: 5 }}>INGREDIENTS OR DESCRIPTION <span style={{ fontWeight: 400, textTransform: "none", fontSize: 10 }}>(optional)</span></Text>
+            <div style={{ background: C.surface, border: `1.5px solid ${productDesc ? C.accent : C.border}`, borderRadius: 12, padding: "12px 14px" }}>
+              <textarea
+                value={productDesc}
+                onChange={e => setProductDesc(e.target.value)}
+                placeholder={"Paste ingredient list or describe the product...\ne.g. Niacinamide, Zinc PCA, Hyaluronic Acid, Fragrance"}
+                rows={4}
+                style={{ width: "100%", border: "none", outline: "none", background: "transparent", fontSize: 12, fontFamily: "'DM Sans', sans-serif", color: C.text, resize: "none", lineHeight: 1.6 }}
+              />
+            </div>
+            <Text size={9} color={C.muted} style={{ marginTop: 5, fontFamily: "'DM Sans', sans-serif" }}>Tip: Copy directly from the product label or brand website for best results</Text>
+          </div>
+
+          {/* Quick suggestions */}
+          <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.05em", marginBottom: 8 }}>COMMON PRODUCTS</Text>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 20 }}>
+            {["The Ordinary Retinol", "Cetaphil Moisturiser", "La Roche-Posay SPF", "Laneige Water Bank"].map(s => (
+              <div key={s} onClick={() => setProductName(s)} style={{ padding: "5px 12px", borderRadius: 99, background: C.card, border: `1px solid ${C.border}`, fontSize: 11, fontWeight: 500, color: C.sub, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{s}</div>
+            ))}
+          </div>
+
+          <div onClick={triggerManualScan} style={{ width: "100%", padding: "15px", borderRadius: 16, background: productName ? `linear-gradient(120deg, ${C.accentMid}, ${C.accent})` : C.card, textAlign: "center", fontSize: 14, fontWeight: 800, cursor: productName ? "pointer" : "default", fontFamily: "'DM Sans', sans-serif", color: productName ? "#0D2A3A" : C.muted, boxShadow: productName ? `0 6px 20px ${C.accentMid}55` : "none", transition: "all 0.2s" }}>
+            {productName ? "◎  Analyse Product" : "Enter product name above"}
+          </div>
+
+          {/* Recent scans compact */}
+          <div style={{ marginTop: 20 }}>
+            <Text size={12} weight={800} style={{ marginBottom: 10 }}>Recent Scans</Text>
+            {recentScans.map(s => (
+              <div key={s.id} onClick={() => { setSelectedRecent(s); setPhase("recent-detail"); }} style={{ background: C.surface, border: `1px solid ${s.conflict ? "#F0C080" : C.border}`, borderRadius: 12, padding: "11px 14px", marginBottom: 9, display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: s.safe ? "#E8FFFB" : "#FFF3E8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{s.emoji}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Text size={12} weight={700} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</Text>
+                  <Text size={10} color={C.muted}>{s.date}</Text>
+                </div>
+                <span style={{ color: C.muted, fontSize: 14 }}>›</span>
               </div>
-              <div style={{ flex: 1, padding: "14px", borderRadius: 14, background: C.accentMid, color: C.text, textAlign: "center", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
-                Save to Routine
+            ))}
+            <div style={{ height: 80 }} />
+          </div>
+        </div>
+      )}
+
+      {/* ── RESULT ── */}
+      {phase === "result" && (
+        <div style={{ flex: 1, background: C.bg, borderRadius: "20px 20px 0 0", overflowY: "auto", padding: "16px 20px 0" }}>
+          <div style={{ width: 36, height: 4, borderRadius: 99, background: C.border, margin: "0 auto 16px" }} />
+
+          {/* Status banner */}
+          <div style={{ background: "#E8FFFB", border: `1.5px solid #7ADFC8`, borderRadius: 16, padding: "14px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#7ADFC8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 18, color: "#fff" }}>✓</span>
+            </div>
+            <div>
+              <Text size={14} weight={800} color={C.mintDark}>Compatible with your skin</Text>
+              <Text size={11} color="#3A8A70">No conflicts with your current routine.</Text>
+            </div>
+          </div>
+
+          {/* Detected product */}
+          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "13px 16px", marginBottom: 14 }}>
+            <Text size={10} weight={700} color={C.sub} style={{ letterSpacing: "0.07em", marginBottom: 8 }}>DETECTED PRODUCT</Text>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: C.card, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>🧴</div>
+              <div>
+                <Text size={13} weight={700}>{productName || "COSRX Niacinamide Serum"}</Text>
+                <Text size={10} color={C.sub}>{productName ? "Entered manually" : "COSRX · Scanned"}</Text>
               </div>
-            </Box>
-          </>
-        )}
-      </Box>
+            </div>
+          </div>
+
+          {/* Ingredients */}
+          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
+            <Text size={10} weight={700} color={C.sub} style={{ letterSpacing: "0.07em", marginBottom: 10 }}>KEY INGREDIENTS</Text>
+            {[
+              { name: "Niacinamide 10%", tag: "BRIGHTENING", safe: true },
+              { name: "Zinc PCA 1%", tag: "OIL CONTROL", safe: true },
+              { name: "Hyaluronic Acid", tag: "HYDRATION", safe: true },
+              { name: "Fragrance", tag: "⚠ IRRITANT", safe: false },
+            ].map(ing => (
+              <div key={ing.name} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: ing.safe ? C.accentMid : C.danger, flexShrink: 0 }} />
+                <Text size={12}>{ing.name}</Text>
+                <div style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 99, background: ing.safe ? C.accentLight : "#FDE8E8", fontSize: 9, fontWeight: 700, color: ing.safe ? "#1A6A88" : C.danger, fontFamily: "'DM Sans', sans-serif" }}>{ing.tag}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+            <div onClick={() => { setPhase("camera"); setInputMode("camera"); setProductName(""); setProductDesc(""); }} style={{ flex: 1, padding: "13px", borderRadius: 14, background: C.surface, border: `1px solid ${C.border}`, textAlign: "center", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+              ← Scan Again
+            </div>
+            <div style={{ flex: 1, padding: "13px", borderRadius: 14, background: `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`, color: "#0D2A3A", textAlign: "center", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+              + Add to Routine
+            </div>
+          </div>
+          <div style={{ height: 80 }} />
+        </div>
+      )}
+
       <NavBar active="scan" onNav={onNav} />
     </Box>
   );
@@ -1302,7 +1630,7 @@ function AnalysisScreen({ onNav }) {
           </Box>
         </Box>
       </Box>
-      <NavBar active="scan" onNav={onNav} />
+      <NavBar active="analysis" onNav={onNav} />
     </Box>
   );
 }
@@ -1366,7 +1694,7 @@ function TrackerScreen({ onNav }) {
           ))}
         </Box>
       </Box>
-      <NavBar active="tracker" onNav={onNav} />
+      <NavBar active="analysis" onNav={onNav} />
     </Box>
   );
 }
@@ -1467,7 +1795,7 @@ function DermScreen({ onNav }) {
           </Box>
         </Box>
       </Box>
-      <NavBar active="scan" onNav={onNav} />
+      <NavBar active="community" onNav={onNav} />
     </Box>
   );
 }
@@ -1620,7 +1948,7 @@ function ShopScreen({ onNav }) {
           <Text size={18} color={C.sub} style={{ marginLeft: "auto" }}>›</Text>
         </Box>
       </Box>
-      <NavBar active="shop" onNav={onNav} />
+      <NavBar active="loyalty" onNav={onNav} />
     </Box>
   );
 }
