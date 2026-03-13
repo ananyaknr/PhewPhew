@@ -2243,6 +2243,131 @@ function TrackerScreen({ onNav }) {
   );
 }
 
+// function CommunityScreen({ onNav }) {
+//   const [expandedPost, setExpandedPost] = useState(null);
+//   const posts = [
+//     {
+//       user: "Mint_skincare", score: 82, review: "Cosrx Snail Essence is 🔥 for combination skin — cleared my texture in 2 weeks! My pores literally look smaller in photos now.", upvotes: 142,
+//       beforeScore: 64, afterScore: 82, skinType: "Combination",
+//       product: { name: "COSRX Advanced Snail 96 Mucin Power Essence", price: "฿490", match: true, matchReason: "Suits combination skin — lightweight, non-comedogenic, great for texture" },
+//       week1: { hydration: 60, clarity: 62, texture: 64 }, week4: { hydration: 78, clarity: 80, texture: 82 },
+//     },
+//     {
+//       user: "DermNerd_TH", score: 91, review: "Reminder: never mix retinol + vitamin C in same AM routine. Conflict alert caught this for me! Use Vit C in AM and retinol only PM.", upvotes: 289,
+//       beforeScore: 75, afterScore: 91, skinType: "Normal/Dry",
+//       product: { name: "The Ordinary Retinol 0.5% in Squalane", price: "฿350", match: true, matchReason: "Start slow with 0.5% — ideal for beginners. Use PM only, never with Vit C." },
+//       week1: { hydration: 72, clarity: 74, texture: 70 }, week4: { hydration: 88, clarity: 90, texture: 86 },
+//     },
+//     {
+//       user: "GlassSkinGoal", score: 76, review: "Just got my AI analysis — sensor picked up dehydration I didn't even feel. Switched to barrier-first routine and my skin glowed up fast.", upvotes: 87,
+//       beforeScore: 58, afterScore: 76, skinType: "Oily",
+//       product: { name: "Laneige Water Bank Blue Hyaluronic Cream", price: "฿680", match: false, matchReason: "Oily skin — this might be too heavy. Try the water gel version instead for lighter hydration." },
+//       week1: { hydration: 48, clarity: 56, texture: 62 }, week4: { hydration: 76, clarity: 74, texture: 78 },
+//     },
+//   ];
+
+//   return (
+//     <Box style={{ height: "100vh", background: C.bg, display: "flex", flexDirection: "column" }}>
+//       <StatusBar />
+//       <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
+//         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Community</Text>
+//         <Badge style={{ marginLeft: "auto" }} />
+//       </Box>
+
+//       <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+
+//         {/* Trending tags */}
+//         <Box style={{ display: "flex", gap: 8, marginBottom: 16, overflowX: "auto" }}>
+//           {["#OilyGlassSkin", "#NiacinamideLove", "#SPFDaily", "#FragranceFree", "#Trending"].map(t => (
+//             <div key={t} style={{ padding: "6px 14px", borderRadius: 99, background: C.surface, border: `1px solid ${C.border}`, fontSize: 11, color: C.text, whiteSpace: "nowrap", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t}</div>
+//           ))}
+//         </Box>
+
+//         {/* Feed posts */}
+//         {posts.map((p, i) => (
+//           <Box key={i} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 14 }}>
+//             {/* User row */}
+//             <Box style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+//               <div style={{ width: 36, height: 36, borderRadius: 18, background: `linear-gradient(135deg, ${C.accentMid}, ${C.mint})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
+//                 {["🌿","🧬","✨"][i]}
+//               </div>
+//               <div>
+//                 <Text size={13} weight={700}>{p.user}</Text>
+//                 <Text size={10} color={C.sub}>Skin Score {p.score}/100 · {p.skinType}</Text>
+//               </div>
+//               <div style={{ marginLeft: "auto", padding: "4px 10px", borderRadius: 99, background: C.accentLight, fontSize: 10, fontWeight: 700, color: C.accent, fontFamily: "'DM Sans', sans-serif" }}>✓ Verified</div>
+//             </Box>
+
+//             {/* Before/After skin analysis mini-chart */}
+//             <div style={{ background: C.bg, borderRadius: 12, padding: "10px 12px", marginBottom: 10, border: `1px solid ${C.border}` }}>
+//               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+//                 <Text size={10} weight={700} color={C.sub}>Skin Analysis · Before → After</Text>
+//                 <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+//                   <div style={{ width: 8, height: 8, borderRadius: 99, background: C.border }} /><Text size={8} color={C.muted}>Week 1</Text>
+//                   <div style={{ width: 8, height: 8, borderRadius: 99, background: C.accent }} /><Text size={8} color={C.muted}>Week 4</Text>
+//                 </div>
+//               </div>
+//               {[["Hydration", p.week1.hydration, p.week4.hydration],["Clarity", p.week1.clarity, p.week4.clarity],["Texture", p.week1.texture, p.week4.texture]].map(([label, before, after]) => (
+//                 <div key={label} style={{ marginBottom: 6 }}>
+//                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+//                     <Text size={9} color={C.sub}>{label}</Text>
+//                     <Text size={9} color={C.accent} weight={600}>{before} → {after} (+{after - before})</Text>
+//                   </div>
+//                   <div style={{ position: "relative", height: 4, borderRadius: 99, background: C.card }}>
+//                     <div style={{ position: "absolute", left: 0, height: "100%", width: `${before}%`, borderRadius: 99, background: C.border }} />
+//                     <div style={{ position: "absolute", left: 0, height: "100%", width: `${after}%`, borderRadius: 99, background: C.accent, opacity: 0.7 }} />
+//                   </div>
+//                 </div>
+//               ))}
+//               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+//                 <div style={{ flex: 1, textAlign: "center", padding: "4px 6px", borderRadius: 8, background: C.card }}>
+//                   <Text size={11} weight={800} color={C.sub}>{p.beforeScore}</Text>
+//                   <Text size={8} color={C.muted}>Before</Text>
+//                 </div>
+//                 <div style={{ display: "flex", alignItems: "center", color: C.accent, fontSize: 14 }}>→</div>
+//                 <div style={{ flex: 1, textAlign: "center", padding: "4px 6px", borderRadius: 8, background: C.accentLight }}>
+//                   <Text size={11} weight={800} color={C.accent}>{p.afterScore}</Text>
+//                   <Text size={8} color={C.accent}>After</Text>
+//                 </div>
+//               </div>
+//             </div>
+
+//             <Text size={13} color={C.text} style={{ marginBottom: 10, lineHeight: 1.5 }}>{p.review}</Text>
+
+//             {/* Affiliate product link */}
+//             <div onClick={() => onNav("shop")} style={{ background: p.product.match ? "#E8FFFB" : "#FFF3E8", border: `1px solid ${p.product.match ? "#7ADFC8" : "#F0C080"}`, borderRadius: 12, padding: "10px 12px", marginBottom: 10, cursor: "pointer" }}>
+//               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+//                 <Text size={11} weight={700} color={p.product.match ? C.mintDark : "#C05000"}>
+//                   {p.product.match ? "✓ Suits your skin" : "⚠ May not suit you"}
+//                 </Text>
+//                 <div style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, color: C.text, fontFamily: "'DM Sans', sans-serif" }}>{p.product.price}</div>
+//               </div>
+//               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+//                 <div>
+//                   <Text size={11} weight={600}>{p.product.name}</Text>
+//                   <Text size={9} color={C.sub} style={{ marginTop: 2, lineHeight: 1.4 }}>{p.product.matchReason}</Text>
+//                 </div>
+//                 <div style={{ flexShrink: 0, padding: "5px 10px", borderRadius: 9, background: p.product.match ? C.accentMid : "#F0C080", fontSize: 10, fontWeight: 700, color: "#0D2A3A", fontFamily: "'DM Sans', sans-serif" }}>Shop →</div>
+//               </div>
+//             </div>
+
+//             <Box style={{ display: "flex", alignItems: "center", gap: 16 }}>
+//               <Text size={12} color={C.sub}>▲ {p.upvotes} upvotes</Text>
+//               <Text size={12} color={C.sub}>💬 Reply</Text>
+//               <Text size={12} color={C.sub}>⇧ Share</Text>
+//             </Box>
+//           </Box>
+//         ))}
+//       </Box>
+//       <NavBar active="community" onNav={onNav} />
+//     </Box>
+//   );
+// }
+
+// import React, { useState } from 'react';
+
+// import React, { useState } from 'react';
+
 function CommunityScreen({ onNav }) {
   const [expandedPost, setExpandedPost] = useState(null);
   const posts = [
@@ -2267,9 +2392,18 @@ function CommunityScreen({ onNav }) {
   ];
 
   return (
-    <Box style={{ height: "100vh", background: C.bg, display: "flex", flexDirection: "column" }}>
+    <Box style={{ 
+      height: "100dvh", 
+      maxWidth: "600px", 
+      margin: "0 auto", 
+      background: C.bg, 
+      display: "flex", 
+      flexDirection: "column",
+      position: "relative",
+      boxShadow: "0 0 20px rgba(0,0,0,0.05)" 
+    }}>
       <StatusBar />
-      <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
+      <Box style={{ padding: "12px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Community</Text>
         <Badge style={{ marginLeft: "auto" }} />
       </Box>
@@ -2277,7 +2411,15 @@ function CommunityScreen({ onNav }) {
       <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
 
         {/* Trending tags */}
-        <Box style={{ display: "flex", gap: 8, marginBottom: 16, overflowX: "auto" }}>
+        <Box style={{ 
+          display: "flex", 
+          gap: 8, 
+          marginBottom: 16, 
+          overflowX: "auto", 
+          paddingBottom: 4, 
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none"
+        }}>
           {["#OilyGlassSkin", "#NiacinamideLove", "#SPFDaily", "#FragranceFree", "#Trending"].map(t => (
             <div key={t} style={{ padding: "6px 14px", borderRadius: 99, background: C.surface, border: `1px solid ${C.border}`, fontSize: 11, color: C.text, whiteSpace: "nowrap", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t}</div>
           ))}
@@ -2286,27 +2428,29 @@ function CommunityScreen({ onNav }) {
         {/* Feed posts */}
         {posts.map((p, i) => (
           <Box key={i} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 14 }}>
+            
             {/* User row */}
             <Box style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 18, background: `linear-gradient(135deg, ${C.accentMid}, ${C.mint})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 18, flexShrink: 0, background: `linear-gradient(135deg, ${C.accentMid}, ${C.mint})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
                 {["🌿","🧬","✨"][i]}
               </div>
-              <div>
-                <Text size={13} weight={700}>{p.user}</Text>
-                <Text size={10} color={C.sub}>Skin Score {p.score}/100 · {p.skinType}</Text>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <Text size={13} weight={700} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.user}</Text>
+                <Text size={10} color={C.sub} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Skin Score {p.score}/100 · {p.skinType}</Text>
               </div>
-              <div style={{ marginLeft: "auto", padding: "4px 10px", borderRadius: 99, background: C.accentLight, fontSize: 10, fontWeight: 700, color: C.accent, fontFamily: "'DM Sans', sans-serif" }}>✓ Verified</div>
+              <div style={{ flexShrink: 0, padding: "4px 10px", borderRadius: 99, background: C.accentLight, fontSize: 10, fontWeight: 700, color: C.accent, fontFamily: "'DM Sans', sans-serif" }}>✓ Verified</div>
             </Box>
 
             {/* Before/After skin analysis mini-chart */}
             <div style={{ background: C.bg, borderRadius: 12, padding: "10px 12px", marginBottom: 10, border: `1px solid ${C.border}` }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
                 <Text size={10} weight={700} color={C.sub}>Skin Analysis · Before → After</Text>
                 <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                   <div style={{ width: 8, height: 8, borderRadius: 99, background: C.border }} /><Text size={8} color={C.muted}>Week 1</Text>
                   <div style={{ width: 8, height: 8, borderRadius: 99, background: C.accent }} /><Text size={8} color={C.muted}>Week 4</Text>
                 </div>
               </div>
+              
               {[["Hydration", p.week1.hydration, p.week4.hydration],["Clarity", p.week1.clarity, p.week4.clarity],["Texture", p.week1.texture, p.week4.texture]].map(([label, before, after]) => (
                 <div key={label} style={{ marginBottom: 6 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
@@ -2336,25 +2480,25 @@ function CommunityScreen({ onNav }) {
 
             {/* Affiliate product link */}
             <div onClick={() => onNav("shop")} style={{ background: p.product.match ? "#E8FFFB" : "#FFF3E8", border: `1px solid ${p.product.match ? "#7ADFC8" : "#F0C080"}`, borderRadius: 12, padding: "10px 12px", marginBottom: 10, cursor: "pointer" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                <Text size={11} weight={700} color={p.product.match ? C.mintDark : "#C05000"}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 4 }}>
+                <Text size={11} weight={700} color={p.product.match ? C.mintDark : "#C05000"} style={{ flex: 1 }}>
                   {p.product.match ? "✓ Suits your skin" : "⚠ May not suit you"}
                 </Text>
-                <div style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, color: C.text, fontFamily: "'DM Sans', sans-serif" }}>{p.product.price}</div>
+                <div style={{ flexShrink: 0, fontSize: 12, fontWeight: 700, color: C.text, fontFamily: "'DM Sans', sans-serif" }}>{p.product.price}</div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                <div>
-                  <Text size={11} weight={600}>{p.product.name}</Text>
-                  <Text size={9} color={C.sub} style={{ marginTop: 2, lineHeight: 1.4 }}>{p.product.matchReason}</Text>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Text size={11} weight={600} style={{ display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.product.name}</Text>
+                  <Text size={9} color={C.sub} style={{ marginTop: 2, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.product.matchReason}</Text>
                 </div>
                 <div style={{ flexShrink: 0, padding: "5px 10px", borderRadius: 9, background: p.product.match ? C.accentMid : "#F0C080", fontSize: 10, fontWeight: 700, color: "#0D2A3A", fontFamily: "'DM Sans', sans-serif" }}>Shop →</div>
               </div>
             </div>
 
-            <Box style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <Text size={12} color={C.sub}>▲ {p.upvotes} upvotes</Text>
-              <Text size={12} color={C.sub}>💬 Reply</Text>
-              <Text size={12} color={C.sub}>⇧ Share</Text>
+            <Box style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", marginTop: 4 }}>
+              <Text size={12} color={C.sub} style={{ cursor: "pointer" }}>▲ {p.upvotes} upvotes</Text>
+              <Text size={12} color={C.sub} style={{ cursor: "pointer" }}>💬 Reply</Text>
+              <Text size={12} color={C.sub} style={{ cursor: "pointer" }}>⇧ Share</Text>
             </Box>
           </Box>
         ))}
@@ -2363,6 +2507,10 @@ function CommunityScreen({ onNav }) {
     </Box>
   );
 }
+
+// export default CommunityScreen;
+
+// export default CommunityScreen;
 
 function DermScreen({ onNav }) {
   const [bookingStep, setBookingStep] = useState(null); // null | 'select-time' | 'confirm' | 'booked'
