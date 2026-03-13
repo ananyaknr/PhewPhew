@@ -3,7 +3,7 @@ import { useState } from "react";
 const W = 390;
 const H = 844;
 
-// ─── Palette: PhewPhew CI ─────────────────────────────────
+// ─── Palette — PhewPhew CI ─────────────────────────────────
 const C = {
   bg: "#EEF8FD",           // very light sky, derived from #E2F4FC
   surface: "#FFFFFF",      // white
@@ -42,42 +42,114 @@ const Text = ({ size = 13, weight = 400, color = C.text, children, style }) => (
   <div style={{ fontSize: size, fontWeight: weight, color, lineHeight: 1.4, fontFamily: "'DM Sans', sans-serif", ...style }}>{children}</div>
 );
 
-const Badge = ({ label, premium }) => (
-  <div style={{
-    display: "inline-flex", alignItems: "center", gap: 4,
-    padding: "3px 10px", borderRadius: 99,
-    background: premium ? C.premiumMid : C.accentMid,
-    border: `1px solid ${premium ? "#D4C840" : "#6DD6EE"}`,
-    fontSize: 10, fontWeight: 700, color: premium ? C.premium : "#1A6A88",
-    letterSpacing: "0.06em", fontFamily: "'DM Sans', sans-serif",
-  }}>
-    {premium ? "★ PREMIUM" : "FREE"}{label ? ` · ${label}` : ""}
-  </div>
-);
+const Badge = ({ label, premium }) => {
+  if (!premium) return null; // Only render premium badges
+  return (
+    <div style={{
+      display: "inline-flex", alignItems: "center", gap: 4,
+      padding: "3px 10px", borderRadius: 99,
+      background: C.premiumMid, border: `1px solid #D4C840`,
+      fontSize: 10, fontWeight: 700, color: "#5A5000",
+      letterSpacing: "0.06em", fontFamily: "'DM Sans', sans-serif",
+    }}>
+      ★ PREMIUM{label ? ` · ${label}` : ""}
+    </div>
+  );
+};
 
 const NavBar = ({ active, onNav }) => {
   const items = [
-    { id: "home", icon: "⌂", label: "Home" },
-    { id: "scan", icon: "◎", label: "Scan" },
-    { id: "tracker", icon: "◉", label: "Track" },
-    { id: "community", icon: "◻", label: "Feed" },
-    { id: "shop", icon: "◪", label: "Shop" },
+    {
+      id: "home",
+      label: "Home",
+      icon: (on) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H15v-5h-6v5H4a1 1 0 01-1-1V10.5z"
+            fill={on ? C.accent : "none"} stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      id: "scan",
+      label: "Scan",
+      icon: (on) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <circle cx="17.5" cy="17.5" r="3" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <line x1="19.6" y1="19.6" x2="22" y2="22" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
+        </svg>
+      ),
+    },
+    {
+      id: "tracker",
+      label: "Track",
+      icon: (on) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 17l5-5 4 4 5-6 4 3" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+        </svg>
+      ),
+    },
+    {
+      id: "community",
+      label: "Community",
+      icon: (on) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="9" cy="8" r="3.5" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
+          <circle cx="17" cy="9" r="2.5" stroke={on ? C.accent : C.muted} strokeWidth="1.6"/>
+          <path d="M15 20c0-2.2 1-4 3-4.5" stroke={on ? C.accent : C.muted} strokeWidth="1.6" strokeLinecap="round"/>
+        </svg>
+      ),
+    },
+    {
+      id: "shop",
+      label: "Shop",
+      icon: (on) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinejoin="round"/>
+          <line x1="3" y1="6" x2="21" y2="6" stroke={on ? C.accent : C.muted} strokeWidth="1.8"/>
+          <path d="M16 10a4 4 0 01-8 0" stroke={on ? C.accent : C.muted} strokeWidth="1.8" strokeLinecap="round"/>
+        </svg>
+      ),
+    },
   ];
+
   return (
     <div style={{
       position: "absolute", bottom: 0, left: 0, right: 0, height: 72,
-      background: C.surface, borderTop: `1px solid ${C.border}`,
-      display: "flex", alignItems: "center",
+      background: C.surface,
+      borderTop: `1px solid ${C.border}`,
+      display: "flex", alignItems: "flex-start",
+      paddingTop: 8,
     }}>
-      {items.map(it => (
-        <div key={it.id} onClick={() => onNav(it.id)} style={{
-          flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
-          gap: 2, cursor: "pointer", paddingBottom: 8,
-        }}>
-          <div style={{ fontSize: 20, color: active === it.id ? C.accent : C.muted }}>{it.icon}</div>
-          <div style={{ fontSize: 9, fontWeight: active === it.id ? 700 : 400, color: active === it.id ? C.accent : C.muted, fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.04em" }}>{it.label}</div>
-        </div>
-      ))}
+      {items.map(it => {
+        const on = active === it.id;
+        return (
+          <div key={it.id} onClick={() => onNav(it.id)} style={{
+            flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+            cursor: "pointer", position: "relative",
+          }}>
+            {/* Active pill indicator */}
+            {on && (
+              <div style={{
+                position: "absolute", top: -9, left: "50%", transform: "translateX(-50%)",
+                width: 28, height: 3, borderRadius: 99,
+                background: C.accent,
+              }} />
+            )}
+            {it.icon(on)}
+            <div style={{
+              fontSize: 8.5, fontWeight: on ? 700 : 400,
+              color: on ? C.accent : C.muted,
+              fontFamily: "'DM Sans', sans-serif",
+              letterSpacing: "0.02em",
+            }}>{it.label}</div>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -624,94 +696,447 @@ function OnboardingScreen({ onNav }) {
   );
 }
 
+// ─── Premium Badge (only shown when premium) ─────────────
+const PremiumTag = () => (
+  <div style={{
+    display: "inline-flex", alignItems: "center", gap: 3,
+    padding: "2px 8px", borderRadius: 99,
+    background: C.premiumMid, border: `1px solid #D4C840`,
+    fontSize: 9, fontWeight: 700, color: "#5A5000",
+    letterSpacing: "0.06em", fontFamily: "'DM Sans', sans-serif",
+  }}>★ PREMIUM</div>
+);
+
+// ─── Section header ───────────────────────────────────────
+const SectionHead = ({ label, action, onAction }) => (
+  <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+    <Text size={13} weight={800} style={{ letterSpacing: "-0.01em" }}>{label}</Text>
+    {action && <div onClick={onAction} style={{ fontSize: 11, color: C.accent, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{action}</div>}
+  </Box>
+);
+
 function HomeScreen({ onNav }) {
+  const [routineTab, setRoutineTab] = useState("AM");
+  const [expandedStep, setExpandedStep] = useState(null);
+
+  // Separate AM and PM step data — both toggleable
+  const allSteps = {
+    AM: [
+      { name: "Gentle Cleanser", brand: "CeraVe Hydrating", done: true,  emoji: "🫧", why: "Removes overnight sebum without stripping your barrier — essential first step every AM.", tag: "Barrier Safe",     tagColor: C.mintDark,  tagBg: "#E8FFFB" },
+      { name: "Hydrating Toner",  brand: "COSRX AHA/BHA",   done: true,  emoji: "💧", why: "Preps skin pH before serums so actives absorb 40% better. Choose alcohol-free.",          tag: "Prep Step",       tagColor: "#1A6A88",   tagBg: C.accentLight },
+      { name: "Vitamin C Serum",  brand: "Timeless 20% C+E",done: true,  emoji: "🍊", why: "AM antioxidant that neutralises free radicals from PM2.5 — boosts SPF effectiveness.",    tag: "✦ New",           tagColor: C.premium,   tagBg: C.premiumMid },
+      { name: "Moisturiser",      brand: "Round Lab Birch",  done: false, emoji: "🧴", why: "Seals in serum actives and maintains hydration throughout the day.",                       tag: "Locks In",        tagColor: "#1A6A88",   tagBg: C.accentLight },
+      { name: "SPF 50 Sunscreen", brand: "Beauty of Joseon", done: false, emoji: "☀️", why: "Non-negotiable last step — UV is the #1 cause of aging. Reapply every 2h outdoors.",      tag: "⚠ Required",      tagColor: "#7A6A00",   tagBg: "#FFFDE8" },
+    ],
+    PM: [
+      { name: "Oil Cleanser",     brand: "Banila Co Clean It", done: false, emoji: "🫧", why: "First cleanse dissolves sunscreen and makeup. Essential for double-cleanse method.",      tag: "Double Cleanse",  tagColor: C.mintDark,  tagBg: "#E8FFFB" },
+      { name: "Foaming Cleanser", brand: "CeraVe Foaming",     done: false, emoji: "🧼", why: "Second cleanse clears remaining impurities — sets clean canvas for PM actives.",          tag: "Deep Clean",      tagColor: "#1A6A88",   tagBg: C.accentLight },
+      { name: "BHA Toner",        brand: "Paula's Choice 2%",  done: false, emoji: "⚗️", why: "Unclogs pores and exfoliates dead skin while you sleep. Use 2–3x per week.",              tag: "✦ New",           tagColor: C.premium,   tagBg: C.premiumMid },
+      { name: "Retinol 0.3%",     brand: "The Ordinary",       done: false, emoji: "🔬", why: "Stimulates collagen overnight — the gold standard anti-aging ingredient. Start slow.",    tag: "Anti-aging",      tagColor: "#5A5000",   tagBg: "#FFFDE8" },
+      { name: "Night Moisturiser",brand: "Laneige Water Bank",  done: false, emoji: "🌙", why: "Heavier PM formula that repairs and locks in moisture during sleep — your skin works hardest at night.", tag: "Repair Mode", tagColor: "#1A6A88", tagBg: C.accentLight },
+    ],
+  };
+
+  const [stepStates, setStepStates] = useState({ AM: [true,true,true,false,false], PM: [false,false,false,false,false] });
+
+  const currentSteps = allSteps[routineTab].map((s, i) => ({ ...s, done: stepStates[routineTab][i] }));
+  const doneCount = currentSteps.filter(s => s.done).length;
+
+  const toggleStep = (e, i) => {
+    e.stopPropagation();
+    setStepStates(prev => {
+      const updated = [...prev[routineTab]];
+      updated[i] = !updated[i];
+      return { ...prev, [routineTab]: updated };
+    });
+  };
+
   return (
     <Box style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column" }}>
       <StatusBar />
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", paddingBottom: 80 }}>
 
-        {/* Header */}
-        <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, marginTop: 4 }}>
-          <div>
-            <Text size={12} color={C.muted}>Good morning ✦</Text>
-            <Text size={22} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Nida's Dashboard</Text>
-          </div>
-          <div style={{ width: 40, height: 40, borderRadius: "50%", background: C.card, border: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Text size={18}>👤</Text>
-          </div>
-        </Box>
+        {/* ── HERO HEADER — LIGHT ─────────────────────── */}
+        <div style={{
+          background: "linear-gradient(150deg, #D4F0FB 0%, #E8F8FF 50%, #E2F4FC 100%)",
+          padding: "0 20px 18px",
+          borderBottom: `1px solid ${C.border}`,
+          position: "relative", overflow: "hidden",
+        }}>
+          {/* Soft orbs */}
+          <div style={{ position: "absolute", top: -30, right: -20, width: 130, height: 130, borderRadius: "50%", background: C.accentMid, opacity: 0.18 }} />
+          <div style={{ position: "absolute", bottom: -20, left: -30, width: 110, height: 110, borderRadius: "50%", background: C.mint, opacity: 0.25 }} />
 
-        {/* Weather/PM2.5 alert banner */}
-        <Box style={{ background: "#FFFDE8", border: `1px solid #E8E060`, borderRadius: 14, padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }} onClick={() => onNav("weather")}>
-          <Text size={22}>⚠️</Text>
-          <div>
-            <Text size={12} weight={700} color="#7A6A00">PM2.5 Alert — Today</Text>
-            <Text size={11} color="#9A8800">AQI 142 · Apply extra SPF, skip actives</Text>
-          </div>
-          <Text size={18} color={C.muted} style={{ marginLeft: "auto" }}>›</Text>
-        </Box>
-
-        {/* Daily To-do */}
-        <Box style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 16 }}>
-          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <Text size={13} weight={700}>Today's Routine</Text>
-            <Badge label="AM" />
-          </Box>
-          {["Cleanser", "Toner", "Vitamin C Serum", "Moisturiser", "SPF 50"].map((item, i) => (
-            <Box key={item} style={{ display: "flex", alignItems: "center", gap: 12, paddingVertical: 6, marginBottom: 8 }}>
-              <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${i < 3 ? C.accent : C.border}`, background: i < 3 ? C.accentLight : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {i < 3 && <Text size={10} color={C.accent}>✓</Text>}
+          {/* Top bar — brand + actions */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 8, marginBottom: 16, position: "relative", zIndex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: C.accentMid, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 10px #9BE9FA44" }}>
+                <span style={{ fontSize: 16 }}>✦</span>
               </div>
-              <Text size={13} color={i < 3 ? C.muted : C.text} style={{ textDecoration: i < 3 ? "line-through" : "none" }}>{item}</Text>
-              <Text size={11} color={C.muted} style={{ marginLeft: "auto" }}>Step {i + 1}</Text>
-            </Box>
-          ))}
-        </Box>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: C.text, fontFamily: "Syne, sans-serif", lineHeight: 1 }}>PhewPhew</div>
+                <div style={{ fontSize: 9, color: C.accent, letterSpacing: "0.1em", fontFamily: "'DM Sans', sans-serif" }}>SKIN INTELLIGENCE</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {/* Notification bell */}
+              <div onClick={() => onNav("daily")} style={{ position: "relative", cursor: "pointer", padding: 4 }}>
+                <span style={{ fontSize: 20 }}>🔔</span>
+                <div style={{ position: "absolute", top: 2, right: 2, width: 8, height: 8, borderRadius: "50%", background: C.danger, border: `1.5px solid ${C.bg}` }} />
+              </div>
+              {/* Avatar */}
+              <div onClick={() => onNav("loyalty")} style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg, ${C.accentMid}, ${C.mint})`, display: "flex", alignItems: "center", justifyContent: "center", border: `2px solid ${C.surface}`, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+                <span style={{ fontSize: 16 }}>👤</span>
+              </div>
+            </div>
+          </div>
 
-        {/* Quick Actions */}
-        <Text size={13} weight={700} style={{ marginBottom: 10 }}>Quick Actions</Text>
-        <Box style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-          {[
-            { icon: "◎", label: "Scan Ingredient", sub: "Check compatibility", screen: "scan", free: true },
-            { icon: "◈", label: "Skin Analysis", sub: "AI + Sensor scan", screen: "analysis", free: false },
-            { icon: "◷", label: "Expiry Tracker", sub: "2 expiring soon", screen: "routine", free: true },
-            { icon: "◆", label: "Loyalty Points", sub: "1,240 pts", screen: "loyalty", free: true },
-          ].map(a => (
-            <Box key={a.label} onClick={() => onNav(a.screen)} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px", cursor: "pointer" }}>
-              <Text size={22}>{a.icon}</Text>
-              <Text size={12} weight={700} style={{ marginTop: 6 }}>{a.label}</Text>
-              <Text size={11} color={C.sub}>{a.sub}</Text>
-              <div style={{ marginTop: 8 }}><Badge premium={!a.free} /></div>
-            </Box>
-          ))}
-        </Box>
+          {/* Greeting + headline */}
+          <div style={{ position: "relative", zIndex: 1, marginBottom: 14 }}>
+            <Text size={11} color={C.sub} style={{ letterSpacing: "0.04em", marginBottom: 3 }}>Good morning, Nida ✦</Text>
+            <Text size={21} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, color: C.text }}>
+              Your skin is getting<br />
+              <span style={{ color: C.accent }}>smarter every day.</span>
+            </Text>
+          </div>
 
-        {/* Skin Score */}
-        <Box onClick={() => onNav("tracker")} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 16, cursor: "pointer" }}>
-          <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <Text size={13} weight={700}>Skin Score</Text>
-            <Badge premium label="TRACK" />
-          </Box>
-          <Box style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ width: 64, height: 64, borderRadius: "50%", border: `4px solid ${C.accent}`, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-              <Text size={18} weight={800} color={C.accent}>74</Text>
-              <Text size={8} color={C.sub}>/100</Text>
+          {/* Skin Score card — light version */}
+          <div onClick={() => onNav("tracker")} style={{
+            background: C.surface, borderRadius: 14, border: `1px solid ${C.border}`,
+            padding: "12px 14px", display: "flex", alignItems: "center", gap: 14,
+            cursor: "pointer", position: "relative", zIndex: 1,
+            boxShadow: "0 2px 12px rgba(45,156,202,0.10)",
+          }}>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", border: `3px solid ${C.accentMid}`, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", flexShrink: 0, background: C.accentLight }}>
+              <span style={{ fontSize: 17, fontWeight: 800, color: C.accent, fontFamily: "Syne, sans-serif", lineHeight: 1 }}>74</span>
+              <span style={{ fontSize: 7, color: C.muted, fontFamily: "'DM Sans', sans-serif" }}>/100</span>
             </div>
             <div style={{ flex: 1 }}>
-              {["Hydration", "Clarity", "Texture"].map((m, i) => (
-                <Box key={m} style={{ marginBottom: 6 }}>
-                  <Box style={{ display: "flex", justifyContent: "space-between" }}>
-                    <Text size={10} color={C.sub}>{m}</Text>
-                    <Text size={10} color={C.sub}>{[78, 65, 82][i]}%</Text>
-                  </Box>
-                  <div style={{ height: 5, borderRadius: 99, background: C.card, marginTop: 2 }}>
-                    <div style={{ height: "100%", width: `${[78, 65, 82][i]}%`, borderRadius: 99, background: C.accent }} />
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
+                <Text size={11} weight={700}>Skin Score Today</Text>
+                <PremiumTag />
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[["Hydration", 78, C.accentMid], ["Clarity", 65, "#b5ffef"], ["Texture", 82, "#fff9af"]].map(([label, val, barColor]) => (
+                  <div key={label} style={{ flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+                      <span style={{ fontSize: 7, color: C.muted, fontFamily: "'DM Sans', sans-serif" }}>{label}</span>
+                      <span style={{ fontSize: 7, color: C.sub, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>{val}</span>
+                    </div>
+                    <div style={{ height: 4, borderRadius: 99, background: C.card }}>
+                      <div style={{ height: "100%", width: `${val}%`, borderRadius: 99, background: barColor }} />
+                    </div>
                   </div>
-                </Box>
+                ))}
+              </div>
+            </div>
+            <span style={{ color: C.muted, fontSize: 16 }}>›</span>
+          </div>
+        </div>
+
+        {/* ── REAL-TIME ENVIRONMENT BANNER — merged, standout ── */}
+        <div style={{ padding: "14px 20px 0" }}>
+          <div onClick={() => onNav("weather")} style={{
+            borderRadius: 16, overflow: "hidden", cursor: "pointer",
+            background: "linear-gradient(120deg, #0D3A50 0%, #1A6A7A 55%, #1A5040 100%)",
+            boxShadow: "0 4px 20px rgba(13,58,80,0.18)",
+            position: "relative",
+          }}>
+            {/* Subtle texture ring */}
+            <div style={{ position: "absolute", top: -40, right: -40, width: 130, height: 130, borderRadius: "50%", background: C.accentMid, opacity: 0.12, pointerEvents: "none" }} />
+            <div style={{ position: "absolute", bottom: -30, left: -20, width: 100, height: 100, borderRadius: "50%", background: C.mint, opacity: 0.10, pointerEvents: "none" }} />
+
+            <div style={{ padding: "14px 16px", position: "relative", zIndex: 1 }}>
+              {/* Top row: label + live badge */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2a7 7 0 017 7c0 4-7 13-7 13S5 13 5 9a7 7 0 017-7z" stroke={C.accentMid} strokeWidth="1.8"/>
+                    <circle cx="12" cy="9" r="2.5" stroke={C.accentMid} strokeWidth="1.8"/>
+                  </svg>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", fontFamily: "'DM Sans', sans-serif" }}>Bangkok · Real-Time Environment</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 99, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}>
+                  <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#4ade80" }} />
+                  <span style={{ fontSize: 8, fontWeight: 700, color: "#9BE9FA", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.06em" }}>LIVE</span>
+                </div>
+              </div>
+
+              {/* Stats row */}
+              <div style={{ display: "flex", gap: 8 }}>
+                {[
+                  { icon: "🌡️", label: "Temp",    value: "34°C",   note: "Humid" },
+                  { icon: "☁️", label: "PM2.5",   value: "AQI 142", note: "Unhealthy", alert: true },
+                  { icon: "☀️", label: "UV Index", value: "9 Very High", note: "SPF required", alert: true },
+                ].map(s => (
+                  <div key={s.label} style={{
+                    flex: 1, background: s.alert ? "rgba(220,100,50,0.18)" : "rgba(255,255,255,0.08)",
+                    border: `1px solid ${s.alert ? "rgba(220,100,50,0.4)" : "rgba(255,255,255,0.12)"}`,
+                    borderRadius: 10, padding: "8px 8px 7px", textAlign: "center",
+                  }}>
+                    <div style={{ fontSize: 14, marginBottom: 3 }}>{s.icon}</div>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: s.alert ? "#FFB380" : "#9BE9FA", fontFamily: "Syne, sans-serif", lineHeight: 1.1 }}>{s.value}</div>
+                    <div style={{ fontSize: 8, color: "rgba(255,255,255,0.55)", fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>{s.note}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Routine impact pill */}
+              <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 7 }}>
+                <div style={{ width: 18, height: 18, borderRadius: "50%", background: "rgba(255,180,60,0.25)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 9 }}>⚠</span>
+                </div>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.75)", fontFamily: "'DM Sans', sans-serif" }}>
+                  Routine auto-adjusted — skip AHA/BHA today · extra SPF layer added
+                </span>
+                <span style={{ fontSize: 13, color: "rgba(155,233,250,0.6)", marginLeft: "auto" }}>›</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── TODAY'S ROUTINE ─────────────────────────── */}
+        <div style={{ padding: "16px 20px 0" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <Text size={13} weight={800}>Today's Routine</Text>
+            {/* AM / PM toggle */}
+            <div style={{ display: "flex", background: C.card, borderRadius: 10, padding: 2, border: `1px solid ${C.border}` }}>
+              {["AM", "PM"].map(tab => (
+                <div key={tab} onClick={() => { setRoutineTab(tab); setExpandedStep(null); }} style={{
+                  padding: "5px 16px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer",
+                  background: routineTab === tab ? C.surface : "transparent",
+                  color: routineTab === tab ? C.accent : C.muted,
+                  fontFamily: "'DM Sans', sans-serif",
+                  boxShadow: routineTab === tab ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+                  transition: "all 0.15s",
+                }}>{tab}</div>
               ))}
             </div>
-          </Box>
-        </Box>
+          </div>
+
+          {/* Progress */}
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+              <Text size={10} color={C.sub}>{doneCount} of {currentSteps.length} done</Text>
+              <Text size={10} color={C.accent} weight={700}>{Math.round((doneCount / currentSteps.length) * 100)}%</Text>
+            </div>
+            <div style={{ height: 5, borderRadius: 99, background: C.card, border: `1px solid ${C.border}` }}>
+              <div style={{ height: "100%", width: `${(doneCount / currentSteps.length) * 100}%`, borderRadius: 99, background: C.accentMid, transition: "width 0.3s" }} />
+            </div>
+          </div>
+
+          {/* Step list */}
+          <div style={{ background: C.surface, borderRadius: 14, border: `1px solid ${C.border}`, overflow: "hidden" }}>
+            {currentSteps.map((step, i) => {
+              const isExp = expandedStep === i;
+              return (
+                <div key={step.name} style={{ borderBottom: i < currentSteps.length - 1 ? `1px solid ${C.borderLight}` : "none" }}>
+                  <div
+                    onClick={() => setExpandedStep(isExp ? null : i)}
+                    style={{ display: "flex", alignItems: "center", gap: 11, padding: "11px 13px", background: isExp ? "#F0F8FF" : "transparent", cursor: "pointer" }}
+                  >
+                    {/* Tappable checkbox */}
+                    <div
+                      onClick={(e) => toggleStep(e, i)}
+                      style={{
+                        width: 22, height: 22, borderRadius: 7, flexShrink: 0,
+                        border: `2px solid ${step.done ? C.accent : C.border}`,
+                        background: step.done ? C.accentMid : C.surface,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        cursor: "pointer", transition: "all 0.15s",
+                      }}
+                    >
+                      {step.done && <span style={{ fontSize: 10, color: "#0D2A3A", fontWeight: 800 }}>✓</span>}
+                    </div>
+                    <span style={{ fontSize: 17, flexShrink: 0 }}>{step.emoji}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
+                        <Text size={12} weight={700} color={step.done ? C.muted : C.text} style={{ textDecoration: step.done ? "line-through" : "none" }}>{step.name}</Text>
+                        <div style={{ padding: "1px 6px", borderRadius: 99, background: step.tagBg, fontSize: 8, fontWeight: 700, color: step.tagColor, fontFamily: "'DM Sans', sans-serif", whiteSpace: "nowrap" }}>{step.tag}</div>
+                      </div>
+                      <Text size={10} color={C.muted}>{step.brand}</Text>
+                    </div>
+                    <span style={{ fontSize: 12, color: C.muted, transform: isExp ? "rotate(90deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }}>›</span>
+                  </div>
+                  {isExp && (
+                    <div style={{ padding: "8px 13px 12px 46px", background: "#F0F8FF" }}>
+                      <div style={{ display: "flex", gap: 7, alignItems: "flex-start" }}>
+                        <span style={{ fontSize: 12 }}>💡</span>
+                        <Text size={11} color="#1A5A78" style={{ lineHeight: 1.65 }}>{step.why}</Text>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div onClick={() => onNav("routine")} style={{ textAlign: "center", marginTop: 8, fontSize: 11, color: C.accent, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+            Manage routine + expiry tracker →
+          </div>
+        </div>
+
+        {/* ── CORE TOOLS ──────────────────────────────── */}
+        {/*
+          Color logic:
+          • Mint (#E8FFFB) = safe / scan — green means "go, check compatibility"
+          • Blue (#E2F4FC) = intelligence / AI — brand primary = PhewPhew AI
+          • Yellow (#FFFDE8) = premium / caution — matches PremiumTag colour, signals paid
+          Each pair uses the same hue family so premium tools are instantly grouped.
+        */}
+        <div style={{ padding: "16px 20px 0" }}>
+          <SectionHead label="Core Tools" />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {[
+              { icon: "◎", label: "Ingredient Scanner", sub: "Photo scan · conflict check",   screen: "scan",     bg: "#E8FFFB", border: "#7ADFC8", iconColor: C.mintDark, premium: false },
+              { icon: "◈", label: "AI Skin Analysis",   sub: "Sensor + AI · deep insights",   screen: "analysis", bg: C.accentLight, border: C.border, iconColor: C.accent, premium: true },
+              { icon: "◉", label: "Progress Tracker",   sub: "Before/After · score trend",    screen: "tracker",  bg: C.accentLight, border: C.border, iconColor: C.accent, premium: true },
+              { icon: "✚", label: "Derm Consult",       sub: "Video call · ฿300–500/session", screen: "derm",     bg: "#FFFDE8",  border: "#E0D840", iconColor: "#5A5000", premium: true },
+            ].map(a => (
+              <div key={a.label} onClick={() => onNav(a.screen)} style={{ background: a.bg, border: `1.5px solid ${a.border}`, borderRadius: 14, padding: "13px 13px 12px", cursor: "pointer", position: "relative" }}>
+                {a.premium && <div style={{ position: "absolute", top: 9, right: 9 }}><PremiumTag /></div>}
+                <span style={{ fontSize: 22, color: a.iconColor }}>{a.icon}</span>
+                <Text size={12} weight={700} style={{ marginTop: 8, lineHeight: 1.3 }}>{a.label}</Text>
+                <Text size={10} color={C.sub} style={{ marginTop: 3, lineHeight: 1.4 }}>{a.sub}</Text>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── DAILY LIFE ──────────────────────────────── */}
+        <div style={{ padding: "16px 20px 0" }}>
+          <SectionHead label="Daily Life" />
+
+          {/* Daily Wellness — advanced tips with nutritional specifics */}
+          <div onClick={() => onNav("daily")} style={{
+            background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14,
+            padding: "14px 16px", cursor: "pointer", position: "relative",
+          }}>
+            <div style={{ position: "absolute", top: 12, right: 12 }}><PremiumTag /></div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "#FFFDE8", border: `1px solid #E0D840`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <span style={{ fontSize: 18 }}>✿</span>
+              </div>
+              <div>
+                <Text size={12} weight={700}>Daily Wellness Tips</Text>
+                <Text size={10} color={C.sub}>AI-matched to your skin profile today</Text>
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {[
+                {
+                  icon: "🥦",
+                  title: "Eat broccoli or kale today",
+                  desc: "Sulforaphane in cruciferous veg activates Nrf2 — boosts your skin's own UV defence by ~30%",
+                  tag: "Antioxidant",
+                  tagColor: C.mintDark, tagBg: "#E8FFFB",
+                  progress: 0,
+                },
+                {
+                  icon: "🐟",
+                  title: "Add omega-3 (salmon / flaxseed)",
+                  desc: "EPA reduces prostaglandin E2 — directly lowers the inflammatory response behind your breakouts",
+                  tag: "Anti-inflammatory",
+                  tagColor: C.accent, tagBg: C.accentLight,
+                  progress: 100,
+                },
+                {
+                  icon: "💧",
+                  title: "Hydration — 3 of 8 glasses done",
+                  desc: "Dehydration thickens ceramide layers — aim 500ml before noon to maintain transepidermal water loss",
+                  tag: "Barrier",
+                  tagColor: "#1A6A88", tagBg: C.accentLight,
+                  progress: 38,
+                },
+              ].map(tip => (
+                <div key={tip.title} style={{
+                  background: C.card, borderRadius: 10, padding: "9px 11px",
+                  display: "flex", gap: 10, alignItems: "flex-start",
+                }}>
+                  <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>{tip.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                      <Text size={11} weight={700}>{tip.title}</Text>
+                      <div style={{ padding: "1px 6px", borderRadius: 99, background: tip.tagBg, fontSize: 7, fontWeight: 700, color: tip.tagColor, fontFamily: "'DM Sans', sans-serif", whiteSpace: "nowrap", flexShrink: 0 }}>{tip.tag}</div>
+                    </div>
+                    <Text size={9} color={C.sub} style={{ lineHeight: 1.55 }}>{tip.desc}</Text>
+                    {tip.progress > 0 && (
+                      <div style={{ marginTop: 5, height: 3, borderRadius: 99, background: C.border }}>
+                        <div style={{ height: "100%", width: `${tip.progress}%`, borderRadius: 99, background: tip.progress === 100 ? C.mint : C.accentMid }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 8, fontSize: 10, color: C.accent, fontWeight: 600, textAlign: "right", fontFamily: "'DM Sans', sans-serif" }}>See all 7 tips today →</div>
+          </div>
+        </div>
+
+        {/* ── COMMUNITY & LOYALTY ─────────────────────── */}
+        <div style={{ padding: "16px 20px 0" }}>
+          <SectionHead label="Community & Rewards" />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+
+            {/* Community — with SVG icon */}
+            <div onClick={() => onNav("community")} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px", cursor: "pointer" }}>
+              <div style={{ width: 38, height: 38, borderRadius: 11, background: "#EEF4FF", border: "1px solid #C8D8F8", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="9" cy="7" r="4" stroke="#4A6CF7" strokeWidth="1.8"/>
+                  <path d="M2 21c0-3.87 3.13-7 7-7s7 3.13 7 7" stroke="#4A6CF7" strokeWidth="1.8" strokeLinecap="round"/>
+                  <circle cx="19" cy="8" r="3" stroke="#4A6CF7" strokeWidth="1.6"/>
+                  <path d="M22 21c0-2.76-1.34-5-3-6" stroke="#4A6CF7" strokeWidth="1.6" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <Text size={12} weight={700}>Community</Text>
+              <Text size={10} color={C.sub} style={{ marginTop: 2 }}>Reviews · Routines</Text>
+              <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 3 }}>
+                {["🙂","😊","🙂"].map((e, i) => <span key={i} style={{ fontSize: 11 }}>{e}</span>)}
+                <Text size={9} color={C.muted} style={{ marginLeft: 4 }}>2.4k active</Text>
+              </div>
+            </div>
+
+            {/* Loyalty */}
+            <div onClick={() => onNav("loyalty")} style={{
+              background: C.accentLight, border: `1.5px solid ${C.accentMid}`, borderRadius: 14, padding: "14px", cursor: "pointer",
+            }}>
+              <div style={{ width: 38, height: 38, borderRadius: 11, background: C.accentMid, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="#0D2A3A" strokeWidth="1.8" strokeLinejoin="round" fill="#0D2A3A" fillOpacity="0.15"/>
+                </svg>
+              </div>
+              <Text size={12} weight={700} color={C.text}>Loyalty Points</Text>
+              <Text size={20} weight={800} color={C.accent} style={{ marginTop: 2, fontFamily: "Syne, sans-serif", lineHeight: 1 }}>1,240</Text>
+              <Text size={9} color={C.sub} style={{ marginTop: 2 }}>Gold · 260 pts to Platinum</Text>
+              <div style={{ marginTop: 6, height: 4, borderRadius: 99, background: C.border }}>
+                <div style={{ height: "100%", width: "82%", borderRadius: 99, background: C.accentMid }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── SHOP ─────────────────────────────────────── */}
+        <div style={{ padding: "16px 20px 0" }}>
+          <SectionHead label="Shop" action="See all →" onAction={() => onNav("shop")} />
+          <div onClick={() => onNav("shop")} style={{
+            background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14,
+            padding: "14px 16px", display: "flex", alignItems: "center", gap: 14, cursor: "pointer",
+          }}>
+            <div style={{ display: "flex" }}>
+              {["🧴","💊","🌿"].map((e, i) => (
+                <div key={i} style={{ width: 36, height: 36, borderRadius: 10, background: C.card, display: "flex", alignItems: "center", justifyContent: "center", marginLeft: i > 0 ? -8 : 0, border: `2px solid ${C.surface}` }}>
+                  <span style={{ fontSize: 18 }}>{e}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ flex: 1 }}>
+              <Text size={12} weight={700}>Personalised Picks for You</Text>
+              <Text size={10} color={C.sub}>4 products matched to your skin · AI-curated</Text>
+            </div>
+            <span style={{ color: C.muted, fontSize: 16 }}>›</span>
+          </div>
+        </div>
+
+        <div style={{ height: 10 }} />
       </Box>
       <NavBar active="home" onNav={onNav} />
     </Box>
