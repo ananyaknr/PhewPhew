@@ -988,7 +988,7 @@ function HomeScreen({ onNav }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {[
               { icon: "◎", label: "Ingredient Scanner", sub: "Photo scan · conflict check",   screen: "scan",     bg: "#E8FFFB", border: "#7ADFC8", iconColor: C.mintDark, premium: false },
-              { icon: "◈", label: "AI Skin Analysis",   sub: "Sensor + AI · deep insights",   screen: "analysis", bg: C.accentLight, border: C.border, iconColor: C.accent, premium: true },
+              { icon: "◈", label: "AI Skin Analysis",   sub: "AI+indicator · deep insights",   screen: "analysis", bg: C.accentLight, border: C.border, iconColor: C.accent, premium: false },
               { icon: "◉", label: "Progress Tracker",   sub: "Before/After · score trend",    screen: "tracker",  bg: C.accentLight, border: C.border, iconColor: C.accent, premium: true },
               { icon: "✚", label: "Derm Consult",       sub: "Video call · ฿300–500/session", screen: "derm",     bg: "#FFFDE8",  border: "#E0D840", iconColor: "#5A5000", premium: true },
             ].map(a => (
