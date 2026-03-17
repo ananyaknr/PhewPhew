@@ -1,9 +1,9 @@
-import InspectorApp from "@/components/InspectorApp";
+import PhewphewApp from "@/components/PhewphewApp";
 
 export default function Home() {
   return (
     <main>
-      <InspectorApp />
+      <PhewphewApp />
     </main>
   );
 }

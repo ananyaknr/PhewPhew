@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { PROMPT } from './Constants';
 import { FaceAnalyzer, type StatusType } from '@/logic/FaceAnalyzer';
 import { AppHeader } from './organisms/AppHeader';
 import { VideoPane } from './organisms/VideoPane';
 import { InspectorPane } from './organisms/InspectorPane';
+import { ResultsPane, type AnalysisResults } from './organisms/ResultsPane';
+import { cn } from '@/components/ui/Atoms';
+import { ClipboardList, Code } from 'lucide-react';
 
 export default function InspectorApp() {
   const [status, setStatus] = useState<{ text: string; type: StatusType }>({ text: 'Starting…', type: 'idle' });
@@ -20,6 +23,11 @@ export default function InspectorApp() {
   } | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [copied, setCopied] = useState(false);
+  
+  // New state for results
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
+  const [isAnalysing, setIsAnalysing] = useState(false);
+  const [activeSideTab, setActiveSideTab] = useState<'results' | 'inspector'>('results');
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -47,6 +55,53 @@ export default function InspectorApp() {
       analyzerRef.current.setShowOverlay(showOverlay);
     }
   }, [showOverlay]);
+
+  const runMockAnalysis = useCallback(() => {
+    setIsAnalysing(true);
+    setActiveSideTab('results');
+    
+    // Simulate API delay
+    setTimeout(() => {
+      const mockResults: AnalysisResults = {
+        overall_summary: "The skin shows good overall hydration with localized areas of mild inflammation. T-zone exhibits slight oiliness, but texture remains relatively smooth across the cheeks.",
+        conditions: [
+          {
+            name: "Mild Erythema",
+            icon: "🔴",
+            severity: "Low",
+            confidence: 92,
+            zone: "Left Cheek",
+            description: "Localized redness observed, possibly due to sensitivity or recent environmental exposure."
+          },
+          {
+            name: "Sebum Activity",
+            icon: "✨",
+            severity: "Medium",
+            confidence: 88,
+            zone: "T-Zone",
+            description: "Increased reflectance indicates moderate oil production in the forehead and nasal bridge."
+          },
+          {
+            name: "Congested Pores",
+            icon: "🔘",
+            severity: "Low",
+            confidence: 85,
+            zone: "Chin",
+            description: "Slight texture irregularity suggesting minor pore congestion."
+          }
+        ],
+        recommendations: [
+          "Incorporate a soothing niacinamide serum to address localized redness.",
+          "Use a gentle BHA exfoliant twice a week on the T-zone to manage oil.",
+          "Ensure daily SPF 50 application to prevent UV-induced inflammation."
+        ],
+        limitations: "This analysis is based on a single 2D image. Results may vary with lighting and camera quality. Not a medical diagnosis."
+      };
+      
+      setAnalysisResults(mockResults);
+      setIsAnalysing(false);
+    }, 2500);
+  }, []);
 
   const capturePayload = () => {
     if (!analyzerRef.current) return;
@@ -88,6 +143,9 @@ export default function InspectorApp() {
       size: frameData.size,
       prompt: PROMPT,
     });
+
+    // Trigger analysis pipeline
+    runMockAnalysis();
   };
 
   const copyPayload = () => {
@@ -151,13 +209,45 @@ export default function InspectorApp() {
           isCapturing={isCapturing}
         />
 
-        <InspectorPane 
-          capturedData={capturedData}
-          copyPayload={copyPayload}
-          copied={copied}
-          syntaxHighlight={syntaxHighlight}
-          colorPrompt={colorPrompt}
-        />
+        <div className="flex flex-col bg-dark2 border-l border-sage/10 overflow-hidden relative">
+          {/* Side Tab Switcher */}
+          <div className="flex bg-black/40 border-b border-sage/10 flex-shrink-0">
+            <button 
+              onClick={() => setActiveSideTab('results')}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b-2",
+                activeSideTab === 'results' ? "text-mint border-mint" : "text-muted border-transparent hover:text-sage"
+              )}
+            >
+              <ClipboardList className="w-4 h-4" />
+              Analysis
+            </button>
+            <button 
+              onClick={() => setActiveSideTab('inspector')}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b-2",
+                activeSideTab === 'inspector' ? "text-mint border-mint" : "text-muted border-transparent hover:text-sage"
+              )}
+            >
+              <Code className="w-4 h-4" />
+              Inspector
+            </button>
+          </div>
+
+          <div className="flex-1 flex flex-col min-h-0 relative">
+            {activeSideTab === 'results' ? (
+              <ResultsPane results={analysisResults} isLoading={isAnalysing} />
+            ) : (
+              <InspectorPane 
+                capturedData={capturedData}
+                copyPayload={copyPayload}
+                copied={copied}
+                syntaxHighlight={syntaxHighlight}
+                colorPrompt={colorPrompt}
+              />
+            )}
+          </div>
+        </div>
       </div>
       
       <style jsx global>{`

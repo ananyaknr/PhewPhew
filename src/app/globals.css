@@ -4,23 +4,36 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-dm-sans);
+  --font-syne: var(--font-syne);
   --font-serif: var(--font-dm-serif);
   --font-mono: var(--font-jetbrains-mono);
 
+  /* PhewPhew CI Palette - Updated from Repo */
+  --color-pp-bg: #EEF8FD;
+  --color-pp-surface: #FFFFFF;
+  --color-pp-card: #E2F4FC;
+  --color-pp-border: #B8DFF0;
+  --color-pp-text: #0D2A3A;
+  --color-pp-sub: #4A7A8A;
+  --color-pp-muted: #8BBCCC;
+  --color-pp-accent: #2D9CCA;
+  --color-pp-accent-mid: #9BE9FA;
+  --color-pp-premium: #6B8A2A;
+  --color-pp-premium-mid: #fff9af;
+  --color-pp-mint: #b5ffef;
+  --color-pp-danger: #D44B3A;
+
+  /* Retaining some of the inspector colors for analysis overlays */
   --color-dark: #111918;
-  --color-dark2: #182220;
-  --color-teal: #0D6B5C;
-  --color-teal2: #14917A;
-  --color-sage: #84B59F;
   --color-mint: #02C39A;
-  --color-muted: #4E6B63;
+  --color-sage: #84B59F;
   --color-warn: #E07B39;
   --color-code-bg: #0C1614;
 }
 
 :root {
-  --background: #111918;
-  --foreground: #ffffff;
+  --background: #EEF8FD;
+  --foreground: #0D2A3A;
 }
 
 body {
@@ -29,24 +42,16 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  font-family: var(--font-dm-sans);
 }
 
-/* Background effects from original CSS */
+/* Background effects - Softened for PhewPhew CI */
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 50% 40% at 70% 10%, rgba(13,107,92,.14) 0%, transparent 65%),
-    radial-gradient(ellipse 30% 30% at 10% 90%, rgba(2,195,154,.07) 0%, transparent 60%);
-}
-
-@keyframes spin { 
-  to { transform: rotate(360deg); } 
-}
-
-.animate-spin-custom {
-  animation: spin .7s linear infinite;
+    radial-gradient(ellipse 50% 40% at 70% 10%, rgba(155, 233, 250, 0.2) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 30% at 10% 90%, rgba(181, 255, 239, 0.15) 0%, transparent 60%);
 }
 
 @keyframes scanline {
@@ -56,8 +61,23 @@ body::before {
 
 .scan-line {
   position: absolute; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, #02C39A, transparent);
-  box-shadow: 0 0 12px #02C39A;
+  background: linear-gradient(90deg, transparent, #2D9CCA, transparent);
+  box-shadow: 0 0 12px #2D9CCA;
   animation: scanline .5s ease forwards;
   pointer-events: none; z-index: 40;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #B8DFF0;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2D9CCA;
 }
