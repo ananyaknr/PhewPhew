@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhewPhew — Live Demo (Payload Inspector)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+
+<style>
+:root {
+  --dark:  #111918;
+  --dark2: #182220;
+  --teal:  #0D6B5C;
+  --teal2: #14917A;
+  --sage:  #84B59F;
+  --mint:  #02C39A;
+  --muted: #4E6B63;
+  --warn:  #E07B39;
+  --code-bg: #0C1614;
+  --code-border: rgba(2,195,154,.15);
+  --string: #98C379;
+  --number: #D19A66;
+  --key:    #61AFEF;
+  --bool:   #C678DD;
+  --null:   #56B6C2;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 40% at 70% 10%, rgba(13,107,92,.14) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 30% at 10% 90%, rgba(2,195,154,.07) 0%, transparent 60%);
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 20; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 24px;
+  border-bottom: 1px solid rgba(132,181,159,.1);
+  background: rgba(17,25,24,.8);
+  backdrop-filter: blur(8px);
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--teal); display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 14px; color: #fff;
+}
+.logo-name { font-family: 'DM Serif Display', serif; font-size: 19px; }
+.logo-name span { color: var(--sage); }
+
+.header-center {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(2,195,154,.08); border: 1px solid rgba(2,195,154,.2);
+  border-radius: 20px; padding: 4px 14px;
+}
+.header-center span { font-size: 12px; color: var(--mint); font-weight: 500; }
+
+.status-pill {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; color: var(--muted);
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); transition: all .3s; }
+.dot.on  { background: var(--mint); box-shadow: 0 0 8px rgba(2,195,154,.5); }
+.dot.err { background: #D94040; }
+
+/* ── LAYOUT ── */
+.layout {
+  position: relative; z-index: 10; flex: 1;
+  display: grid; grid-template-columns: 1fr 480px;
+  min-height: 0; overflow: hidden;
+}
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .right-pane { max-height: 55vh; }
+  body { overflow: auto; }
+}
+
+/* ── LEFT: VIDEO ── */
+.video-pane {
+  display: flex; flex-direction: column;
+  background: #080F0E;
+  border-right: 1px solid rgba(132,181,159,.08);
+}
+.video-wrap {
+  position: relative; flex: 1; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; transform: scaleX(-1); opacity: 0; transition: opacity .5s;
+}
+canvas#overlay {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transform: scaleX(-1);
+}
+canvas#cap { display: none; }
+
+.model-loading {
+  position: absolute; inset: 0; z-index: 30;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  background: rgba(8,15,14,.95);
+}
+.spin-ring {
+  width: 36px; height: 36px;
+  border: 2.5px solid rgba(2,195,154,.2); border-top-color: var(--mint);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+.model-loading p { font-size: 12px; color: var(--sage); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.no-cam {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: var(--muted); font-size: 13px; text-align: center; padding: 24px;
+}
+.no-cam .bi { font-size: 44px; opacity: .3; }
+
+/* Scan line animation when capturing */
+@keyframes scanline {
+  0%   { top: 0; opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  box-shadow: 0 0 12px var(--mint);
+  animation: scanline .5s ease forwards;
+  pointer-events: none; z-index: 40;
+}
+
+/* Zone legend */
+.zone-legend {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding: 8px 16px;
+  border-top: 1px solid rgba(132,181,159,.07);
+  background: rgba(0,0,0,.3); flex-shrink: 0;
+}
+.leg { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--muted); }
+.leg-sw { width: 8px; height: 8px; border-radius: 2px; }
+
+/* Controls */
+.controls {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 10px 16px;
+  border-top: 1px solid rgba(132,181,159,.07);
+  background: rgba(0,0,0,.2); flex-shrink: 0;
+}
+.btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 18px; border-radius: 9px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .18s; letter-spacing: .2px;
+}
+.btn-primary { background: var(--teal); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--teal2); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-ghost { background: rgba(255,255,255,.05); color: var(--sage); border: 1px solid rgba(132,181,159,.18); }
+.btn-ghost:hover { background: rgba(132,181,159,.1); }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+
+/* ── RIGHT: PAYLOAD INSPECTOR ── */
+.right-pane {
+  display: flex; flex-direction: column;
+  background: var(--dark2); overflow: hidden;
+}
+
+/* Tabs */
+.tabs {
+  display: flex; border-bottom: 1px solid rgba(132,181,159,.1);
+  flex-shrink: 0; background: rgba(0,0,0,.2);
+}
+.tab {
+  padding: 11px 18px; font-size: 12px; font-weight: 500; color: var(--muted);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all .15s; display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--sage); }
+.tab.active { color: var(--mint); border-bottom-color: var(--mint); }
+.tab-count {
+  font-size: 10px; background: rgba(2,195,154,.15); color: var(--mint);
+  border-radius: 10px; padding: 1px 6px; font-weight: 600;
+}
+
+/* Tab panels */
+.tab-panel { display: none; flex: 1; overflow-y: auto; min-height: 0; }
+.tab-panel.active { display: flex; flex-direction: column; }
+
+/* Empty state */
+.empty-state {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px; padding: 32px; text-align: center;
+}
+.empty-state .ei { font-size: 38px; opacity: .25; }
+.empty-state p { font-size: 12px; color: var(--muted); line-height: 1.6; max-width: 260px; }
+
+/* ── CODE BLOCK ── */
+.code-section { flex: 1; display: flex; flex-direction: column; padding: 0; }
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(0,0,0,.3);
+  border-bottom: 1px solid rgba(132,181,159,.08);
+  flex-shrink: 0;
+}
+.code-title { font-size: 11px; font-weight: 600; letter-spacing: .8px; color: var(--sage); text-transform: uppercase; }
+.copy-btn {
+  font-size: 10px; padding: 3px 10px; border-radius: 6px; border: none; cursor: pointer;
+  background: rgba(132,181,159,.1); color: var(--sage);
+  font-family: 'DM Sans', sans-serif; transition: all .15s;
+}
+.copy-btn:hover { background: rgba(132,181,159,.2); }
+.copy-btn.copied { background: rgba(2,195,154,.15); color: var(--mint); }
+
+pre {
+  margin: 0; padding: 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.65;
+  overflow-x: auto; overflow-y: auto;
+  background: var(--code-bg);
+  flex: 1;
+  color: #ABB2BF;
+}
+
+/* Syntax highlight classes */
+.jk  { color: var(--key); }     /* JSON key */
+.js  { color: var(--string); }  /* JSON string */
+.jn  { color: var(--number); }  /* number */
+.jb  { color: var(--bool); }    /* bool */
+.jl  { color: var(--null); }    /* null */
+.cm  { color: #5C6370; font-style: italic; } /* comment */
+.trunc { color: #5C6370; }       /* truncated indicator */
+
+/* ── IMAGE PANEL ── */
+.image-section { flex: 1; display: flex; flex-direction: column; }
+.image-header {
+  padding: 10px 16px; border-bottom: 1px solid rgba(132,181,159,.08);
+  background: rgba(0,0,0,.3); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.img-meta { font-size: 11px; color: var(--muted); }
+.img-meta strong { color: var(--sage); font-weight: 600; }
+.captured-img-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--code-bg); }
+.captured-img-wrap img { max-width: 100%; max-height: 100%; border-radius: 10px; border: 1px solid var(--code-border); }
+.b64-preview { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #5C6370; line-height: 1.5; word-break: break-all; background: var(--code-bg); flex: 1; overflow-y: auto; }
+
+/* Prompt panel */
+.prompt-section { flex: 1; display: flex; flex-direction: column; }
+.prompt-meta {
+  padding: 10px 16px; border-bottom: 1px solid rgba(132,181,159,.08);
+  background: rgba(0,0,0,.3); flex-shrink: 0;
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.meta-item { display: flex; flex-direction: column; gap: 2px; }
+.meta-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.meta-value { font-size: 12px; font-weight: 600; color: var(--sage); }
+
+.prompt-text {
+  flex: 1; padding: 16px; overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.7;
+  background: var(--code-bg); color: #ABB2BF; white-space: pre-wrap;
+}
+.prompt-text .ph  { color: var(--mint); font-weight: 500; }    /* placeholder/var */
+.prompt-text .kw  { color: #C678DD; }                          /* keyword */
+.prompt-text .str { color: var(--string); }                    /* string value */
+.prompt-text .cmt { color: #5C6370; font-style: italic; }      /* comment */
+
+/* Info panel */
+.info-section { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.info-card {
+  background: rgba(255,255,255,.03); border: 1px solid rgba(132,181,159,.1);
+  border-radius: 12px; padding: 14px 16px;
+}
+.info-card h4 { font-size: 11px; font-weight: 700; letter-spacing: .8px; color: var(--sage); text-transform: uppercase; margin-bottom: 8px; }
+.info-card p  { font-size: 12px; color: rgba(255,255,255,.65); line-height: 1.6; }
+.info-card code { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; background: rgba(2,195,154,.08); color: var(--mint); padding: 1px 5px; border-radius: 4px; }
+.flow-step {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 12px; color: rgba(255,255,255,.65); line-height: 1.5;
+  padding: 8px 0; border-bottom: 1px solid rgba(132,181,159,.07);
+}
+.flow-step:last-child { border-bottom: none; }
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  background: var(--teal); display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff; margin-top: 1px;
+}
+.warn-box {
+  background: rgba(224,123,57,.07); border: 1px solid rgba(224,123,57,.2);
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 11.5px; color: rgba(224,123,57,.85); line-height: 1.55;
+}
+.tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin: 2px; }
+.tag-get  { background: rgba(97,175,239,.15); color: #61AFEF; }
+.tag-post { background: rgba(2,195,154,.15); color: var(--mint); }
+.tag-key  { background: rgba(192,96,224,.15); color: #C678DD; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">ผ</div>
+    <div class="logo-name">Phew<span>Phew</span></div>
+  </div>
+  <div class="header-center">
+    <span>🔍 Payload Inspector — No API Key Required</span>
+  </div>
+  <div class="status-pill">
+    <div class="dot" id="dot"></div>
+    <span id="statusTxt">Starting…</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: Live camera + segmentation -->
+  <div class="video-pane">
+    <div class="video-wrap" id="vwrap">
+      <div class="no-cam" id="noCam">
+        <div class="bi">📷</div>
+        <p>Camera access required.<br>Allow permissions and reload.</p>
+      </div>
+      <div class="model-loading" id="mload">
+        <div class="spin-ring"></div>
+        <p>Loading FaceMesh model…</p>
+      </div>
+      <video id="video" playsinline autoplay muted></video>
+      <canvas id="overlay"></canvas>
+      <canvas id="cap"></canvas>
+    </div>
+
+    <div class="zone-legend">
+      <div class="leg"><div class="leg-sw" style="background:#60E090"></div>Forehead</div>
+      <div class="leg"><div class="leg-sw" style="background:#E06060"></div>T-Zone</div>
+      <div class="leg"><div class="leg-sw" style="background:#60A0E0"></div>Cheeks</div>
+      <div class="leg"><div class="leg-sw" style="background:#E0C060"></div>Chin/Jaw</div>
+      <div class="leg"><div class="leg-sw" style="background:#C060E0"></div>Eye area</div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-ghost" onclick="toggleOverlay()" id="overlayBtn">🔲 Hide zones</button>
+      <button class="btn btn-primary" id="snapBtn" onclick="capturePayload()" disabled>
+        📸 Capture &amp; Inspect Payload
+      </button>
+    </div>
+  </div>
+
+  <!-- RIGHT: Inspector -->
+  <div class="right-pane">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('payload')" id="tab-payload">JSON Payload</div>
+      <div class="tab" onclick="switchTab('image')" id="tab-image">Captured Image</div>
+      <div class="tab" onclick="switchTab('prompt')" id="tab-prompt">Prompt</div>
+      <div class="tab" onclick="switchTab('info')" id="tab-info">How it works</div>
+    </div>
+
+    <!-- Payload tab -->
+    <div class="tab-panel active" id="panel-payload">
+      <div class="empty-state" id="payload-empty">
+        <div class="ei">{ }</div>
+        <p>Hit <strong>Capture &amp; Inspect Payload</strong> to see the exact JSON that would be sent to the Anthropic API.</p>
+      </div>
+      <div class="code-section" id="payload-code" style="display:none">
+        <div class="code-header">
+          <span class="code-title">POST /v1/messages — Request Body</span>
+          <button class="copy-btn" id="copyPayloadBtn" onclick="copyPayload()">Copy JSON</button>
+        </div>
+        <pre id="payloadPre"></pre>
+      </div>
+    </div>
+
+    <!-- Image tab -->
+    <div class="tab-panel" id="panel-image">
+      <div class="empty-state" id="image-empty">
+        <div class="ei">🖼️</div>
+        <p>Capture a frame first to preview the image that would be sent.</p>
+      </div>
+      <div class="image-section" id="image-content" style="display:none">
+        <div class="image-header">
+          <div>
+            <div class="code-title" style="font-size:11px;letter-spacing:.8px;color:var(--sage);text-transform:uppercase;font-weight:700">Captured Frame</div>
+            <div class="img-meta" id="imgMeta"></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="switchView()">Toggle b64</button>
+        </div>
+        <div class="captured-img-wrap" id="imgViewImg">
+          <img id="capturedPreview" src="" alt="Captured frame">
+        </div>
+        <div class="b64-preview" id="imgViewB64" style="display:none">
+          <div style="color:var(--sage);font-size:10px;margin-bottom:8px">Base64 JPEG (first 500 chars shown):</div>
+          <span id="b64Preview"></span><span style="color:#5C6370">…[truncated]</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt tab -->
+    <div class="tab-panel" id="panel-prompt">
+      <div class="prompt-section">
+        <div class="prompt-meta">
+          <div class="meta-item"><div class="meta-label">Model</div><div class="meta-value">claude-sonnet-4-20250514</div></div>
+          <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">user</div></div>
+          <div class="meta-item"><div class="meta-label">Max tokens</div><div class="meta-value">1 000</div></div>
+          <div class="meta-item"><div class="meta-label">Content parts</div><div class="meta-value">image + text</div></div>
+        </div>
+        <div class="prompt-text" id="promptDisplay"><span class="cmt">// Hit Capture to bind the prompt with live data</span></div>
+      </div>
+    </div>
+
+    <!-- Info tab -->
+    <div class="tab-panel" id="panel-info">
+      <div class="info-section">
+
+        <div class="info-card">
+          <h4>What this demo shows</h4>
+          <p>This is the exact data PhewPhew would send to the Anthropic API. No API key needed here — the request is built but never fired. You can inspect every field, copy the JSON, and paste it into any API client.</p>
+        </div>
+
+        <div class="info-card">
+          <h4>API Endpoint</h4>
+          <p>
+            <span class="tag tag-post">POST</span>
+            <code>https://api.anthropic.com/v1/messages</code>
+          </p>
+          <p style="margin-top:8px">Headers required in production:</p>
+          <p style="margin-top:6px">
+            <span class="tag tag-key">x-api-key</span> Your Anthropic key<br>
+            <span class="tag tag-key">anthropic-version</span> <code>2023-06-01</code><br>
+            <span class="tag tag-key">content-type</span> <code>application/json</code>
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h4>Request flow</h4>
+          <div class="flow-step"><div class="step-num">1</div><div>MediaPipe FaceMesh detects face + draws zone overlays at ~30fps on-device (no network)</div></div>
+          <div class="flow-step"><div class="step-num">2</div><div>On capture: current video frame is drawn to a hidden canvas and encoded as base64 JPEG</div></div>
+          <div class="flow-step"><div class="step-num">3</div><div>JSON payload is built: <code>model</code>, <code>max_tokens</code>, and a <code>messages</code> array with one user turn containing the image + text prompt</div></div>
+          <div class="flow-step"><div class="step-num">4</div><div>In production, payload is POSTed to <code>/v1/messages</code> — Claude returns structured JSON with conditions, severity, confidence, and recommendations</div></div>
+          <div class="flow-step"><div class="step-num">5</div><div>Response is parsed and rendered as the skin analysis cards in the sidebar</div></div>
+        </div>
+
+        <div class="warn-box">
+          ⚠️ <strong>Production note:</strong> The API key must never live in client-side code. PhewPhew's production build would proxy this request through a FastAPI backend endpoint that holds the key server-side.
+        </div>
+
+        <div class="info-card">
+          <h4>Segmentation tech</h4>
+          <p>Real-time face segmentation uses <code>@mediapipe/face_mesh</code> — 468 3D landmarks running via WebGL/WASM entirely in the browser. Zone overlays (forehead, T-zone, cheeks, chin, eye area) are drawn on a canvas using landmark polygon paths at ~30fps. Zero network requests for this layer.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CANVAS SETUP ──────────────────────────────────────────────────────────────
+const video   = document.getElementById('video');
+const overlay = document.getElementById('overlay');
+const cap     = document.getElementById('cap');
+const ctx     = overlay.getContext('2d');
+
+let landmarks = null;
+let showOverlay = true;
+let meshReady   = false;
+let rawPayload  = null;
+let b64ShowImg  = true;
+
+function resize() {
+  const w = document.getElementById('vwrap');
+  overlay.width = cap.width  = w.clientWidth;
+  overlay.height = cap.height = w.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+function status(txt, s) {
+  document.getElementById('statusTxt').textContent = txt;
+  const d = document.getElementById('dot');
+  d.className = 'dot' + (s==='on'?' on':s==='err'?' err':'');
+}
+
+// ── MEDIAPIPE ─────────────────────────────────────────────────────────────────
+const faceMesh = new FaceMesh({
+  locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`
+});
+faceMesh.setOptions({ maxNumFaces:1, refineLandmarks:true, minDetectionConfidence:.5, minTrackingConfidence:.5 });
+faceMesh.onResults(onResults);
+
+function onResults(res) {
+  if (!meshReady) {
+    meshReady = true;
+    document.getElementById('mload').style.display = 'none';
+    video.style.opacity = '1';
+    document.getElementById('snapBtn').disabled = false;
+    status('Face detected — ready', 'on');
+  }
+  ctx.clearRect(0, 0, overlay.width, overlay.height);
+  if (!res.multiFaceLandmarks?.length) { landmarks = null; status('No face', ''); return; }
+  landmarks = res.multiFaceLandmarks[0];
+  status('Live · ready to capture', 'on');
+  if (showOverlay) drawZones(landmarks);
+}
+
+// ── ZONE DRAWING ──────────────────────────────────────────────────────────────
+const ZONES = [
+  { name:'Forehead',  color:'rgba(96,224,144,',
+    pts:[10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109] },
+  { name:'T-Zone',    color:'rgba(224,96,96,',
+    pts:[168,6,197,195,5,4,1,19,94,2,164,0,11,12,13,14,15,16,17,18,200,199,175] },
+  { name:'Left Cheek',color:'rgba(96,160,224,',
+    pts:[234,93,132,58,172,136,150,149,176,148,152,377,400,378,379,365,397,288,361,323,454] },
+  { name:'Chin/Jaw',  color:'rgba(224,192,96,',
+    pts:[152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109,10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377] },
+  { name:'Left Eye',  color:'rgba(192,96,224,', pts:[33,7,163,144,145,153,154,155,133,173,157,158,159,160,161,246] },
+  { name:'Right Eye', color:'rgba(192,96,224,', pts:[362,382,381,380,374,373,390,249,263,466,388,387,386,385,384,398] },
+];
+
+function drawZones(lm) {
+  const W = overlay.width, H = overlay.height;
+  const p = i => ({ x: lm[i].x * W, y: lm[i].y * H });
+  ZONES.forEach(z => {
+    const valid = z.pts.filter(i => i < lm.length);
+    if (valid.length < 3) return;
+    ctx.beginPath();
+    ctx.moveTo(...Object.values(p(valid[0])));
+    valid.slice(1).forEach(i => ctx.lineTo(...Object.values(p(i))));
+    ctx.closePath();
+    ctx.fillStyle   = z.color + '0.11)';
+    ctx.strokeStyle = z.color + '0.45)';
+    ctx.lineWidth   = 1;
+    ctx.fill(); ctx.stroke();
+  });
+  // Landmark dots
+  [1,4,33,61,93,127,133,152,162,168,197,234,263,291,323,356,362,389,397,454].forEach(i => {
+    if (i >= lm.length) return;
+    ctx.beginPath(); ctx.arc(p(i).x, p(i).y, 1.8, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(2,195,154,0.65)'; ctx.fill();
+  });
+}
+
+function toggleOverlay() {
+  showOverlay = !showOverlay;
+  document.getElementById('overlayBtn').textContent = showOverlay ? '🔲 Hide zones' : '🔳 Show zones';
+  if (!showOverlay) ctx.clearRect(0, 0, overlay.width, overlay.height);
+}
+
+// ── CAMERA ────────────────────────────────────────────────────────────────────
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:{ideal:1280}, height:{ideal:720} } });
+    video.srcObject = stream;
+    document.getElementById('noCam').style.display = 'none';
+    status('Loading model…', '');
+    const camera = new Camera(video, {
+      onFrame: async () => { await faceMesh.send({ image: video }); },
+      width: 1280, height: 720
+    });
+    camera.start();
+  } catch(e) {
+    document.getElementById('noCam').style.display = 'flex';
+    document.getElementById('mload').style.display = 'none';
+    status('Camera unavailable', 'err');
+  }
+}
+startCamera();
+
+// ── CAPTURE & BUILD PAYLOAD ───────────────────────────────────────────────────
+function capturePayload() {
+  // Scan line animation
+  const sl = document.createElement('div');
+  sl.className = 'scan-line';
+  document.getElementById('vwrap').appendChild(sl);
+  setTimeout(() => sl.remove(), 600);
+
+  // Draw un-mirrored frame
+  const cctx = cap.getContext('2d');
+  cap.width = overlay.width; cap.height = overlay.height;
+  cctx.save();
+  cctx.scale(-1, 1);
+  cctx.drawImage(video, -cap.width, 0, cap.width, cap.height);
+  cctx.restore();
+
+  const dataURL = cap.toDataURL('image/jpeg', 0.88);
+  const b64 = dataURL.split(',')[1];
+  const kbSize = Math.round(b64.length * 0.75 / 1024);
+
+  // ── Build the exact prompt ──────────────────────────────────────────────────
+  const PROMPT = `You are PhewPhew's AI skin analysis engine. Analyse the facial skin image carefully.
+Respond ONLY with valid JSON — no markdown, no extra text.
+
+{
+  "overall_summary": "2-sentence overall skin assessment",
+  "conditions": [
+    {
+      "name": "condition name",
+      "icon": "emoji",
+      "severity": "None|Low|Medium|High",
+      "confidence": 0-100,
+      "zone": "Forehead|T-Zone|Left cheek|Right cheek|Chin|Eye area|Full face",
+      "description": "1-2 sentences of what you observe"
+    }
+  ],
+  "recommendations": ["rec 1", "rec 2", "rec 3"],
+  "limitations": "one sentence about photo-only analysis limits"
+}
+
+Assess: Acne/breakouts, Hyperpigmentation, Redness/inflammation, Pore visibility, Oiliness, Skin texture, Signs of dehydration, Uneven tone.
+Only flag conditions with clear visual evidence.`;
+
+  // ── Build the full API payload ──────────────────────────────────────────────
+  rawPayload = {
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1000,
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: "image/jpeg",
+              data: "[BASE64_JPEG_DATA]" // replaced with actual b64 in real call
+            }
+          },
+          {
+            type: "text",
+            text: PROMPT
+          }
+        ]
+      }
+    ]
+  };
+
+  // Store actual b64 separately for image tab
+  window._capturedB64  = b64;
+  window._capturedURL  = dataURL;
+  window._capturedSize = kbSize;
+  window._capturedPrompt = PROMPT;
+
+  renderPayloadTab(rawPayload, b64, kbSize);
+  renderImageTab(dataURL, b64, kbSize);
+  renderPromptTab(PROMPT);
+  switchTab('payload');
+}
+
+// ── RENDER PAYLOAD TAB ────────────────────────────────────────────────────────
+function renderPayloadTab(payload, b64, kbSize) {
+  document.getElementById('payload-empty').style.display = 'none';
+  document.getElementById('payload-code').style.display  = 'flex';
+
+  // Pretty-print with syntax highlighting
+  const jsonStr = JSON.stringify(payload, null, 2);
+  const highlighted = syntaxHighlight(jsonStr);
+  document.getElementById('payloadPre').innerHTML = highlighted;
+}
+
+function syntaxHighlight(json) {
+  return json
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+      let cls = 'jn';
+      if (/^"/.test(match)) {
+        cls = /:$/.test(match) ? 'jk' : 'js';
+      } else if (/true|false/.test(match)) {
+        cls = 'jb';
+      } else if (/null/.test(match)) {
+        cls = 'jl';
+      }
+      return `<span class="${cls}">${match}</span>`;
+    });
+}
+
+function copyPayload() {
+  if (!rawPayload) return;
+  // Build the real payload with actual b64 for copy
+  const real = JSON.parse(JSON.stringify(rawPayload));
+  real.messages[0].content[0].source.data = window._capturedB64;
+  navigator.clipboard.writeText(JSON.stringify(real, null, 2)).then(() => {
+    const btn = document.getElementById('copyPayloadBtn');
+    btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy JSON'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── RENDER IMAGE TAB ──────────────────────────────────────────────────────────
+function renderImageTab(dataURL, b64, kbSize) {
+  document.getElementById('image-empty').style.display   = 'none';
+  document.getElementById('image-content').style.display = 'flex';
+  document.getElementById('capturedPreview').src = dataURL;
+  document.getElementById('imgMeta').innerHTML =
+    `<strong>${kbSize} KB</strong> · JPEG · base64 encoded · ${b64.length.toLocaleString()} chars`;
+  document.getElementById('b64Preview').textContent = b64.slice(0, 500);
+}
+
+function switchView() {
+  b64ShowImg = !b64ShowImg;
+  document.getElementById('imgViewImg').style.display = b64ShowImg ? 'flex' : 'none';
+  document.getElementById('imgViewB64').style.display = b64ShowImg ? 'none' : 'block';
+}
+
+// ── RENDER PROMPT TAB ─────────────────────────────────────────────────────────
+function renderPromptTab(prompt) {
+  // Colour-code the prompt a bit
+  const escaped = prompt
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const coloured = escaped
+    .replace(/(None\|Low\|Medium\|High)/g, '<span class="ph">$1</span>')
+    .replace(/(0-100)/g, '<span class="ph">$1</span>')
+    .replace(/("overall_summary"|"conditions"|"name"|"icon"|"severity"|"confidence"|"zone"|"description"|"recommendations"|"limitations")/g, '<span class="str">$1</span>')
+    .replace(/(Respond ONLY with valid JSON)/g, '<span class="kw">$1</span>')
+    .replace(/(You are PhewPhew)/g, '<span class="ph">$1</span>');
+  document.getElementById('promptDisplay').innerHTML = coloured;
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+}
+</script>
+</body>
+</html>

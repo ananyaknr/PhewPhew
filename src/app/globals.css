@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-serif: var(--font-dm-serif);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --color-dark: #111918;
+  --color-dark2: #182220;
+  --color-teal: #0D6B5C;
+  --color-teal2: #14917A;
+  --color-sage: #84B59F;
+  --color-mint: #02C39A;
+  --color-muted: #4E6B63;
+  --color-warn: #E07B39;
+  --color-code-bg: #0C1614;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #111918;
+  --foreground: #ffffff;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Background effects from original CSS */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 40% at 70% 10%, rgba(13,107,92,.14) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 30% at 10% 90%, rgba(2,195,154,.07) 0%, transparent 60%);
+}
+
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}
+
+.animate-spin-custom {
+  animation: spin .7s linear infinite;
+}
+
+@keyframes scanline {
+  0%   { top: 0; opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #02C39A, transparent);
+  box-shadow: 0 0 12px #02C39A;
+  animation: scanline .5s ease forwards;
+  pointer-events: none; z-index: 40;
 }
