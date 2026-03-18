@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
 import { Box } from "@/components/atoms/Layout";
 import { Text } from "@/components/atoms/Text";
-import { Badge } from "@/components/atoms/Badge";
+import { PremiumBadge } from "../atoms/PremiumBadge";
 
 export const DermScreen: React.FC = () => {
   const router = useRouter();
@@ -50,7 +50,7 @@ export const DermScreen: React.FC = () => {
           Derm Consult
         </Text>
         <div style={{ marginLeft: "auto" }}>
-          <Badge premium />
+          <PremiumBadge premium />
         </div>
       </Box>
 
