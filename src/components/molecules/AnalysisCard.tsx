@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn, Tag } from '@/components/ui/Atoms';
+import { cn } from '@/logic/utils';
 
 export interface Condition {
   name: string;

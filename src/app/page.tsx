@@ -1,9 +1,5 @@
-import PhewphewApp from "@/components/PhewphewApp";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <main>
-      <PhewphewApp />
-    </main>
-  );
+  redirect("/onboarding");
 }

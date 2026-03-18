@@ -1,17 +1,14 @@
+"use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar } from "../ui/PhewphewAtoms";
+import { Box } from "@/components/atoms/Layout";
+import { Text } from "@/components/atoms/Text";
 
-interface ScanScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const ScanScreen: React.FC<ScanScreenProps> = ({ onNav }) => {
+export const ScanScreen: React.FC = () => {
+  const router = useRouter();
   const [phase, setPhase] = useState<"camera" | "scanning" | "result" | "manual" | "recent-detail">("camera");
   const [scanProgress, setScanProgress] = useState(0);
-  const [inputMode, setInputMode] = useState<"camera" | "text">("camera");
-  const [productName, setProductName] = useState("");
-  const [productDesc, setProductDesc] = useState("");
   const [frame, setFrame] = useState(0);
 
   useEffect(() => {
@@ -38,10 +35,8 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onNav }) => {
 
   return (
     <Box style={{ height: "100vh", background: "#0D1F2A", display: "flex", flexDirection: "column" }}>
-      <div style={{ background: "#0D1F2A" }}><StatusBar /></div>
-
       <div style={{ padding: "2px 20px 12px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div onClick={() => onNav("home")} style={{ cursor: "pointer", color: "#9BE9FA", fontSize: 20 }}>‹</div>
+        <div onClick={() => router.push("/home")} style={{ cursor: "pointer", color: "#9BE9FA", fontSize: 20 }}>‹</div>
         <Text size={17} weight={800} color="#fff" style={{ fontFamily: "Syne, sans-serif" }}>Ingredient Scanner</Text>
       </div>
 
@@ -72,8 +67,6 @@ export const ScanScreen: React.FC<ScanScreenProps> = ({ onNav }) => {
           <div onClick={() => setPhase("camera")} style={{ marginTop: 20, color: C.accent, cursor: "pointer" }}>← Scan Another</div>
         </div>
       )}
-
-      <NavBar active="scan" onNav={onNav} />
     </Box>
   );
 };

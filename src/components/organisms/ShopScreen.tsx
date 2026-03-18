@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar } from "../ui/PhewphewAtoms";
+import { Box } from "@/components/atoms/Layout";
+import { Text } from "@/components/atoms/Text";
 
-interface ShopScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const ShopScreen: React.FC<ShopScreenProps> = ({ onNav }) => {
+export const ShopScreen: React.FC = () => {
+  const router = useRouter();
   const products = [
     { emoji: "🧴", name: "COSRX Snail Mucin", price: "฿490", match: "98% Match" },
     { emoji: "💧", name: "Round Lab Birch Toner", price: "฿480", match: "96% Match" },
@@ -15,9 +15,8 @@ export const ShopScreen: React.FC<ShopScreenProps> = ({ onNav }) => {
 
   return (
     <Box style={{ height: "100vh", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
       <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div onClick={() => onNav("home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
+        <div onClick={() => router.push("/home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>PhewPhew Shop</Text>
       </Box>
 
@@ -34,7 +33,6 @@ export const ShopScreen: React.FC<ShopScreenProps> = ({ onNav }) => {
           ))}
         </div>
       </Box>
-      <NavBar active="home" onNav={onNav} />
     </Box>
   );
 };

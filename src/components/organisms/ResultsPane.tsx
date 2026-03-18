@@ -1,6 +1,5 @@
 import React from 'react';
-import { AnalysisCard, type Condition } from '../molecules/AnalysisCard';
-import { InfoCard } from '../molecules/Molecules';
+import { AnalysisCard, type Condition } from '@/components/molecules/AnalysisCard';
 import { Sparkles, ClipboardList, ShieldAlert, Loader2 } from 'lucide-react';
 
 export interface AnalysisResults {
@@ -55,7 +54,7 @@ export function ResultsPane({ results, isLoading }: ResultsPaneProps) {
           </div>
           <div className="bg-gradient-to-br from-teal/20 to-mint/5 border border-mint/20 rounded-2xl p-5 shadow-lg shadow-black/20">
             <p className="text-sm text-white leading-relaxed font-medium italic">
-              "{results.overall_summary}"
+              &quot;{results.overall_summary}&quot;
             </p>
           </div>
         </section>

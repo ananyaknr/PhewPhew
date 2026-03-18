@@ -1,6 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, ChipSelector, StatusBar } from "../ui/PhewphewAtoms";
+import { Box } from "../atoms/Layout";
+import { Text } from "../atoms/Text";
+import { ChipSelector } from "../molecules/ChipSelector";
 import { 
   IllustrationWelcome, 
   IllustrationGender, 
@@ -8,13 +12,11 @@ import {
   IllustrationGoals, 
   IllustrationLifestyle, 
   IllustrationAllergy 
-} from "../ui/PhewphewIllustrations";
+} from "../atoms/Illustrations";
+import { useRouter } from "next/navigation";
 
-interface OnboardingScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => {
+export const OnboardingScreen: React.FC = () => {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [skinType, setSkinType] = useState<string | null>(null);
   const [gender, setGender] = useState<string | null>(null);
@@ -62,8 +64,6 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => 
         overflow: "hidden" 
       }}
     >
-      <StatusBar />
-
       {/* Progress bar */}
       <div style={{ padding: "0 20px", marginTop: 4, marginBottom: 12, flexShrink: 0, boxSizing: "border-box" }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -99,10 +99,10 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => 
               <Text size={10} weight={700} color="#0D2A3A" style={{ letterSpacing: "0.08em" }}>✦ POWERED BY AI + SENSOR</Text>
             </div>
             <Text size={28} weight={800} style={{ lineHeight: 1.15, fontFamily: "Syne, sans-serif", marginBottom: 10 }}>
-              Meet <span style={{ color: C.accent }}>PhewPhew</span> —<br />your skin's<br />best friend.
+              Meet <span style={{ color: C.accent }}>PhewPhew</span> —<br />your skin&apos;s<br />best friend.
             </Text>
             <Text size={14} color={C.sub} style={{ lineHeight: 1.5, marginBottom: 20 }}>
-              Personalised skincare powered by AI + sensor technology. We'll learn your skin, build your routine, and help it glow.
+              Personalised skincare powered by AI + sensor technology. We&apos;ll learn your skin, build your routine, and help it glow.
             </Text>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))", gap: 8 }}>
               {[["◎", "Scan Ingredients"], ["◈", "AI Analysis"], ["◆", "Earn Rewards"]].map(([icon, label]) => (
@@ -118,7 +118,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => 
         {/* ── Step 1: Gender ── */}
         {step === 1 && (
           <>
-            <Text size={22} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What's your<br />biological sex?</Text>
+            <Text size={22} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What&apos;s your<br />biological sex?</Text>
             <Text size={13} color={C.sub} style={{ lineHeight: 1.5, marginBottom: 16 }}>
               Hormones affect skin behaviour — oil production, sensitivity, and aging patterns differ.
             </Text>
@@ -239,7 +239,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => 
         {/* ── Step 5: Surrounding / environment ── */}
         {step === 5 && (
           <>
-            <Text size={22} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What's your<br />living environment?</Text>
+            <Text size={22} weight={800} style={{ fontFamily: "Syne, sans-serif", lineHeight: 1.2, marginBottom: 8 }}>What&apos;s your<br />living environment?</Text>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))", gap: 10 }}>
               {[
                 { val: "High Pollution", desc: "PM2.5, smog — needs antioxidants", icon: "🏙", tag: "Risk" },
@@ -288,7 +288,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => 
             <Text size={11} weight={700} color={C.sub} style={{ letterSpacing: "0.08em", marginTop: 20, marginBottom: 10 }}>PAST REACTIONS</Text>
             <div style={{ padding: "12px 14px", borderRadius: 12, background: C.surface, border: `1.5px solid ${C.border}`, minHeight: 60, boxSizing: "border-box" }}>
               <Text size={12} color={C.muted} style={{ lineHeight: 1.5 }}>
-                e.g. "Redness from fragrance toners"
+                e.g. &quot;Redness from fragrance toners&quot;
               </Text>
             </div>
             <Text size={12} color={C.sub} style={{ marginTop: 16, textAlign: "center", display: "block" }}>No known allergies? Tap Continue.</Text>
@@ -301,7 +301,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => 
         <div
           onClick={() => {
             if (!canProceed() && step !== 0 && step !== 6) return;
-            if (step === TOTAL_STEPS - 1) onNav("home");
+            if (step === TOTAL_STEPS - 1) router.push("/home");
             else setStep(s => s + 1);
           }}
           style={{
@@ -313,7 +313,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onNav }) => 
             boxSizing: "border-box"
           }}
         >
-          {step === 0 ? "Let's begin →" : step === TOTAL_STEPS - 1 ? "Start My Journey ✦" : "Continue →"}
+          {step === 0 ? "Let&apos;s begin →" : step === TOTAL_STEPS - 1 ? "Start My Journey ✦" : "Continue →"}
         </div>
         {step > 0 && (
           <div onClick={() => setStep(s => s - 1)} style={{ textAlign: "center", marginTop: 12, fontSize: 13, color: C.sub, cursor: "pointer", padding: "8px" }}>← Back</div>

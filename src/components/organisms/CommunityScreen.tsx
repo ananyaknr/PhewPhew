@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar, Badge } from "../ui/PhewphewAtoms";
+import { Box } from "@/components/atoms/Layout";
+import { Text } from "@/components/atoms/Text";
+import { Badge } from "@/components/atoms/Badge";
 
-interface CommunityScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const CommunityScreen: React.FC<CommunityScreenProps> = ({ onNav }) => {
+export const CommunityScreen: React.FC = () => {
+  const router = useRouter();
   const posts = [
     {
       user: "Skincare_Junkie", score: 82, review: "Cosrx Snail Essence is 🔥 for combination skin — cleared my texture in 2 weeks! My pores look smaller now.", upvotes: 142,
@@ -24,7 +25,6 @@ export const CommunityScreen: React.FC<CommunityScreenProps> = ({ onNav }) => {
 
   return (
     <Box style={{ height: "100dvh", maxWidth: "600px", margin: "0 auto", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
       <Box style={{ padding: "12px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Community</Text>
         <div style={{ marginLeft: "auto" }}><Badge premium /></div>
@@ -66,7 +66,7 @@ export const CommunityScreen: React.FC<CommunityScreenProps> = ({ onNav }) => {
 
             <Text size={13} color={C.text} style={{ marginBottom: 10, lineHeight: 1.5 }}>{p.review}</Text>
 
-            <div onClick={() => onNav("shop")} style={{ background: p.product.match ? "#E8FFFB" : "#FFF3E8", border: `1px solid ${p.product.match ? "#7ADFC8" : "#F0C080"}`, borderRadius: 12, padding: "10px 12px", cursor: "pointer" }}>
+            <div onClick={() => router.push("/shop")} style={{ background: p.product.match ? "#E8FFFB" : "#FFF3E8", border: `1px solid ${p.product.match ? "#7ADFC8" : "#F0C080"}`, borderRadius: 12, padding: "10px 12px", cursor: "pointer" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Text size={11} weight={700} color={p.product.match ? C.mintDark : "#C05000"}>{p.product.name}</Text>
                 <Text size={11} weight={700}>{p.product.price}</Text>
@@ -75,7 +75,6 @@ export const CommunityScreen: React.FC<CommunityScreenProps> = ({ onNav }) => {
           </Box>
         ))}
       </Box>
-      <NavBar active="community" onNav={onNav} />
     </Box>
   );
 };

@@ -1,12 +1,15 @@
+"use client";
+
 import React, { useState } from "react";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar, PremiumTag, SectionHead } from "../ui/PhewphewAtoms";
+import { Box } from "../atoms/Layout";
+import { Text } from "../atoms/Text";
+import { PremiumTag } from "../atoms/PremiumTag";
+import { SectionHead } from "../molecules/SectionHead";
+import { useRouter } from "next/navigation";
 
-interface HomeScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const HomeScreen: React.FC<HomeScreenProps> = ({ onNav }) => {
+export const HomeScreen: React.FC = () => {
+  const router = useRouter();
   const [routineTab, setRoutineTab] = useState<"AM" | "PM">("AM");
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
 
@@ -34,7 +37,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNav }) => {
 
   const currentSteps = allSteps[routineTab];
   const currentStepStates = stepStates[routineTab];
-  const doneCount = currentStepStates.filter(s => s).length;
 
   const toggleStep = (e: React.MouseEvent, i: number) => {
     e.stopPropagation();
@@ -46,9 +48,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNav }) => {
   };
 
   return (
-    <Box style={{ height: "100vh", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
-      <Box style={{ flex: 1, overflowY: "auto", paddingBottom: 80 }}>
+    <Box style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column" }}>
+      <Box style={{ flex: 1, overflowY: "auto" }}>
 
         {/* ── HERO HEADER ── */}
         <div style={{
@@ -156,7 +157,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNav }) => {
         {/* ── TODAY'S ROUTINE ── */}
         <div style={{ padding: "16px 20px 0" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <Text size={13} weight={800}>Today's Routine</Text>
+            <Text size={13} weight={800}>Today&apos;s Routine</Text>
             <div style={{ display: "flex", background: C.card, borderRadius: 10, padding: 2, border: `1px solid ${C.border}` }}>
               {["AM", "PM"].map(tab => (
                 <div key={tab} onClick={() => { setRoutineTab(tab as "AM" | "PM"); setExpandedStep(null); }} style={{
@@ -215,10 +216,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNav }) => {
           <SectionHead label="Core Tools" />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {[
-              { icon: "◎", label: "Ingredient Scanner", screen: "scan",     bg: "#E8FFFB", border: "#7ADFC8", iconColor: C.mintDark },
-              { icon: "◈", label: "AI Skin Analysis",   screen: "analysis", bg: C.accentLight, border: C.border, iconColor: C.accent },
+              { icon: "◎", label: "Ingredient Scanner", href: "/scan",     bg: "#E8FFFB", border: "#7ADFC8", iconColor: C.mintDark },
+              { icon: "◈", label: "AI Skin Analysis",   href: "/analysis", bg: C.accentLight, border: C.border, iconColor: C.accent },
             ].map(a => (
-              <div key={a.label} onClick={() => onNav(a.screen)} style={{ background: a.bg, border: `1.5px solid ${a.border}`, borderRadius: 14, padding: "13px", cursor: "pointer" }}>
+              <div key={a.label} onClick={() => router.push(a.href)} style={{ background: a.bg, border: `1.5px solid ${a.border}`, borderRadius: 14, padding: "13px", cursor: "pointer" }}>
                 <span style={{ fontSize: 22, color: a.iconColor }}>{a.icon}</span>
                 <Text size={12} weight={700} style={{ marginTop: 8 }}>{a.label}</Text>
               </div>
@@ -227,7 +228,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNav }) => {
         </div>
 
       </Box>
-      <NavBar active="home" onNav={onNav} />
     </Box>
   );
 };

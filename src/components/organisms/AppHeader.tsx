@@ -1,5 +1,6 @@
 import React from "react";
-import { Badge, StatusDot } from "@/components/ui/Atoms";
+import { Badge } from "@/components/atoms/Badge";
+import { StatusDot } from "@/components/atoms/StatusDot";
 import { type StatusType } from "@/logic/FaceAnalyzer";
 
 export function AppHeader({

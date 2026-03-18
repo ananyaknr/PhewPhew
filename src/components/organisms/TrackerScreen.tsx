@@ -1,19 +1,19 @@
+"use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar, PremiumTag } from "../ui/PhewphewAtoms";
+import { Box } from "@/components/atoms/Layout";
+import { Text } from "@/components/atoms/Text";
+import { PremiumTag } from "@/components/atoms/PremiumTag";
 
-interface TrackerScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const TrackerScreen: React.FC<TrackerScreenProps> = ({ onNav }) => {
+export const TrackerScreen: React.FC = () => {
+  const router = useRouter();
   const [activeMetric, setActiveMetric] = useState<number | null>(null);
 
   return (
     <Box style={{ height: "100vh", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
       <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div onClick={() => onNav("home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
+        <div onClick={() => router.push("/home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>Progress Tracker</Text>
         <div style={{ marginLeft: "auto" }}><PremiumTag /></div>
       </Box>
@@ -53,7 +53,6 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({ onNav }) => {
           ))}
         </Box>
       </Box>
-      <NavBar active="analysis" onNav={onNav} />
     </Box>
   );
 };

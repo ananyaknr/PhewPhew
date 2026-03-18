@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar, PremiumTag } from "../ui/PhewphewAtoms";
+import { Box } from "@/components/atoms/Layout";
+import { Text } from "@/components/atoms/Text";
 
-interface RoutineScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const RoutineScreen: React.FC<RoutineScreenProps> = ({ onNav }) => {
+export const RoutineScreen: React.FC = () => {
+  const router = useRouter();
   const routines = {
     "AM Routine": [
       { name: "Gentle Cleanser", brand: "CeraVe Hydrating", exp: "Apr '26", emoji: "🧴" },
@@ -20,9 +20,8 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({ onNav }) => {
 
   return (
     <Box style={{ height: "100vh", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
       <Box style={{ padding: "4px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div onClick={() => onNav("home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
+        <div onClick={() => router.push("/home")} style={{ cursor: "pointer", fontSize: 20, color: C.sub }}>‹</div>
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>My Routine</Text>
       </Box>
 
@@ -43,7 +42,6 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({ onNav }) => {
           </Box>
         ))}
       </Box>
-      <NavBar active="home" onNav={onNav} />
     </Box>
   );
 };

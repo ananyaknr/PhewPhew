@@ -7,7 +7,7 @@ import { AppHeader } from './organisms/AppHeader';
 import { VideoPane } from './organisms/VideoPane';
 import { InspectorPane } from './organisms/InspectorPane';
 import { ResultsPane, type AnalysisResults } from './organisms/ResultsPane';
-import { cn } from '@/components/ui/Atoms';
+import { cn } from '@/logic/utils';
 import { ClipboardList, Code } from 'lucide-react';
 
 export default function InspectorApp() {

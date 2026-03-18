@@ -1,17 +1,18 @@
+"use client";
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar, PremiumTag, SectionHead } from "../ui/PhewphewAtoms";
-import { FaceAnalyzer, type StatusType } from "@/logic/FaceAnalyzer";
+import { Box } from "@/components/atoms/Layout";
+import { Text } from "@/components/atoms/Text";
+import { PremiumTag } from "@/components/atoms/PremiumTag";
+import { SectionHead } from "@/components/molecules/SectionHead";
+import { FaceAnalyzer } from "@/logic/FaceAnalyzer";
 import { Loader2, Camera as CameraIcon } from "lucide-react";
 
-interface AnalysisScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({ onNav }) => {
+export const AnalysisScreen: React.FC = () => {
+  const router = useRouter();
   const [phase, setPhase] = useState<"capture" | "analysing" | "result">("capture");
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<{ text: string; type: StatusType }>({ text: 'Starting…', type: 'idle' });
   const [meshReady, setMeshReady] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -24,7 +25,6 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({ onNav }) => {
       if (!videoRef.current || !overlayRef.current || !capRef.current) return;
 
       const analyzer = new FaceAnalyzer({
-        onStatusChange: (s) => setStatus(s),
         onMeshReadyChange: (ready) => setMeshReady(ready),
       });
 
@@ -56,11 +56,9 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({ onNav }) => {
 
   return (
     <Box style={{ height: "100vh", background: "#0D1F2A", display: "flex", flexDirection: "column" }}>
-      <div style={{ background: "#0D1F2A" }}><StatusBar /></div>
-
       {/* Header */}
       <div style={{ padding: "2px 20px 12px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div onClick={() => onNav("home")} style={{ cursor: "pointer", color: "#9BE9FA", fontSize: 20, lineHeight: 1 }}>‹</div>
+        <div onClick={() => router.push("/home")} style={{ cursor: "pointer", color: "#9BE9FA", fontSize: 20, lineHeight: 1 }}>‹</div>
         <Text size={17} weight={800} color="#fff" style={{ fontFamily: "Syne, sans-serif" }}>AI Skin Analysis</Text>
       </div>
 
@@ -174,8 +172,6 @@ export const AnalysisScreen: React.FC<AnalysisScreenProps> = ({ onNav }) => {
           </div>
         </Box>
       )}
-
-      <NavBar active="analysis" onNav={onNav} />
     </Box>
   );
 };

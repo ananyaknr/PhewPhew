@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   Code,
@@ -8,12 +9,12 @@ import {
   Copy,
   AlertTriangle,
 } from "lucide-react";
-import { Button, Tag, cn } from "@/components/ui/Atoms";
-import {
-  SectionHeader,
-  InfoCard,
-  FlowStep,
-} from "@/components/molecules/Molecules";
+import { Button } from "@/components/atoms/Button";
+import { Tag } from "@/components/atoms/Tag";
+import { cn } from "@/logic/utils";
+import { SectionHeader } from "@/components/molecules/SectionHeader";
+import { InfoCard } from "@/components/molecules/InfoCard";
+import { FlowStep } from "@/components/molecules/FlowStep";
 
 type TabType = "payload" | "image" | "prompt" | "info";
 
@@ -165,10 +166,10 @@ export function InspectorPane({
             <div className="flex-1 p-4 overflow-y-auto font-mono text-[11px] leading-relaxed bg-code-bg text-[#ABB2BF] whitespace-pre-wrap">
               {!capturedData ? (
                 <span className="italic opacity-40">
+                  {/* Hit Capture to bind the prompt with live data */}
                   // Hit Capture to bind the prompt with live data
                 </span>
-              ) : (
-                <div
+              ) : (                <div
                   dangerouslySetInnerHTML={{
                     __html: colorPrompt(capturedData.prompt),
                   }}
@@ -222,7 +223,7 @@ export function InspectorPane({
               <AlertTriangle className="w-4 h-4 text-warn shrink-0 mt-0.5" />
               <p className="text-[11.5px] text-warn/85 leading-relaxed">
                 <strong>Production note:</strong> The API key must never live in
-                client-side code. PhewPhew's production build would proxy this
+                client-side code. PhewPhew&apos;s production build would proxy this
                 request through a FastAPI backend endpoint that holds the key
                 server-side.
               </p>

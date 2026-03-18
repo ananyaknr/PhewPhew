@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+"use client";
+import React from "react";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box, Text, StatusBar, NavBar, PremiumTag } from "../ui/PhewphewAtoms";
+import { Box } from "@/components/atoms/Layout";
+import { Text } from "@/components/atoms/Text";
+import { PremiumTag } from "@/components/atoms/PremiumTag";
 
-interface LoyaltyScreenProps {
-  onNav: (screen: string) => void;
-}
-
-export const LoyaltyScreen: React.FC<LoyaltyScreenProps> = ({ onNav }) => {
+export const LoyaltyScreen: React.FC = () => {
   const rewards = [
     { label: "฿50 Shop Voucher", pts: 500, icon: "🛍️", desc: "Valid on any product in the PhewPhew shop" },
     { label: "1 Free Derm Session", pts: 1000, icon: "👩‍⚕️", desc: "Book a 10–20 min consult with any available doctor" },
@@ -17,7 +16,6 @@ export const LoyaltyScreen: React.FC<LoyaltyScreenProps> = ({ onNav }) => {
 
   return (
     <Box style={{ height: "100dvh", maxWidth: "600px", margin: "0 auto", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <StatusBar />
       <Box style={{ padding: "12px 20px 16px", display: "flex", alignItems: "center", gap: 12 }}>
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>My Rewards</Text>
         <div style={{ marginLeft: "auto" }}><PremiumTag /></div>
@@ -55,7 +53,6 @@ export const LoyaltyScreen: React.FC<LoyaltyScreenProps> = ({ onNav }) => {
           ))}
         </div>
       </Box>
-      <NavBar active="loyalty" onNav={onNav} />
     </Box>
   );
 };

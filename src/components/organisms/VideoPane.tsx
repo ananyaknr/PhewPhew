@@ -1,7 +1,8 @@
 import React from "react";
 import { Camera as CameraIcon, Eye, EyeOff, Loader2 } from "lucide-react";
-import { Button, cn } from "@/components/ui/Atoms";
-import { ZoneLegend } from "@/components/molecules/Molecules";
+import { Button } from "@/components/atoms/Button";
+import { cn } from "@/logic/utils";
+import { ZoneLegend } from "@/components/molecules/ZoneLegend";
 import { type StatusType } from "@/logic/FaceAnalyzer";
 
 interface VideoPaneProps {
