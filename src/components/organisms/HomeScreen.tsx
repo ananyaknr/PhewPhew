@@ -49,7 +49,7 @@ export const HomeScreen: React.FC = () => {
 
   return (
     <Box style={{ height: "100%", background: C.bg, display: "flex", flexDirection: "column" }}>
-      <Box style={{ flex: 1, overflowY: "auto" }}>
+      <Box style={{ flex: 1, overflowY: "auto", paddingBottom: 120 }}>
 
         {/* ── HERO HEADER ── */}
         <div style={{

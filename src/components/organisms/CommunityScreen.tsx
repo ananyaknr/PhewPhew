@@ -30,7 +30,7 @@ export const CommunityScreen: React.FC = () => {
         <div style={{ marginLeft: "auto" }}><Badge premium /></div>
       </Box>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 120px" }}>
         <Box style={{ display: "flex", gap: 8, marginBottom: 16, overflowX: "auto", paddingBottom: 4 }}>
           {["#OilyGlassSkin", "#NiacinamideLove", "#SPFDaily", "#Trending"].map(t => (
             <div key={t} style={{ padding: "6px 14px", borderRadius: 99, background: C.surface, border: `1px solid ${C.border}`, fontSize: 11, color: C.text, whiteSpace: "nowrap" }}>{t}</div>

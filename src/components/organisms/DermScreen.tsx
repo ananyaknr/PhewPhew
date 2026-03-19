@@ -54,7 +54,7 @@ export const DermScreen: React.FC = () => {
         </div>
       </Box>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 120px" }}>
         <Box
           style={{
             background: "#E8FFFB",

@@ -21,7 +21,7 @@ export const LoyaltyScreen: React.FC = () => {
         <div style={{ marginLeft: "auto" }}><PremiumTag /></div>
       </Box>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 120px" }}>
         {/* Points Hero */}
         <Box style={{ background: "linear-gradient(135deg, #0D2A3A, #1A6A88)", borderRadius: 20, padding: "24px", marginBottom: 20, position: "relative", overflow: "hidden" }}>
           <Text color="rgba(255,255,255,0.7)" size={12} weight={600} style={{ letterSpacing: "0.05em" }}>AVAILABLE BALANCE</Text>

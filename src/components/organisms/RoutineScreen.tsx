@@ -25,7 +25,7 @@ export const RoutineScreen: React.FC = () => {
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>My Routine</Text>
       </Box>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 120px" }}>
         {Object.entries(routines).map(([name, steps]) => (
           <Box key={name} style={{ background: "#fff", border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 16 }}>
             <Text size={14} weight={700} style={{ marginBottom: 12 }}>{name}</Text>

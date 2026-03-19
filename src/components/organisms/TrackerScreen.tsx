@@ -18,7 +18,7 @@ export const TrackerScreen: React.FC = () => {
         <div style={{ marginLeft: "auto" }}><PremiumTag /></div>
       </Box>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 120px" }}>
         <Box style={{ background: "#fff", border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px", marginBottom: 16 }}>
           <Text size={13} weight={700} style={{ marginBottom: 4 }}>Skin Score Trend</Text>
           <div style={{ height: 100, display: "flex", alignItems: "flex-end", gap: 6, marginTop: 20 }}>

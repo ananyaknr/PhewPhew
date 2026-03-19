@@ -141,6 +141,7 @@ export const AnalysisScreen: React.FC = () => {
                 inset: 0,
                 width: "100%",
                 height: "100%",
+                objectFit: "cover",
                 transform: "scaleX(-1)",
               }}
               width={1280}
@@ -271,7 +272,7 @@ export const AnalysisScreen: React.FC = () => {
             flex: 1,
             overflowY: "auto",
             background: C.bg,
-            padding: "20px 20px 80px",
+            padding: "20px 20px 120px",
           }}
         >
           <div

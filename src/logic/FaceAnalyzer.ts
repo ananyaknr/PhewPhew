@@ -42,6 +42,8 @@ export class FaceAnalyzer {
       const { FaceMesh } = await import('@mediapipe/face_mesh');
       const { Camera } = await import('@mediapipe/camera_utils');
 
+      if (!this.active || !this.video) return;
+
       this.faceMesh = new FaceMesh({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
       });
@@ -117,9 +119,9 @@ export class FaceAnalyzer {
         ctx.lineTo(pt.x, pt.y);
       });
       ctx.closePath();
-      ctx.fillStyle = z.color + '0.11)';
-      ctx.strokeStyle = z.color + '0.45)';
-      ctx.lineWidth = 1;
+      ctx.fillStyle = z.color + '0.15)';
+      ctx.strokeStyle = z.color + '0.8)';
+      ctx.lineWidth = 2;
       ctx.fill();
       ctx.stroke();
     });
@@ -129,8 +131,8 @@ export class FaceAnalyzer {
       if (i >= lm.length) return;
       const pt = p(i);
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 1.8, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(2,195,154,0.65)';
+      ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(2,195,154,0.9)';
       ctx.fill();
     });
   }

@@ -20,7 +20,7 @@ export const ShopScreen: React.FC = () => {
         <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>PhewPhew Shop</Text>
       </Box>
 
-      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 80px" }}>
+      <Box style={{ flex: 1, overflowY: "auto", padding: "0 20px 120px" }}>
         <Text size={14} weight={700} style={{ marginBottom: 15 }}>AI Recommended for You</Text>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           {products.map(p => (
