@@ -1,5 +1,5 @@
 import React from "react";
-import { ZONES } from "@/components/Constants";
+import { ZONES } from "../Constants";
 
 export function ZoneLegend() {
   return (

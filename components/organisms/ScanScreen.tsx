@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box } from "@/components/atoms/Layout";
-import { Text } from "@/components/atoms/Text";
+import { Box } from "../atoms/Layout";
+import { Text } from "../atoms/Text";
 import {
   ChevronLeft,
   Camera,

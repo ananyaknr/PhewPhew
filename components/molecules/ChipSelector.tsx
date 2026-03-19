@@ -1,5 +1,5 @@
 import React from "react";
-import { PHEWPHEW_COLORS as C } from "@/components/PhewphewConstants";
+import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
 
 export const ChipSelector: React.FC<{ options: string[]; selected: string | string[]; onToggle: (o: string) => void; single?: boolean }> = ({ options, selected, onToggle }) => {
   return (

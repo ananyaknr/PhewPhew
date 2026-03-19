@@ -2,9 +2,9 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box } from "@/components/atoms/Layout";
-import { Text } from "@/components/atoms/Text";
-import { Badge } from "@/components/atoms/Badge";
+import { Box } from "../atoms/Layout";
+import { Text } from "../atoms/Text";
+import { Badge } from "../atoms/Badge";
 
 export const CommunityScreen: React.FC = () => {
   const router = useRouter();

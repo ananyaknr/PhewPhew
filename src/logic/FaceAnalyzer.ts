@@ -1,4 +1,4 @@
-import { ZONES } from '../components/Constants';
+import { ZONES } from '../../components/Constants';
 
 export type StatusType = 'on' | 'err' | 'idle';
 

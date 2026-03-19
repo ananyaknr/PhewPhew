@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
 import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box } from "@/components/atoms/Layout";
-import { Text } from "@/components/atoms/Text";
-import { PremiumTag } from "@/components/atoms/PremiumTag";
+import { Box } from "../atoms/Layout";
+import { Text } from "../atoms/Text";
+import { PremiumTag } from "../atoms/PremiumTag";
 
 export const LoyaltyScreen: React.FC = () => {
   const rewards = [

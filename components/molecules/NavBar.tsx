@@ -1,5 +1,5 @@
 import React from "react";
-import { PHEWPHEW_COLORS as C } from "@/components/PhewphewConstants";
+import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
 import { NavBarItem } from "./NavBarItem";
 import { NavBarFab } from "./NavBarFab";
 

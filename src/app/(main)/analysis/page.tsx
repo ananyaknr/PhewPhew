@@ -1,4 +1,4 @@
-import { AnalysisScreen } from "@/components/organisms/AnalysisScreen";
+import { AnalysisScreen } from "../../../../components/organisms/AnalysisScreen";
 
 export default function AnalysisPage() {
   return <AnalysisScreen />;

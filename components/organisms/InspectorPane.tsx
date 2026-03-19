@@ -9,12 +9,12 @@ import {
   Copy,
   AlertTriangle,
 } from "lucide-react";
-import { Button } from "@/components/atoms/Button";
-import { Tag } from "@/components/atoms/Tag";
+import { Button } from "../atoms/Button";
+import { Tag } from "../atoms/Tag";
 import { cn } from "@/logic/utils";
-import { SectionHeader } from "@/components/molecules/SectionHeader";
-import { InfoCard } from "@/components/molecules/InfoCard";
-import { FlowStep } from "@/components/molecules/FlowStep";
+import { SectionHeader } from "../molecules/SectionHeader";
+import { InfoCard } from "../molecules/InfoCard";
+import { FlowStep } from "../molecules/FlowStep";
 
 type TabType = "payload" | "image" | "prompt" | "info";
 
