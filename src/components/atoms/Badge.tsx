@@ -4,9 +4,11 @@ import { cn } from "@/logic/utils";
 export function Badge({
   children,
   className,
+  premium
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
+  premium?: boolean;
 }) {
   return (
     <span
