@@ -1,6 +1,41 @@
 import React from "react";
-import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
+import { cn } from "@/logic/utils";
 
-export const Text: React.FC<{ size?: number; weight?: number | string; color?: string; children?: React.ReactNode; style?: React.CSSProperties; className?: string }> = ({ size = 13, weight = 400, color = C.text, children, style, className }) => (
-  <div className={className} style={{ fontSize: size, fontWeight: weight, color, lineHeight: 1.4, fontFamily: "'DM Sans', sans-serif", ...style }}>{children}</div>
-);
+interface TextProps {
+  size?: number | string;
+  weight?: number | string;
+  color?: string;
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
+  className?: string;
+}
+
+/**
+ * Text atom refactored for Tailwind CSS 4.
+ * Prefer using className with tailwind utilities.
+ */
+export const Text: React.FC<TextProps> = ({ 
+  size = 13, 
+  weight = 400, 
+  color, 
+  children, 
+  style, 
+  className 
+}) => {
+  return (
+    <div 
+      className={cn(
+        "font-sans leading-[1.4] text-pp-text",
+        className
+      )}
+      style={{ 
+        fontSize: typeof size === 'number' ? `${size}px` : size, 
+        fontWeight: weight,
+        color: color,
+        ...style 
+      }}
+    >
+      {children}
+    </div>
+  );
+};

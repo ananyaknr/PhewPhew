@@ -31,6 +31,34 @@
   --color-code-bg: #0C1614;
 }
 
+@utility card-pp {
+  background-color: var(--color-pp-surface);
+  border: 1px solid var(--color-pp-border);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+@utility card-inspector {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(132, 181, 159, 0.1);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+@utility section-header {
+  font-family: var(--font-syne);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-pp-sub);
+}
+
+@utility glass-panel {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(184, 223, 240, 0.3);
+}
+
 :root {
   --background: #EEF8FD;
   --foreground: #0D2A3A;
