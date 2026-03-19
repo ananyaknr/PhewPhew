@@ -66,7 +66,7 @@ export const CommunityScreen: React.FC = () => {
           gap: 12,
         }}
       >
-        <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>
+        <Text size={18} weight={700} style={{ fontFamily: "Syne, sans-serif" }}>
           Community
         </Text>
         <div style={{ marginLeft: "auto" }}>

@@ -3,9 +3,35 @@ import { Box } from "@component/atoms/Layout";
 import { Text } from "@component/atoms/Text";
 import { PHEWPHEW_COLORS as C } from "@component/PhewphewConstants";
 
-export const SectionHead: React.FC<{ label: string; action?: string; onAction?: () => void }> = ({ label, action, onAction }) => (
-  <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-    <Text size={13} weight={800} style={{ letterSpacing: "-0.01em" }}>{label}</Text>
-    {action && <div onClick={onAction} style={{ fontSize: 11, color: C.accent, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{action}</div>}
+export const SectionHead: React.FC<{
+  label: string;
+  action?: string;
+  onAction?: () => void;
+}> = ({ label, action, onAction }) => (
+  <Box
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+    }}
+  >
+    <Text size={13} weight={700} style={{ letterSpacing: "-0.01em" }}>
+      {label}
+    </Text>
+    {action && (
+      <div
+        onClick={onAction}
+        style={{
+          fontSize: 11,
+          color: C.accent,
+          fontWeight: 600,
+          cursor: "pointer",
+          fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
+        {action}
+      </div>
+    )}
   </Box>
 );

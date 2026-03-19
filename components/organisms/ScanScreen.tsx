@@ -27,7 +27,9 @@ export const ScanScreen: React.FC = () => {
   const [productDesc, setProductDesc] = useState("");
   const [selectedRecent, setSelectedRecent] = useState<any>(null);
   const [frame, setFrame] = useState(0);
-  const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+  const [facingMode, setFacingMode] = useState<"user" | "environment">(
+    "environment",
+  );
   const [cameraError, setCameraError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -68,7 +70,7 @@ export const ScanScreen: React.FC = () => {
         video: { facingMode: facingMode },
         audio: false,
       });
-      
+
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -90,7 +92,7 @@ export const ScanScreen: React.FC = () => {
   };
 
   const toggleCamera = () => {
-    setFacingMode(prev => prev === "user" ? "environment" : "user");
+    setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
   };
 
   const recentScans = [
@@ -209,7 +211,7 @@ export const ScanScreen: React.FC = () => {
           </div>
           <Text
             size={17}
-            weight={800}
+            weight={700}
             style={{ fontFamily: "Syne, sans-serif" }}
           >
             Scan Result
@@ -395,7 +397,7 @@ export const ScanScreen: React.FC = () => {
         </div>
         <Text
           size={17}
-          weight={800}
+          weight={700}
           color="#fff"
           style={{ fontFamily: "Syne, sans-serif" }}
         >

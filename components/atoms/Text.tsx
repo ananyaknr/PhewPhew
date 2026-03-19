@@ -14,25 +14,22 @@ interface TextProps {
  * Text atom refactored for Tailwind CSS 4.
  * Prefer using className with tailwind utilities.
  */
-export const Text: React.FC<TextProps> = ({ 
-  size = 13, 
-  weight = 400, 
-  color, 
-  children, 
-  style, 
-  className 
+export const Text: React.FC<TextProps> = ({
+  size = 13,
+  weight = 400,
+  color,
+  children,
+  style,
+  className,
 }) => {
   return (
-    <div 
-      className={cn(
-        "font-sans leading-[1.4] text-pp-text",
-        className
-      )}
-      style={{ 
-        fontSize: typeof size === 'number' ? `${size}px` : size, 
+    <div
+      className={cn("font-sans leading-[1.4] text-pp-text", className)}
+      style={{
+        fontSize: typeof size === "number" ? `${size}px` : size,
         fontWeight: weight,
         color: color,
-        ...style 
+        ...style,
       }}
     >
       {children}

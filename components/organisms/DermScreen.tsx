@@ -46,7 +46,7 @@ export const DermScreen: React.FC = () => {
         >
           ‹
         </div>
-        <Text size={18} weight={800} style={{ fontFamily: "Syne, sans-serif" }}>
+        <Text size={18} weight={700} style={{ fontFamily: "Syne, sans-serif" }}>
           Derm Consult
         </Text>
         <div style={{ marginLeft: "auto" }}>

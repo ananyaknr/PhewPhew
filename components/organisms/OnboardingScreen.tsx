@@ -175,7 +175,7 @@ export const OnboardingScreen: React.FC = () => {
             </div>
             <Text
               size={28}
-              weight={800}
+              weight={700}
               style={{
                 lineHeight: 1.15,
                 fontFamily: "Syne, sans-serif",
@@ -236,7 +236,7 @@ export const OnboardingScreen: React.FC = () => {
           <>
             <Text
               size={22}
-              weight={800}
+              weight={700}
               style={{
                 fontFamily: "Syne, sans-serif",
                 lineHeight: 1.2,
@@ -337,7 +337,7 @@ export const OnboardingScreen: React.FC = () => {
           <>
             <Text
               size={22}
-              weight={800}
+              weight={700}
               style={{
                 fontFamily: "Syne, sans-serif",
                 lineHeight: 1.2,
@@ -451,7 +451,7 @@ export const OnboardingScreen: React.FC = () => {
           <>
             <Text
               size={22}
-              weight={800}
+              weight={700}
               style={{
                 fontFamily: "Syne, sans-serif",
                 lineHeight: 1.2,
@@ -492,7 +492,7 @@ export const OnboardingScreen: React.FC = () => {
           <>
             <Text
               size={22}
-              weight={800}
+              weight={700}
               style={{
                 fontFamily: "Syne, sans-serif",
                 lineHeight: 1.2,
@@ -582,7 +582,7 @@ export const OnboardingScreen: React.FC = () => {
           <>
             <Text
               size={22}
-              weight={800}
+              weight={700}
               style={{
                 fontFamily: "Syne, sans-serif",
                 lineHeight: 1.2,
@@ -715,7 +715,7 @@ export const OnboardingScreen: React.FC = () => {
           <>
             <Text
               size={22}
-              weight={800}
+              weight={700}
               style={{
                 fontFamily: "Syne, sans-serif",
                 lineHeight: 1.2,

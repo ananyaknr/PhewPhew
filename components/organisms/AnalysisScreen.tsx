@@ -7,7 +7,12 @@ import { Text } from "@component/atoms/Text";
 import { PremiumTag } from "@component/atoms/PremiumTag";
 import { SectionHead } from "@component/molecules/SectionHead";
 import { FaceAnalyzer } from "@/logic/FaceAnalyzer";
-import { Loader2, Camera as CameraIcon, RefreshCw, AlertCircle } from "lucide-react";
+import {
+  Loader2,
+  Camera as CameraIcon,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
 
 export const AnalysisScreen: React.FC = () => {
   const router = useRouter();
@@ -41,7 +46,12 @@ export const AnalysisScreen: React.FC = () => {
         onMeshReadyChange: (ready) => setMeshReady(ready),
       });
 
-      analyzer.initialize(videoRef.current, overlayRef.current, capRef.current, facingMode);
+      analyzer.initialize(
+        videoRef.current,
+        overlayRef.current,
+        capRef.current,
+        facingMode,
+      );
       analyzerRef.current = analyzer;
 
       return () => {
@@ -51,7 +61,7 @@ export const AnalysisScreen: React.FC = () => {
   }, [phase, facingMode]);
 
   const toggleCamera = () => {
-    setFacingMode(prev => prev === "user" ? "environment" : "user");
+    setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
   };
 
   const triggerAnalysis = () => {
@@ -109,7 +119,7 @@ export const AnalysisScreen: React.FC = () => {
         </div>
         <Text
           size={17}
-          weight={800}
+          weight={700}
           color="#fff"
           style={{ fontFamily: "Syne, sans-serif" }}
         >
@@ -143,7 +153,7 @@ export const AnalysisScreen: React.FC = () => {
                 height: "100%",
                 objectFit: "cover",
                 transform: facingMode === "user" ? "scaleX(-1)" : "none",
-                opacity: (meshReady && !cameraError) ? 1 : 0,
+                opacity: meshReady && !cameraError ? 1 : 0,
                 transition: "opacity 0.5s",
               }}
               playsInline
@@ -202,20 +212,28 @@ export const AnalysisScreen: React.FC = () => {
                   zIndex: 20,
                 }}
               >
-                <AlertCircle size={40} color={C.danger} style={{ marginBottom: 12 }} />
-                <Text color="#fff" weight={700} style={{ marginBottom: 8 }}>Camera Access Failed</Text>
-                <Text color="rgba(255,255,255,0.6)" size={12}>{cameraError}</Text>
-                <div 
+                <AlertCircle
+                  size={40}
+                  color={C.danger}
+                  style={{ marginBottom: 12 }}
+                />
+                <Text color="#fff" weight={700} style={{ marginBottom: 8 }}>
+                  Camera Access Failed
+                </Text>
+                <Text color="rgba(255,255,255,0.6)" size={12}>
+                  {cameraError}
+                </Text>
+                <div
                   onClick={() => window.location.reload()}
-                  style={{ 
-                    marginTop: 20, 
-                    padding: "8px 20px", 
-                    borderRadius: 99, 
-                    background: "rgba(255,255,255,0.1)", 
-                    color: "#fff", 
-                    fontSize: 12, 
-                    fontWeight: 600, 
-                    cursor: "pointer" 
+                  style={{
+                    marginTop: 20,
+                    padding: "8px 20px",
+                    borderRadius: 99,
+                    background: "rgba(255,255,255,0.1)",
+                    color: "#fff",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
                   }}
                 >
                   Retry
@@ -246,7 +264,7 @@ export const AnalysisScreen: React.FC = () => {
 
             {/* Camera switch button */}
             {!cameraError && (
-              <div 
+              <div
                 onClick={toggleCamera}
                 style={{
                   position: "absolute",
