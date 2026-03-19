@@ -21,6 +21,7 @@ export class FaceAnalyzer {
   private showOverlay: boolean = true;
   private isMeshReady: boolean = false;
   private active: boolean = false;
+  private facingMode: 'user' | 'environment' = 'user';
 
   private onStatusChange?: StatusCallback;
   private onMeshReadyChange?: MeshReadyCallback;
@@ -30,15 +31,23 @@ export class FaceAnalyzer {
     this.onMeshReadyChange = callbacks.onMeshReadyChange;
   }
 
-  async initialize(video: HTMLVideoElement, overlay: HTMLCanvasElement, cap: HTMLCanvasElement) {
+  async initialize(video: HTMLVideoElement, overlay: HTMLCanvasElement, cap: HTMLCanvasElement, facingMode: 'user' | 'environment' = 'user') {
     if (typeof window === 'undefined') return;
     
     this.video = video;
     this.overlay = overlay;
     this.cap = cap;
     this.active = true;
+    this.facingMode = facingMode;
 
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (window.isSecureContext === false) {
+          throw new Error("Camera requires a secure connection (HTTPS).");
+        }
+        throw new Error("Camera API not supported in this browser.");
+      }
+
       const { FaceMesh } = await import('@mediapipe/face_mesh');
       const { Camera } = await import('@mediapipe/camera_utils');
 
@@ -66,15 +75,16 @@ export class FaceAnalyzer {
             await this.faceMesh.send({ image: this.video });
           }
         },
+        facingMode: facingMode,
         width: 1280,
         height: 720,
       });
 
       this.onStatusChange?.({ text: 'Loading model…', type: 'idle' });
       await this.camera.start();
-    } catch (error) {
+    } catch (error: any) {
       console.error("FaceAnalyzer initialization error:", error);
-      this.onStatusChange?.({ text: 'Camera unavailable', type: 'err' });
+      this.onStatusChange?.({ text: error.message || 'Camera unavailable', type: 'err' });
     }
   }
 
@@ -85,7 +95,14 @@ export class FaceAnalyzer {
       this.onStatusChange?.({ text: 'Face detected — ready', type: 'on' });
     }
 
-    if (!this.overlay) return;
+    if (!this.overlay || !this.video) return;
+    
+    // Sync canvas internal resolution to video source resolution to prevent squishing
+    if (this.overlay.width !== this.video.videoWidth || this.overlay.height !== this.video.videoHeight) {
+      this.overlay.width = this.video.videoWidth;
+      this.overlay.height = this.video.videoHeight;
+    }
+
     const ctx = this.overlay.getContext('2d');
     if (!ctx) return;
 
@@ -151,8 +168,12 @@ export class FaceAnalyzer {
     this.cap.height = this.overlay.height;
 
     cctx.save();
-    cctx.scale(-1, 1);
-    cctx.drawImage(this.video, -this.cap.width, 0, this.cap.width, this.cap.height);
+    if (this.facingMode === 'user') {
+      cctx.scale(-1, 1);
+      cctx.drawImage(this.video, -this.cap.width, 0, this.cap.width, this.cap.height);
+    } else {
+      cctx.drawImage(this.video, 0, 0, this.cap.width, this.cap.height);
+    }
     cctx.restore();
 
     const dataURL = this.cap.toDataURL('image/jpeg', 0.88);

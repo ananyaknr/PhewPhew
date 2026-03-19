@@ -7,7 +7,7 @@ import { Text } from "@/components/atoms/Text";
 import { PremiumTag } from "@/components/atoms/PremiumTag";
 import { SectionHead } from "@/components/molecules/SectionHead";
 import { FaceAnalyzer } from "@/logic/FaceAnalyzer";
-import { Loader2, Camera as CameraIcon } from "lucide-react";
+import { Loader2, Camera as CameraIcon, RefreshCw, AlertCircle } from "lucide-react";
 
 export const AnalysisScreen: React.FC = () => {
   const router = useRouter();
@@ -16,6 +16,8 @@ export const AnalysisScreen: React.FC = () => {
   );
   const [progress, setProgress] = useState(0);
   const [meshReady, setMeshReady] = useState(false);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -23,22 +25,34 @@ export const AnalysisScreen: React.FC = () => {
   const analyzerRef = useRef<FaceAnalyzer | null>(null);
 
   useEffect(() => {
+    setMeshReady(false);
+    setCameraError(null);
+
     if (phase === "capture") {
       if (!videoRef.current || !overlayRef.current || !capRef.current) return;
 
       const analyzer = new FaceAnalyzer({
-        onStatusChange: (status) => console.log("Analyzer status:", status),
+        onStatusChange: (status) => {
+          console.log("Analyzer status:", status);
+          if (status.type === "err") {
+            setCameraError(status.text);
+          }
+        },
         onMeshReadyChange: (ready) => setMeshReady(ready),
       });
 
-      analyzer.initialize(videoRef.current, overlayRef.current, capRef.current);
+      analyzer.initialize(videoRef.current, overlayRef.current, capRef.current, facingMode);
       analyzerRef.current = analyzer;
 
       return () => {
         analyzer.stop();
       };
     }
-  }, [phase]);
+  }, [phase, facingMode]);
+
+  const toggleCamera = () => {
+    setFacingMode(prev => prev === "user" ? "environment" : "user");
+  };
 
   const triggerAnalysis = () => {
     setPhase("analysing");
@@ -66,10 +80,11 @@ export const AnalysisScreen: React.FC = () => {
   return (
     <Box
       style={{
-        height: "100vh",
+        height: "calc(100dvh - 100px)",
         background: "#0D1F2A",
         display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
       }}
     >
       {/* Header */}
@@ -127,8 +142,8 @@ export const AnalysisScreen: React.FC = () => {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                transform: "scaleX(-1)",
-                opacity: meshReady ? 1 : 0,
+                transform: facingMode === "user" ? "scaleX(-1)" : "none",
+                opacity: (meshReady && !cameraError) ? 1 : 0,
                 transition: "opacity 0.5s",
               }}
               playsInline
@@ -142,14 +157,12 @@ export const AnalysisScreen: React.FC = () => {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                transform: "scaleX(-1)",
+                transform: facingMode === "user" ? "scaleX(-1)" : "none",
               }}
-              width={1280}
-              height={720}
             />
             <canvas ref={capRef} style={{ display: "none" }} />
 
-            {!meshReady && (
+            {!meshReady && !cameraError && (
               <div
                 style={{
                   position: "absolute",
@@ -159,6 +172,7 @@ export const AnalysisScreen: React.FC = () => {
                   alignItems: "center",
                   justifyContent: "center",
                   background: "rgba(0,0,0,0.8)",
+                  zIndex: 5,
                 }}
               >
                 <Loader2
@@ -173,6 +187,42 @@ export const AnalysisScreen: React.FC = () => {
               </div>
             )}
 
+            {cameraError && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "rgba(0,0,0,0.9)",
+                  padding: 20,
+                  textAlign: "center",
+                  zIndex: 20,
+                }}
+              >
+                <AlertCircle size={40} color={C.danger} style={{ marginBottom: 12 }} />
+                <Text color="#fff" weight={700} style={{ marginBottom: 8 }}>Camera Access Failed</Text>
+                <Text color="rgba(255,255,255,0.6)" size={12}>{cameraError}</Text>
+                <div 
+                  onClick={() => window.location.reload()}
+                  style={{ 
+                    marginTop: 20, 
+                    padding: "8px 20px", 
+                    borderRadius: 99, 
+                    background: "rgba(255,255,255,0.1)", 
+                    color: "#fff", 
+                    fontSize: 12, 
+                    fontWeight: 600, 
+                    cursor: "pointer" 
+                  }}
+                >
+                  Retry
+                </div>
+              </div>
+            )}
+
             {/* Viewfinder circle mask */}
             <div
               style={{
@@ -180,6 +230,7 @@ export const AnalysisScreen: React.FC = () => {
                 inset: 0,
                 border: "40px solid rgba(13,31,42,0.7)",
                 pointerEvents: "none",
+                zIndex: 10,
               }}
             >
               <div
@@ -192,6 +243,31 @@ export const AnalysisScreen: React.FC = () => {
                 }}
               />
             </div>
+
+            {/* Camera switch button */}
+            {!cameraError && (
+              <div 
+                onClick={toggleCamera}
+                style={{
+                  position: "absolute",
+                  top: 20,
+                  right: 20,
+                  width: 44,
+                  height: 44,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  zIndex: 30,
+                }}
+              >
+                <RefreshCw size={20} color="#fff" />
+              </div>
+            )}
           </div>
 
           <div
