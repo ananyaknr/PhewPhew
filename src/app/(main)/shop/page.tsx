@@ -1,4 +1,4 @@
-import { ShopScreen } from "../../../../components/organisms/ShopScreen";
+import { ShopScreen } from "@component/organisms/ShopScreen";
 
 export default function ShopPage() {
   return <ShopScreen />;

@@ -1,7 +1,7 @@
 import React from "react";
-import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { NavBarItem } from "./NavBarItem";
-import { NavBarFab } from "./NavBarFab";
+import { PHEWPHEW_COLORS as C } from "@component/PhewphewConstants";
+import { NavBarItem } from "@component/molecules/NavBarItem";
+import { NavBarFab } from "@component/molecules/NavBarFab";
 
 export const NavBar: React.FC = () => {
   const items = [

@@ -1,17 +1,23 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { PROMPT } from './Constants';
-import { FaceAnalyzer, type StatusType } from '@/logic/FaceAnalyzer';
-import { AppHeader } from './organisms/AppHeader';
-import { VideoPane } from './organisms/VideoPane';
-import { InspectorPane } from './organisms/InspectorPane';
-import { ResultsPane, type AnalysisResults } from './organisms/ResultsPane';
-import { cn } from '@/logic/utils';
-import { ClipboardList, Code } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { PROMPT } from "@component/Constants";
+import { FaceAnalyzer, type StatusType } from "@/logic/FaceAnalyzer";
+import { AppHeader } from "@component/organisms/AppHeader";
+import { VideoPane } from "@component/organisms/VideoPane";
+import { InspectorPane } from "@component/organisms/InspectorPane";
+import {
+  ResultsPane,
+  type AnalysisResults,
+} from "@component/organisms/ResultsPane";
+import { cn } from "@/logic/utils";
+import { ClipboardList, Code } from "lucide-react";
 
 export default function InspectorApp() {
-  const [status, setStatus] = useState<{ text: string; type: StatusType }>({ text: 'Starting…', type: 'idle' });
+  const [status, setStatus] = useState<{ text: string; type: StatusType }>({
+    text: "Starting…",
+    type: "idle",
+  });
   const [showOverlay, setShowOverlay] = useState(true);
   const [meshReady, setMeshReady] = useState(false);
   const [capturedData, setCapturedData] = useState<{
@@ -23,11 +29,14 @@ export default function InspectorApp() {
   } | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [copied, setCopied] = useState(false);
-  
+
   // New state for results
-  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
+  const [analysisResults, setAnalysisResults] =
+    useState<AnalysisResults | null>(null);
   const [isAnalysing, setIsAnalysing] = useState(false);
-  const [activeSideTab, setActiveSideTab] = useState<'results' | 'inspector'>('results');
+  const [activeSideTab, setActiveSideTab] = useState<"results" | "inspector">(
+    "results",
+  );
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -58,12 +67,13 @@ export default function InspectorApp() {
 
   const runMockAnalysis = useCallback(() => {
     setIsAnalysing(true);
-    setActiveSideTab('results');
-    
+    setActiveSideTab("results");
+
     // Simulate API delay
     setTimeout(() => {
       const mockResults: AnalysisResults = {
-        overall_summary: "The skin shows good overall hydration with localized areas of mild inflammation. T-zone exhibits slight oiliness, but texture remains relatively smooth across the cheeks.",
+        overall_summary:
+          "The skin shows good overall hydration with localized areas of mild inflammation. T-zone exhibits slight oiliness, but texture remains relatively smooth across the cheeks.",
         conditions: [
           {
             name: "Mild Erythema",
@@ -71,7 +81,8 @@ export default function InspectorApp() {
             severity: "Low",
             confidence: 92,
             zone: "Left Cheek",
-            description: "Localized redness observed, possibly due to sensitivity or recent environmental exposure."
+            description:
+              "Localized redness observed, possibly due to sensitivity or recent environmental exposure.",
           },
           {
             name: "Sebum Activity",
@@ -79,7 +90,8 @@ export default function InspectorApp() {
             severity: "Medium",
             confidence: 88,
             zone: "T-Zone",
-            description: "Increased reflectance indicates moderate oil production in the forehead and nasal bridge."
+            description:
+              "Increased reflectance indicates moderate oil production in the forehead and nasal bridge.",
           },
           {
             name: "Congested Pores",
@@ -87,17 +99,19 @@ export default function InspectorApp() {
             severity: "Low",
             confidence: 85,
             zone: "Chin",
-            description: "Slight texture irregularity suggesting minor pore congestion."
-          }
+            description:
+              "Slight texture irregularity suggesting minor pore congestion.",
+          },
         ],
         recommendations: [
           "Incorporate a soothing niacinamide serum to address localized redness.",
           "Use a gentle BHA exfoliant twice a week on the T-zone to manage oil.",
-          "Ensure daily SPF 50 application to prevent UV-induced inflammation."
+          "Ensure daily SPF 50 application to prevent UV-induced inflammation.",
         ],
-        limitations: "This analysis is based on a single 2D image. Results may vary with lighting and camera quality. Not a medical diagnosis."
+        limitations:
+          "This analysis is based on a single 2D image. Results may vary with lighting and camera quality. Not a medical diagnosis.",
       };
-      
+
       setAnalysisResults(mockResults);
       setIsAnalysing(false);
     }, 2500);
@@ -105,7 +119,7 @@ export default function InspectorApp() {
 
   const capturePayload = () => {
     if (!analyzerRef.current) return;
-    
+
     setIsCapturing(true);
     setTimeout(() => setIsCapturing(false), 600);
 
@@ -160,36 +174,48 @@ export default function InspectorApp() {
 
   const syntaxHighlight = (json: string) => {
     return json
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
       .replace(
         /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
         (match) => {
-          let cls = 'text-number';
+          let cls = "text-number";
           if (/^"/.test(match)) {
-            cls = /:$/.test(match) ? 'text-key' : 'text-string';
+            cls = /:$/.test(match) ? "text-key" : "text-string";
           } else if (/true|false/.test(match)) {
-            cls = 'text-bool';
+            cls = "text-bool";
           } else if (/null/.test(match)) {
-            cls = 'text-null';
+            cls = "text-null";
           }
           return `<span class="${cls}">${match}</span>`;
-        }
+        },
       );
   };
 
   const colorPrompt = (text: string) => {
-    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escaped = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
     return escaped
-      .replace(/(None\|Low\|Medium\|High)/g, '<span class="text-mint">$1</span>')
+      .replace(
+        /(None\|Low\|Medium\|High)/g,
+        '<span class="text-mint">$1</span>',
+      )
       .replace(/(0-100)/g, '<span class="text-mint">$1</span>')
       .replace(
         /("overall_summary"|"conditions"|"name"|"icon"|"severity"|"confidence"|"zone"|"description"|"recommendations"|"limitations")/g,
-        '<span class="text-string">$1</span>'
+        '<span class="text-string">$1</span>',
       )
-      .replace(/(Respond ONLY with valid JSON)/g, '<span class="text-purple-400">$1</span>')
-      .replace(/(You are PhewPhew)/g, '<span class="text-mint font-medium">$1</span>');
+      .replace(
+        /(Respond ONLY with valid JSON)/g,
+        '<span class="text-purple-400">$1</span>',
+      )
+      .replace(
+        /(You are PhewPhew)/g,
+        '<span class="text-mint font-medium">$1</span>',
+      );
   };
 
   return (
@@ -197,7 +223,7 @@ export default function InspectorApp() {
       <AppHeader status={status} />
 
       <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_480px] min-h-0 overflow-hidden relative z-10">
-        <VideoPane 
+        <VideoPane
           videoRef={videoRef}
           overlayRef={overlayRef}
           capRef={capRef}
@@ -212,21 +238,25 @@ export default function InspectorApp() {
         <div className="flex flex-col bg-dark2 border-l border-sage/10 overflow-hidden relative">
           {/* Side Tab Switcher */}
           <div className="flex bg-black/40 border-b border-sage/10 flex-shrink-0">
-            <button 
-              onClick={() => setActiveSideTab('results')}
+            <button
+              onClick={() => setActiveSideTab("results")}
               className={cn(
                 "flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b-2",
-                activeSideTab === 'results' ? "text-mint border-mint" : "text-muted border-transparent hover:text-sage"
+                activeSideTab === "results"
+                  ? "text-mint border-mint"
+                  : "text-muted border-transparent hover:text-sage",
               )}
             >
               <ClipboardList className="w-4 h-4" />
               Analysis
             </button>
-            <button 
-              onClick={() => setActiveSideTab('inspector')}
+            <button
+              onClick={() => setActiveSideTab("inspector")}
               className={cn(
                 "flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-widest transition-all border-b-2",
-                activeSideTab === 'inspector' ? "text-mint border-mint" : "text-muted border-transparent hover:text-sage"
+                activeSideTab === "inspector"
+                  ? "text-mint border-mint"
+                  : "text-muted border-transparent hover:text-sage",
               )}
             >
               <Code className="w-4 h-4" />
@@ -235,10 +265,10 @@ export default function InspectorApp() {
           </div>
 
           <div className="flex-1 flex flex-col min-h-0 relative">
-            {activeSideTab === 'results' ? (
+            {activeSideTab === "results" ? (
               <ResultsPane results={analysisResults} isLoading={isAnalysing} />
             ) : (
-              <InspectorPane 
+              <InspectorPane
                 capturedData={capturedData}
                 copyPayload={copyPayload}
                 copied={copied}
@@ -249,13 +279,23 @@ export default function InspectorApp() {
           </div>
         </div>
       </div>
-      
+
       <style jsx global>{`
-        .text-key { color: #61AFEF; }
-        .text-string { color: #98C379; }
-        .text-number { color: #D19A66; }
-        .text-bool { color: #C678DD; }
-        .text-null { color: #56B6C2; }
+        .text-key {
+          color: #61afef;
+        }
+        .text-string {
+          color: #98c379;
+        }
+        .text-number {
+          color: #d19a66;
+        }
+        .text-bool {
+          color: #c678dd;
+        }
+        .text-null {
+          color: #56b6c2;
+        }
       `}</style>
     </div>
   );

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box } from "../atoms/Layout";
-import { Text } from "../atoms/Text";
-import { PremiumTag } from "../atoms/PremiumTag";
-import { SectionHead } from "../molecules/SectionHead";
+import { PHEWPHEW_COLORS as C } from "@component/PhewphewConstants";
+import { Box } from "@component/atoms/Layout";
+import { Text } from "@component/atoms/Text";
+import { PremiumTag } from "@component/atoms/PremiumTag";
+import { SectionHead } from "@component/molecules/SectionHead";
 import { useRouter } from "next/navigation";
 
 export const HomeScreen: React.FC = () => {

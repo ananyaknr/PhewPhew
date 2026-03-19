@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box } from "../atoms/Layout";
-import { Text } from "../atoms/Text";
-import { PremiumTag } from "../atoms/PremiumTag";
-import { SectionHead } from "../molecules/SectionHead";
+import { PHEWPHEW_COLORS as C } from "@component/PhewphewConstants";
+import { Box } from "@component/atoms/Layout";
+import { Text } from "@component/atoms/Text";
+import { PremiumTag } from "@component/atoms/PremiumTag";
+import { SectionHead } from "@component/molecules/SectionHead";
 import { FaceAnalyzer } from "@/logic/FaceAnalyzer";
 import { Loader2, Camera as CameraIcon, RefreshCw, AlertCircle } from "lucide-react";
 

@@ -1,7 +1,7 @@
 import React from "react";
-import { Box } from "../atoms/Layout";
-import { Text } from "../atoms/Text";
-import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
+import { Box } from "@component/atoms/Layout";
+import { Text } from "@component/atoms/Text";
+import { PHEWPHEW_COLORS as C } from "@component/PhewphewConstants";
 
 export const SectionHead: React.FC<{ label: string; action?: string; onAction?: () => void }> = ({ label, action, onAction }) => (
   <Box style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>

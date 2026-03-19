@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
-import { Box } from "../atoms/Layout";
-import { Text } from "../atoms/Text";
-import { ChipSelector } from "../molecules/ChipSelector";
+import { PHEWPHEW_COLORS as C } from "@component/PhewphewConstants";
+import { Box } from "@component/atoms/Layout";
+import { Text } from "@component/atoms/Text";
+import { ChipSelector } from "@component/molecules/ChipSelector";
 import { 
   IllustrationWelcome, 
   IllustrationGender, 
@@ -12,7 +12,7 @@ import {
   IllustrationGoals, 
   IllustrationLifestyle, 
   IllustrationAllergy 
-} from "../atoms/Illustrations";
+} from "@component/atoms/Illustrations";
 import { useRouter } from "next/navigation";
 
 export const OnboardingScreen: React.FC = () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
+import { PHEWPHEW_COLORS as C } from "@component/PhewphewConstants";
 
 export const PremiumBadge: React.FC<{ label?: string; premium?: boolean }> = ({ label, premium }) => {
   if (!premium) return null; // Only render premium badges
