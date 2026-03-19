@@ -1,4 +1,4 @@
-import { NavBar } from "@/components/molecules/NavBar";
+import { NavBar } from "../../../components/molecules/NavBar";
 
 export default function MainLayout({
   children,

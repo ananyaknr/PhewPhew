@@ -1,4 +1,4 @@
-import { OnboardingScreen } from "@/components/organisms/OnboardingScreen";
+import { OnboardingScreen } from "../../../components/organisms/OnboardingScreen";
 
 export default function OnboardingPage() {
   return <OnboardingScreen />;

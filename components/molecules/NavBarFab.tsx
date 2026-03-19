@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { PHEWPHEW_COLORS as C } from "@/components/PhewphewConstants";
+import { PHEWPHEW_COLORS as C } from "../PhewphewConstants";
 
 export const NavBarFab: React.FC = () => {
   const pathname = usePathname();

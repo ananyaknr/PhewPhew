@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnalysisCard, type Condition } from '@/components/molecules/AnalysisCard';
+import { AnalysisCard, type Condition } from '../molecules/AnalysisCard';
 import { Sparkles, ClipboardList, ShieldAlert, Loader2 } from 'lucide-react';
 
 export interface AnalysisResults {
