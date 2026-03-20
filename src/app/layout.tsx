@@ -6,6 +6,7 @@ import {
   Syne,
 } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -44,6 +45,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"
+          strategy="beforeInteractive"
+        />
+        <Script
+          src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.10/dist/tf-tflite.min.js"
+          strategy="beforeInteractive"
+        />
+        <Script
+          src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body
         className={`${dmSans.variable} ${syne.variable} ${dmSerif.variable} ${jetBrainsMono.variable} antialiased font-sans`}
       >

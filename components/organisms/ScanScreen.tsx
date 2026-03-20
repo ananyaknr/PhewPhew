@@ -14,7 +14,19 @@ import {
   X,
   Share2,
   Plus,
+  RefreshCw,
+  Info,
+  Loader2,
 } from "lucide-react";
+import { 
+  analyzeProduct, 
+  AnalysisResult, 
+  initModels
+} from "@/logic/ProductAnalyzer";
+import { IngredientRow } from "@component/molecules/IngredientRow";
+import { ProductScoreCard } from "@component/atoms/ProductScoreCard";
+import { ProductAlert } from "@component/molecules/ProductAlert";
+import { CompatibilityCard } from "@component/molecules/CompatibilityCard";
 
 export const ScanScreen: React.FC = () => {
   const router = useRouter();
@@ -26,17 +38,37 @@ export const ScanScreen: React.FC = () => {
   const [productName, setProductName] = useState("");
   const [productDesc, setProductDesc] = useState("");
   const [selectedRecent, setSelectedRecent] = useState<any>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
+    null,
+  );
   const [frame, setFrame] = useState(0);
   const [facingMode, setFacingMode] = useState<"user" | "environment">(
     "environment",
   );
+  const [aiReady, setAiReady] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => setFrame((f) => (f + 1) % 60), 100);
     return () => clearInterval(interval);
+  }, []);
+
+  // Initialize AI Models
+  useEffect(() => {
+    const loadAI = async () => {
+      try {
+        await initModels();
+        setAiReady(true);
+      } catch (err) {
+        console.error("Failed to load AI engine:", err);
+        setAiError("AI Engine initialization failed.");
+      }
+    };
+    loadAI();
   }, []);
 
   // Handle Camera Feed
@@ -60,14 +92,15 @@ export const ScanScreen: React.FC = () => {
       }
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        if (window.isSecureContext === false) {
-          throw new Error("Camera requires a secure connection (HTTPS).");
-        }
         throw new Error("Camera API not supported in this browser.");
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: facingMode },
+        video: {
+          facingMode: facingMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
         audio: false,
       });
 
@@ -94,6 +127,94 @@ export const ScanScreen: React.FC = () => {
   const toggleCamera = () => {
     setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
   };
+
+  const triggerScan = async () => {
+    if (!videoRef.current) return;
+
+    setPhase("scanning");
+    setScanProgress(0);
+
+    // Setup simulated progress for UI feel
+    const progressInterval = setInterval(() => {
+      setScanProgress((prev) => {
+        if (prev < 40) return prev + 5; // Fast initial capture
+        if (prev < 85) return prev + 1; // Slower analysis phase
+        return prev;
+      });
+    }, 100);
+
+    try {
+      // Capture frame to canvas
+      const video = videoRef.current;
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(video, 0, 0);
+        // Run real AI logic
+        const result = await analyzeProduct(canvas);
+        setAnalysisResult(result);
+        setProductName(result.product.name);
+      }
+
+      setScanProgress(100);
+      clearInterval(progressInterval);
+      setTimeout(() => setPhase("result"), 400);
+    } catch (err) {
+      console.error("Scan error:", err);
+      setPhase("camera");
+      setAiError("Analysis failed. Please try again.");
+      clearInterval(progressInterval);
+    }
+  };
+
+  const triggerManualScan = () => {
+    if (!productName.trim()) return;
+    setPhase("scanning");
+    setScanProgress(0);
+    let p = 0;
+    const t = setInterval(() => {
+      p += 3;
+      setScanProgress(p);
+      if (p >= 100) {
+        clearInterval(t);
+        // Manual entry doesn't have a canvas, so we mock a result
+        setAnalysisResult({
+          product: {
+            name: productName,
+            brand: "Manual Entry",
+            type: "Skincare Product",
+            icon: "🧴",
+            skinTypes: ["All Types"],
+            scores: { overall: "—", safety: "—", hydration: "—" },
+            ingredients: productDesc
+              .split(/[,\\n]/)
+              .map((s) => s.trim())
+              .filter((s) => s.length > 0),
+            alerts: [
+              {
+                type: "warn",
+                text: "⚠ Results based on manual ingredient list.",
+              },
+            ],
+            compatibility: [],
+          },
+          confidence: 1.0,
+          entropy: 0.0,
+          isUnknown: false,
+          ocrText: productDesc,
+        });
+        setTimeout(() => setPhase("result"), 300);
+      }
+    }, 70);
+  };
+
+  const camNoise = Array.from({ length: 6 }, (_, i) => ({
+    x: 10 + ((frame * 7 + i * 43) % 80),
+    y: 10 + ((frame * 11 + i * 29) % 60),
+    op: 0.04 + Math.sin((frame + i * 10) * 0.3) * 0.02,
+  }));
 
   const recentScans = [
     {
@@ -145,41 +266,6 @@ export const ScanScreen: React.FC = () => {
         "⚠ Conflict detected: Fragrance listed. Your profile flags fragrance sensitivity. Use with caution.",
     },
   ];
-
-  const triggerScan = () => {
-    setPhase("scanning");
-    setScanProgress(0);
-    let p = 0;
-    const t = setInterval(() => {
-      p += 4;
-      setScanProgress(p);
-      if (p >= 100) {
-        clearInterval(t);
-        setTimeout(() => setPhase("result"), 300);
-      }
-    }, 60);
-  };
-
-  const triggerManualScan = () => {
-    if (!productName.trim()) return;
-    setPhase("scanning");
-    setScanProgress(0);
-    let p = 0;
-    const t = setInterval(() => {
-      p += 3;
-      setScanProgress(p);
-      if (p >= 100) {
-        clearInterval(t);
-        setTimeout(() => setPhase("result"), 300);
-      }
-    }, 70);
-  };
-
-  const camNoise = Array.from({ length: 6 }, (_, i) => ({
-    x: 10 + ((frame * 7 + i * 43) % 80),
-    y: 10 + ((frame * 11 + i * 29) % 60),
-    op: 0.04 + Math.sin((frame + i * 10) * 0.3) * 0.02,
-  }));
 
   if (phase === "recent-detail" && selectedRecent) {
     const r = selectedRecent;
@@ -431,6 +517,34 @@ export const ScanScreen: React.FC = () => {
         </div>
       </div>
 
+      {/* AI Initializing Status Bar */}
+      {!aiReady && !aiError && (
+        <div className="mx-5 mb-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2">
+          <Loader2 size={12} className="text-[#9BE9FA] animate-spin" />
+          <Text
+            size={10}
+            color="#9BE9FA"
+            weight={700}
+            className="uppercase tracking-wider"
+          >
+            AI Engine Initializing...
+          </Text>
+        </div>
+      )}
+      {aiError && (
+        <div className="mx-5 mb-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+          <Info size={12} className="text-red-400" />
+          <Text
+            size={10}
+            color="#f87171"
+            weight={700}
+            className="uppercase tracking-wider"
+          >
+            {aiError}
+          </Text>
+        </div>
+      )}
+
       {/* ── CAMERA PHASE — full-bleed live viewport ── */}
       {(phase === "camera" || phase === "scanning") &&
         inputMode === "camera" && (
@@ -524,6 +638,34 @@ export const ScanScreen: React.FC = () => {
               )}
             </div>
 
+            {/* Confidence Bar */}
+            <div className="px-5 mt-4">
+              <div className="flex justify-between items-end mb-1.5">
+                <Text
+                  size={10}
+                  weight={800}
+                  color={C.sub}
+                  className="uppercase tracking-[0.2em]"
+                >
+                  {phase === "scanning"
+                    ? "AI ANALYSING SIGNAL..."
+                    : "DETECTION CONFIDENCE"}
+                </Text>
+                <Text size={10} weight={700} color={C.accent}>
+                  {phase === "scanning" ? `${scanProgress}%` : "—"}
+                </Text>
+              </div>
+              <div className="h-1 bg-black/10 rounded-full overflow-hidden">
+                <div
+                  style={{
+                    width: phase === "scanning" ? `${scanProgress}%` : "0%",
+                    background: `linear-gradient(90deg, ${C.accent}, ${C.accentMid})`,
+                  }}
+                  className="h-full transition-all duration-300"
+                />
+              </div>
+            </div>
+
             {/* ── Bottom sheet ── */}
             <div
               style={{ background: C.bg }}
@@ -539,11 +681,14 @@ export const ScanScreen: React.FC = () => {
                 <div
                   onClick={triggerScan}
                   style={{
-                    background: `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`,
+                    background: aiReady
+                      ? `linear-gradient(120deg, ${C.accentMid}, ${C.accent})`
+                      : C.card,
+                    opacity: aiReady ? 1 : 0.6,
                   }}
-                  className="w-full p-3.5 rounded-2xl text-center text-[15px] font-extrabold cursor-pointer font-sans text-[#0D2A3A] shadow-lg shadow-[#9BE9FA]/40 mb-3 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                  className={`w-full p-3.5 rounded-2xl text-center text-[15px] font-extrabold font-sans text-[#0D2A3A] shadow-lg shadow-[#9BE9FA]/40 mb-3 hover:scale-[1.02] active:scale-[0.98] transition-all ${aiReady ? "cursor-pointer" : "cursor-not-allowed"}`}
                 >
-                  ◎ Scan Ingredients
+                  {aiReady ? "◎ Scan Ingredients" : "Engine Loading..."}
                 </div>
               )}
               {phase === "scanning" && (
@@ -804,29 +949,35 @@ export const ScanScreen: React.FC = () => {
       )}
 
       {/* ── RESULT ── */}
-      {phase === "result" && (
+      {phase === "result" && analysisResult && (
         <div
           style={{ background: C.bg }}
           className="flex-1 overflow-y-auto pb-32"
         >
           {/* ── Hero verdict ── */}
-          <div className="bg-gradient-to-br from-[#0A2E20] to-[#0D4A30] p-5 pb-7 relative overflow-hidden">
-            <div className="absolute -top-7 -right-7 w-[120px] h-[120px] rounded-full bg-[#b5ffef] opacity-[0.08]" />
-            <div className="absolute -bottom-5 -left-5 w-[90px] h-[90px] rounded-full bg-[#b5ffef] opacity-[0.1]" />
+          <div
+            className={`p-5 pb-7 relative overflow-hidden ${
+              analysisResult.isUnknown
+                ? "bg-gradient-to-br from-[#2D1A10] to-[#4A2E1A]"
+                : "bg-gradient-to-br from-[#0A2E20] to-[#0D4A30]"
+            }`}
+          >
+            <div className="absolute -top-7 -right-7 w-[120px] h-[120px] rounded-full bg-white opacity-[0.08]" />
+            <div className="absolute -bottom-5 -left-5 w-[90px] h-[90px] rounded-full bg-white opacity-[0.1]" />
 
             {/* Product identity */}
             <div className="flex items-center gap-3 mb-4.5 relative z-10">
               <div className="w-11 h-11 rounded-[13px] bg-white/10 border border-white/15 flex items-center justify-center text-2xl flex-shrink-0">
-                🧴
+                {analysisResult.product.icon}
               </div>
               <div className="flex-1">
                 <div className="text-[13px] font-extrabold text-white font-sans leading-tight">
-                  {productName || "COSRX Niacinamide Serum"}
+                  {analysisResult.product.name}
                 </div>
-                <div className="text-[10px] text-[#b5ffef]/70 font-sans mt-0.5">
+                <div className="text-[10px] text-white/70 font-sans mt-0.5">
                   {inputMode === "text"
                     ? "✏️ Entered manually"
-                    : "📷 Camera scan · COSRX"}
+                    : `📷 Camera scan · ${analysisResult.product.brand}`}
                 </div>
               </div>
             </div>
@@ -843,166 +994,109 @@ export const ScanScreen: React.FC = () => {
                     stroke="rgba(255,255,255,0.1)"
                     strokeWidth="6"
                   />
-                  <circle
-                    cx="36"
-                    cy="36"
-                    r="30"
-                    fill="none"
-                    stroke="#4ade80"
-                    strokeWidth="6"
-                    strokeDasharray={`${0.88 * 188.5} ${188.5}`}
-                    strokeLinecap="round"
-                    strokeDashoffset="47"
-                    transform="rotate(-90 36 36)"
-                  />
+                  {!analysisResult.isUnknown && (
+                    <circle
+                      cx="36"
+                      cy="36"
+                      r="30"
+                      fill="none"
+                      stroke={
+                        analysisResult.confidence > 0.8 ? "#4ade80" : "#fbbf24"
+                      }
+                      strokeWidth="6"
+                      strokeDasharray={`${analysisResult.confidence * 188.5} 188.5`}
+                      strokeLinecap="round"
+                      transform="rotate(-90 36 36)"
+                    />
+                  )}
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-[18px] font-extrabold text-white font-sans leading-none">
-                    88
+                    {analysisResult.isUnknown
+                      ? "?"
+                      : Math.round(analysisResult.confidence * 100)}
                   </span>
                   <span className="text-[8px] text-white/50 font-sans">
-                    /100
+                    {analysisResult.isUnknown ? "MATCH" : "/100"}
                   </span>
                 </div>
               </div>
 
               <div className="flex-1">
-                <div className="text-[16px] font-extrabold text-[#4ade80] font-sans leading-tight mb-1">
-                  Great match for
-                  <br />
-                  your skin
+                <div
+                  className={`text-[16px] font-extrabold font-sans leading-tight mb-1 ${
+                    analysisResult.isUnknown
+                      ? "text-orange-400"
+                      : "text-[#4ade80]"
+                  }`}
+                >
+                  {analysisResult.isUnknown
+                    ? "Product not fully recognized"
+                    : analysisResult.confidence > 0.85
+                      ? "High match for your skin"
+                      : "Compatible with caution"}
                 </div>
-                <div className="text-[10px] text-[#b5ffef]/75 font-sans leading-snug">
-                  3 actives work well together · 1 minor flag (fragrance) — safe
-                  to use with caution
+                <div className="text-[10px] text-white/75 font-sans leading-snug">
+                  {analysisResult.isUnknown
+                    ? "We'll attempt to analyze the ingredients from the raw label extract below."
+                    : `${analysisResult.product.skinTypes.slice(0, 2).join(" & ")} friendly · ${analysisResult.product.alerts.length} analysis flags.`}
                 </div>
               </div>
             </div>
 
-            {/* Stat pills */}
+            {/* Stat pills (Confidence & Entropy) */}
             <div className="flex gap-1.5 mt-4 relative z-10">
-              {[
-                {
-                  label: "4 ingredients",
-                  sub: "detected",
-                  color: "bg-[#9BE9FA]/15",
-                  border: "border-[#9BE9FA]/25",
-                  text: "text-[#9BE9FA]",
-                },
-                {
-                  label: "3 compatible",
-                  sub: "with your skin",
-                  color: "bg-green-400/10",
-                  border: "border-green-400/30",
-                  text: "text-green-400",
-                },
-                {
-                  label: "1 flag",
-                  sub: "fragrance",
-                  color: "bg-orange-400/10",
-                  border: "border-orange-400/30",
-                  text: "text-orange-400",
-                },
-              ].map((p) => (
-                <div
-                  key={p.label}
-                  className={`flex-1 px-2 pb-1.5 pt-2 rounded-[10px] border text-center ${p.color} ${p.border}`}
-                >
-                  <div
-                    className={`text-[11px] font-extrabold font-sans ${p.text}`}
-                  >
-                    {p.label}
-                  </div>
-                  <div className="text-[8px] text-white/45 font-sans mt-px">
-                    {p.sub}
-                  </div>
+              <div className="flex-1 px-2 pb-1.5 pt-2 rounded-[10px] border border-white/20 bg-white/5 text-center">
+                <div className="text-[11px] font-extrabold font-sans text-white">
+                  {Math.round(analysisResult.confidence * 100)}%
                 </div>
-              ))}
+                <div className="text-[8px] text-white/45 font-sans mt-px uppercase tracking-tighter">
+                  Confidence
+                </div>
+              </div>
+              <div className="flex-1 px-2 pb-1.5 pt-2 rounded-[10px] border border-white/20 bg-white/5 text-center">
+                <div className="text-[11px] font-extrabold font-sans text-white">
+                  {analysisResult.entropy.toFixed(2)}
+                </div>
+                <div className="text-[8px] text-white/45 font-sans mt-px uppercase tracking-tighter">
+                  Entropy
+                </div>
+              </div>
+              <div className="flex-1 px-2 pb-1.5 pt-2 rounded-[10px] border border-white/20 bg-white/5 text-center">
+                <div className="text-[11px] font-extrabold font-sans text-white">
+                  {analysisResult.product.ingredients.length}
+                </div>
+                <div className="text-[8px] text-white/45 font-sans mt-px uppercase tracking-tighter">
+                  Ingredients
+                </div>
+              </div>
             </div>
           </div>
 
           {/* ── Body ── */}
           <div className="px-5 pt-4">
-            {/* Ingredient breakdown */}
-            <div
-              style={{ background: C.surface, borderColor: C.border }}
-              className="border rounded-2xl mb-3.5 overflow-hidden"
-            >
-              <div
-                style={{ borderColor: C.border }}
-                className="px-4 py-3 border-b"
-              >
-                <Text size={12} weight={800}>
-                  Ingredient Breakdown
-                </Text>
-              </div>
-              {[
-                {
-                  name: "Niacinamide 10%",
-                  tag: "BRIGHTENING",
-                  safe: true,
-                  note: "Reduces pores + pigmentation. Works well with your Zinc toner.",
-                },
-                {
-                  name: "Zinc PCA 1%",
-                  tag: "OIL CONTROL",
-                  safe: true,
-                  note: "Balances sebum — ideal for your combination skin type.",
-                },
-                {
-                  name: "Hyaluronic Acid",
-                  tag: "HYDRATION",
-                  safe: true,
-                  note: "Draws moisture into skin. Layer before moisturiser for best effect.",
-                },
-                {
-                  name: "Fragrance",
-                  tag: "⚠ IRRITANT",
-                  safe: false,
-                  note: "Your profile flags fragrance sensitivity. Watch for redness or itching.",
-                },
-              ].map((ing, i, arr) => (
-                <div
-                  key={ing.name}
-                  style={{
-                    borderColor: C.border,
-                    background: ing.safe ? "transparent" : "#FFFAF5",
-                  }}
-                  className={`px-4 py-3 ${i < arr.length - 1 ? "border-b" : ""}`}
-                >
-                  <div
-                    className={`flex items-center gap-2.5 ${ing.note ? "mb-1" : ""}`}
-                  >
-                    <div
-                      className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${ing.safe ? "bg-[#4ade80]" : "bg-[#D44B3A]"}`}
-                    />
-                    <Text size={12} weight={700}>
-                      {ing.name}
-                    </Text>
-                    <div
-                      style={{
-                        background: ing.safe ? C.accentLight : "#FDE8E8",
-                        color: ing.safe ? "#1A6A88" : C.danger,
-                      }}
-                      className="ml-auto px-2 py-0.5 rounded-full text-[8px] font-bold font-sans flex-shrink-0"
-                    >
-                      {ing.tag}
-                    </div>
-                  </div>
-                  {ing.note && (
-                    <Text
-                      size={10}
-                      color={ing.safe ? C.sub : "#B05000"}
-                      style={{ paddingLeft: 19, lineHeight: 1.55 }}
-                    >
-                      {ing.note}
-                    </Text>
-                  )}
-                </div>
-              ))}
+            {/* Scores */}
+            <div className="flex gap-3 mb-4">
+              <ProductScoreCard
+                label="Grade"
+                value={analysisResult.product.scores.overall}
+              />
+              <ProductScoreCard
+                label="Safety"
+                value={analysisResult.product.scores.safety}
+              />
+              <ProductScoreCard
+                label="Hydration"
+                value={analysisResult.product.scores.hydration}
+              />
             </div>
 
-            {/* Routine conflict check */}
+            {/* Alerts */}
+            {analysisResult.product.alerts.map((alert: any, i: number) => (
+              <ProductAlert key={i} type={alert.type} text={alert.text} />
+            ))}
+
+            {/* Ingredient breakdown */}
             <div
               style={{ background: C.surface, borderColor: C.border }}
               className="border rounded-2xl mb-3.5 overflow-hidden"
@@ -1012,77 +1106,84 @@ export const ScanScreen: React.FC = () => {
                 className="px-4 py-3 border-b flex items-center justify-between"
               >
                 <Text size={12} weight={800}>
-                  Routine Compatibility
+                  Ingredient Analysis
                 </Text>
-                <span className="px-2 py-0.5 rounded-full bg-[#E8FFFB] text-[9px] font-bold text-[#2A9E80] font-sans border border-[#7ADFC8]">
-                  ✓ No conflicts
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
+                  <span className="text-[9px] font-bold text-gray-400 font-sans">
+                    {analysisResult.product.ingredients.length} FOUND
+                  </span>
+                </div>
               </div>
-              {[
-                {
-                  step: "Vitamin C Serum",
-                  icon: "🍊",
-                  ok: true,
-                  note: "Use Niacinamide at a different time — alternating AM/PM is ideal.",
-                },
-                {
-                  step: "BHA Toner",
-                  icon: "⚗️",
-                  ok: true,
-                  note: "No conflict. BHA + Niacinamide complement each other.",
-                },
-                {
-                  step: "SPF 50",
-                  icon: "☀️",
-                  ok: true,
-                  note: "Apply this before SPF for best absorption.",
-                },
-              ].map((r, i, arr) => (
-                <div
-                  key={r.step}
-                  style={{ borderColor: C.border }}
-                  className={`flex items-start gap-2.5 px-4 py-2.5 ${i < arr.length - 1 ? "border-b" : ""}`}
-                >
-                  <span className="text-base flex-shrink-0">{r.icon}</span>
-                  <div className="flex-1">
-                    <Text size={11} weight={700}>
-                      {r.step}
-                    </Text>
-                    <Text
-                      size={10}
-                      color={C.sub}
-                      style={{ marginTop: 2, lineHeight: 1.5 }}
-                    >
-                      {r.note}
+              <div className="max-h-[300px] overflow-y-auto">
+                {analysisResult.product.ingredients.length > 0 ? (
+                  analysisResult.product.ingredients.map(
+                    (ing: string, i: number, arr: any[]) => (
+                      <IngredientRow
+                        key={i}
+                        name={ing}
+                        isLast={i === arr.length - 1}
+                      />
+                    ),
+                  )
+                ) : (
+                  <div className="px-4 py-8 text-center">
+                    <Info size={24} className="mx-auto text-gray-300 mb-2" />
+                    <Text size={11} color={C.muted}>
+                      No ingredients extracted yet.
+                      <br />
+                      Try scanning again or enter manually.
                     </Text>
                   </div>
-                  <Check
-                    size={14}
-                    className="text-[#4ade80] flex-shrink-0 mt-0.5"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Where to use pill */}
-            <div
-              style={{ background: C.accentLight, borderColor: C.border }}
-              className="border rounded-xl px-4 py-3 mb-4 flex gap-3 items-center"
-            >
-              <span className="text-xl">💡</span>
-              <div>
-                <Text size={11} weight={700} color={C.accent}>
-                  Best used in your AM routine
-                </Text>
-                <Text
-                  size={10}
-                  color={C.sub}
-                  style={{ marginTop: 2, lineHeight: 1.5 }}
-                >
-                  After toner, before moisturiser. Pat gently — do not rub.
-                </Text>
+                )}
               </div>
             </div>
+
+            {/* Compatibility Guide */}
+            {analysisResult.product.compatibility.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-1.5 mb-2.5 px-1">
+                  <Zap size={14} className="text-yellow-500 fill-yellow-500" />
+                  <Text size={12} weight={800}>
+                    Layering Compatibility
+                  </Text>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {analysisResult.product.compatibility.map(
+                    (c: any, i: number) => (
+                      <CompatibilityCard
+                        key={i}
+                        title={c.title}
+                        desc={c.desc}
+                      />
+                    ),
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Raw OCR Extract (Toggleable) */}
+            {analysisResult.ocrText && (
+              <div className="mb-4">
+                <details className="group">
+                  <summary className="list-none cursor-pointer flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <FileText size={14} className="text-gray-400" />
+                      <Text size={11} weight={700} color={C.sub}>
+                        RAW OCR EXTRACT
+                      </Text>
+                    </div>
+                    <ChevronLeft
+                      size={14}
+                      className="text-gray-400 -rotate-90 group-open:rotate-90 transition-transform"
+                    />
+                  </summary>
+                  <div className="mt-2 p-3 rounded-xl bg-gray-50 border border-gray-100 text-[10px] font-mono text-gray-500 leading-relaxed max-h-32 overflow-y-auto">
+                    {analysisResult.ocrText}
+                  </div>
+                </details>
+              </div>
+            )}
 
             {/* CTAs */}
             <div className="flex gap-2.5 mb-3">
@@ -1093,6 +1194,7 @@ export const ScanScreen: React.FC = () => {
                   setProductName("");
                   setProductDesc("");
                   setScanProgress(0);
+                  setAnalysisResult(null);
                 }}
                 style={{
                   background: C.surface,
@@ -1111,27 +1213,19 @@ export const ScanScreen: React.FC = () => {
                 className="flex-[2] p-3 rounded-xl text-center text-[13px] font-extrabold cursor-pointer font-sans text-[#0D2A3A] hover:scale-[1.01] transition-transform"
               >
                 <Plus size={14} className="inline mr-1 -mt-0.5" />
-                Add to AM Routine
+                Add to Routine
               </div>
             </div>
 
-            {/* Secondary action: share / derm */}
             <div className="flex gap-2.5 mb-2.5">
-              <div
-                style={{
-                  background: C.surface,
-                  borderColor: C.border,
-                  color: C.sub,
-                }}
-                className="flex-1 p-2.5 rounded-xl border text-center text-[12px] font-semibold cursor-pointer font-sans hover:bg-gray-50 flex items-center justify-center gap-1.5"
-              >
+              <div className="flex-1 p-2.5 rounded-xl bg-white border border-gray-100 text-center text-[12px] font-semibold cursor-pointer font-sans text-gray-400 hover:bg-gray-50 flex items-center justify-center gap-1.5">
                 <Share2 size={12} /> Share Result
               </div>
               <div
                 onClick={() => router.push("/derm")}
                 className="flex-1 p-2.5 rounded-xl bg-[#FFFDE8] border border-[#E0D840] text-center text-[12px] font-semibold cursor-pointer font-sans text-[#5A5000] hover:bg-[#FFFCE0] flex items-center justify-center gap-1.5"
               >
-                <Plus size={12} /> Ask Derm
+                <RefreshCw size={12} /> Ask Derm
               </div>
             </div>
           </div>
