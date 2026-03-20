@@ -1,0 +1,53 @@
+{
+  "classNames": [
+    "Cute Press",
+    "Rojukiss",
+    "Dr.PONG"
+  ],
+  "numClasses": 3,
+  "imgSize": 224,
+  "normMean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "normStd": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "rejectionPolicy": {
+    "method": "confidence_threshold_plus_entropy",
+    "confThreshold": 0.7,
+    "entropyThreshold": 0.85,
+    "rule": "reject if maxConf < 0.7 OR normalizedEntropy > 0.85"
+  },
+  "products": [
+    {
+      "brand": "Cute Press",
+      "product": "1 Night Brightening Overnight Mask",
+      "icon": "\ud83c\udf19"
+    },
+    {
+      "brand": "Rojukiss",
+      "product": "Reju-PDRN Treatment Ampoule Serum",
+      "icon": "\ud83e\uddec"
+    },
+    {
+      "brand": "Dr.PONG",
+      "product": "28D Biome+ Acne Defense Serum",
+      "icon": "\ud83d\udd2c"
+    }
+  ],
+  "training": {
+    "bestValAcc": 97.83,
+    "finalEpoch": 50,
+    "lr": 0.0003,
+    "batch": 32,
+    "scheduler": "OneCycleLR (10% linear warmup + cosine decay, per-batch)",
+    "modelBase": "MobileNetV2 ImageNet1K pretrained",
+    "exportedAt": "2026-03-19T17:30:11.458268"
+  },
+  "modelType": "mobilenetv2_3class_open_set",
+  "version": "3.0"
+}
