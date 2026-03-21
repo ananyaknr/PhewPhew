@@ -243,17 +243,17 @@ export const OnboardingScreen: React.FC = () => {
                 marginBottom: 8,
               }}
             >
-              What&apos;s your
+              What best describes
               <br />
-              biological sex?
+              your hormonal profile?
             </Text>
             <Text
               size={13}
               color={C.sub}
               style={{ lineHeight: 1.5, marginBottom: 16 }}
             >
-              Hormones affect skin behaviour — oil production, sensitivity, and
-              aging patterns differ.
+              Hormones directly affect oil production, sensitivity, and how your
+              skin ages.
             </Text>
             <div
               style={{
@@ -265,19 +265,24 @@ export const OnboardingScreen: React.FC = () => {
             >
               {[
                 {
-                  val: "Female",
-                  desc: "Higher estrogen — tends toward dryness",
+                  val: "Female / Estrogen",
+                  desc: "Includes trans women on HRT",
                   icon: "♀",
                 },
                 {
-                  val: "Male",
-                  desc: "Higher androgens — oilier, thicker skin",
+                  val: "Male / Testosterone",
+                  desc: "Includes trans men on HRT",
                   icon: "♂",
                 },
                 {
-                  val: "Non-binary",
-                  desc: "We'll use general skin data",
+                  val: "Transitioning / Mixed Hormones",
+                  desc: "Currently on hormone therapy or fluctuating",
                   icon: "◈",
+                },
+                {
+                  val: "Prefer not to say",
+                  desc: "We'll use general baseline",
+                  icon: "—",
                 },
               ].map((opt) => (
                 <div
